@@ -1,4 +1,4 @@
-﻿ResourceType,ResourceID,StringID,LANGID,Original,Chinese,Status,Notes
+﻿ResourceType,ResourceID,ItemRef,LANGID,Original,Chinese,Status,Notes
 STRING,8,117,1033,&File,文件(&F),DONE,顶层菜单 File
 STRING,9,139,1033,&Edit,编辑(&E),DONE,顶层菜单 Edit
 STRING,11,165,1033,Fl&ash,Flash(&A),DONE,"顶层菜单 Flash, 助记键在 a"
@@ -42,3 +42,147 @@ STRING,49,769,1033,&Breakpoints...,断点(&B)...,DONE,Debug>Breakpoints
 STRING,49,783,1033,Debug Settin&gs...,调试设置(&G)...,DONE,Debug>Debug Settings
 STRING,43,682,1033,Status Bar,状态栏,DONE,View>Status Bar
 STRING,8,115,1033,Show Trace Data,显示跟踪数据,DONE,Show Trace Data
+STRING,9,140,1033,&Undo	Ctrl+Z,撤销(&U)	Ctrl+Z,DONE,Edit>Undo
+STRING,9,141,1033,&Redo	Ctrl+Shift+Z,重做(&R)	Ctrl+Shift+Z,DONE,Edit>Redo
+STRING,9,142,1033,Cu&t	Ctrl+X,剪切(&T)	Ctrl+X,DONE,Edit>Cut
+STRING,9,143,1033,&Copy	Ctrl+C,复制(&C)	Ctrl+C,DONE,Edit>Copy
+STRING,10,144,1033,&Paste	Ctrl+V,粘贴(&P)	Ctrl+V,DONE,Edit>Paste
+STRING,10,145,1033,Navigate &Backwards,向后导航(&B),DONE,Edit>Navigate Backwards
+STRING,10,146,1033,Navigate For&wards,向前导航(&W),DONE,Edit>Navigate Forwards
+STRING,10,147,1033,&Insert/Remove Bookmark	Ctrl+F2,插入/移除书签(&I)	Ctrl+F2,DONE,Edit>Bookmark
+STRING,10,148,1033,&Go to Next Bookmark	F2,转到下一书签(&G)	F2,DONE,Edit>Bookmark
+STRING,10,149,1033,Go to Previous Book&mark	Shift+F2,转到上一书签(&M)	Shift+F2,DONE,Edit>Bookmark
+STRING,10,151,1033,Clear &All Bookmarks,清除所有书签(&A),DONE,Edit>Bookmark
+STRING,41,649,1033,&Find...	Ctrl+F,查找(&F)...	Ctrl+F,DONE,Edit>Find
+STRING,41,650,1033,R&eplace...	Ctrl+H,替换(&E)...	Ctrl+H,DONE,Edit>Replace
+STRING,41,651,1033,Find in Fi&les...,在文件中查找(&L)...,DONE,Edit>Find in Files
+STRING,41,652,1033,Incremental Fin&d	Ctrl+I,增量查找(&D)	Ctrl+I,DONE,Edit>Incremental Find
+STRING,41,653,1033,Outlini&ng,大纲(&N),DONE,Edit>Outlining
+STRING,41,654,1033,&Show All Outlining,显示全部大纲(&S),DONE,Edit>Outlining
+STRING,41,655,1033,&Hide All Outlining,隐藏全部大纲(&H),DONE,Edit>Outlining
+STRING,42,656,1033,&Expand All Definitions,展开全部定义(&E),DONE,Edit>Outlining
+STRING,42,657,1033,Collapse All &Definitions,折叠全部定义(&D),DONE,Edit>Outlining
+STRING,42,658,1033,Collapse Current &Block,折叠当前块(&B),DONE,Edit>Outlining
+STRING,42,659,1033,Collapse Current &Procedure,折叠当前过程(&P),DONE,Edit>Outlining
+STRING,42,660,1033,Ad&vanced,高级(&V),DONE,Edit>Advanced
+STRING,42,661,1033,&Go To Line...	Ctrl G,转到行(&G)...	Ctrl G,DONE,Edit>Advanced
+STRING,42,663,1033,Go To Matching B&race	Ctrl E,转到匹配括号(&R)	Ctrl E,DONE,Edit>Advanced
+STRING,42,666,1033,Make &Uppercase,转为大写(&U),DONE,Edit>Advanced
+STRING,42,667,1033,Make &Lowercase,转为小写(&L),DONE,Edit>Advanced
+STRING,42,668,1033,Co&mment Selection,注释所选(&M),DONE,Edit>Advanced
+STRING,42,669,1033,Uncomm&ent Selection,取消注释所选(&E),DONE,Edit>Advanced
+STRING,42,670,1033,&Indent Selection,缩进所选(&I),DONE,Edit>Advanced
+STRING,42,671,1033,U&nindent Selection,取消缩进所选(&N),DONE,Edit>Advanced
+STRING,43,674,1033,Delete Trailing &White Space,删除尾随空白(&W),DONE,Edit>Advanced
+STRING,43,675,1033,Delete &Horizontal White Space,删除水平空白(&H),DONE,Edit>Advanced
+STRING,43,676,1033,&Cut Current Line,剪切当前行(&C),DONE,Edit>Advanced
+STRING,43,677,1033,Go to &Definition of current Word,转到当前词的定义(&D),DONE,Edit>Advanced
+STRING,43,680,1033,C&onfiguration...,配置(&O)...,DONE,Edit>Configuration
+STRING,43,683,1033,T&oolbars,工具栏(&O),DONE,View>Toolbars
+STRING,43,684,1033,&File Toolbar,文件工具栏(&F),DONE,View>Toolbars
+STRING,43,685,1033,&Edit Toolbar,编辑工具栏(&E),DONE,View>Toolbars
+STRING,43,686,1033,&Build Toolbar,编译工具栏(&B),DONE,View>Toolbars
+STRING,43,687,1033,&Debug Toolbar,调试工具栏(&D),DONE,View>Toolbars
+STRING,44,688,1033,&Project Window,工程窗口(&P),DONE,View>Project Window
+STRING,44,689,1033,Boo&ks Window,书籍窗口(&K),DONE,View>Books Window
+STRING,44,690,1033,Functions Window,函数窗口,DONE,View>Functions Window
+STRING,44,691,1033,Templates &Window,模板窗口(&W),DONE,View>Templates Window
+STRING,44,692,1033,Source &Browser Window,源代码浏览器窗口(&B),DONE,View>Source Browser
+STRING,44,693,1033,Build Output Wi&ndow,编译输出窗口(&N),DONE,View>Build Output
+STRING,44,694,1033,&Error List Window,错误列表窗口(&E),DONE,View>Error List
+STRING,44,695,1033,F&ind In Files Window,在文件中查找窗口(&I),DONE,View>Find In Files
+STRING,44,696,1033,&Command Window,命令窗口(&C),DONE,View>Command
+STRING,44,697,1033,&Disassembly Window,反汇编窗口(&D),DONE,View>Disassembly
+STRING,44,698,1033,Symbo&ls Window,符号窗口(&L),DONE,View>Symbols
+STRING,44,699,1033,Re&gisters Window,寄存器窗口(&G),DONE,View>Registers
+STRING,44,700,1033,Call &Stack Window,调用栈窗口(&S),DONE,View>Call Stack
+STRING,44,701,1033,Watc&h Windows,Watch 窗口(&H),DONE,View>Watch
+STRING,45,704,1033,&Memory Windows,内存窗口(&M),DONE,View>Memory
+STRING,45,705,1033,Memory &1,内存 1(&1),DONE,View>Memory 1
+STRING,45,706,1033,Memory &2,内存 2(&2),DONE,View>Memory 2
+STRING,45,707,1033,Memory &3,内存 3(&3),DONE,View>Memory 3
+STRING,45,708,1033,Memory &4,内存 4(&4),DONE,View>Memory 4
+STRING,45,709,1033,Se&rial Windows,串口窗口(&R),DONE,View>Serial Windows
+STRING,46,720,1033,Trace &Navigation,跟踪导航(&N),DONE,View>Trace Navigation
+STRING,46,721,1033,Trace &Exceptions,跟踪异常(&E),DONE,View>Trace Exceptions
+STRING,46,723,1033,&Instruction Trace,指令跟踪(&I),DONE,View>Instruction Trace
+STRING,46,724,1033,&Show Records in Disassembly,在反汇编中显示记录(&S),DONE,View>Trace
+STRING,46,725,1033,&Enable Trace Recording,启用跟踪记录(&E),DONE,View>Trace
+STRING,46,726,1033,&Toolbox Window,工具箱窗口(&T),DONE,View>Toolbox
+STRING,46,727,1033,System &Viewer,系统查看器(&V),DONE,View>System Viewer
+STRING,46,728,1033,Periodic Window &Update,定期窗口刷新(&U),DONE,View>Periodic Update
+STRING,46,730,1033,New Multi-Project &Workspace...,新建多工程工作空间(&W)...,DONE,Project>New Multi-Project Workspace
+STRING,46,731,1033,&Open Project...,打开工程(&O)...,DONE,Project>Open Project
+STRING,46,732,1033,&Close Project,关闭工程(&C),DONE,Project>Close Project
+STRING,46,733,1033,&Export,导出(&E),DONE,Project>Export
+STRING,46,734,1033,&Manage,管理(&M),DONE,Project>Manage
+STRING,31,490,1033,&Import,导入(&I),DONE,Project>Import
+STRING,31,492,1033,Import Project from &CPRJ Format,从 CPRJ 格式导入工程(&C),DONE,Project>Import
+STRING,32,496,1033,Batch Buil&d,批量编译(&D),DONE,Project>Batch Build
+STRING,11,161,1033,Batc&h Setup...,批量编译设置(&H)...,DONE,Project>Batch Setup
+STRING,50,787,1033,Set-up &PC-Lint...,设置 PC-Lint(&P)...,DONE,Tools>PC-Lint
+STRING,50,789,1033,&Lint,Lint 检查(&L),DONE,Tools>Lint
+STRING,50,791,1033,Configure &Merge Tool...,配置合并工具(&M)...,DONE,Tools>Merge Tool
+STRING,50,792,1033,&Customize Tools Menu...,自定义工具菜单(&C)...,DONE,Tools>Customize
+STRING,51,801,1033,&Open Books Window,打开书籍窗口(&O),DONE,Help>Books Window
+STRING,51,804,1033,&Contact Support,联系技术支持(&C),DONE,Help>Contact Support
+STRING,51,805,1033,Check for &Update,检查更新(&U),DONE,Help>Check for Update
+STRING,51,806,1033,Set-&up Static Code Analyzer...,设置静态代码分析器(&U)...,DONE,Tools>Static Code Analyzer
+STRING,3841,61447,1033,µVision &Help,µVision帮助(&H),DONE,"Help>µVision Help, 省略空格以满足整块大小约束"
+STRING,3841,61448,1033,&About µVision...,关于 µVision(&A)...,DONE,Help>About
+MENU,143,0/0,1033,O&ptions...	Alt+F7,选项(&P)...	Alt+F7,DONE,工程窗口右键>Options
+MENU,143,0/2,1033,Add New &Item to Group...,向组添加新条目(&I)...,DONE,工程窗口右键
+MENU,143,0/3,1033,Add Existing &Files to Group...,向组添加已有文件(&F)...,DONE,工程窗口右键
+MENU,143,0/4,1033,A&dd Group...,添加组(&D)...,DONE,工程窗口右键
+MENU,143,0/5,1033,R&emove Item,移除条目(&E),DONE,工程窗口右键
+MENU,143,0/6,1033,Mana&ge Project Items...,管理工程条目(&G)...,DONE,工程窗口右键
+MENU,143,0/8,1033,&Open File,打开文件(&O),DONE,工程窗口右键
+MENU,143,0/9,1033,Open &List File,打开 List 文件(&L),DONE,工程窗口右键
+MENU,143,0/10,1033,Open &Map File,打开 Map 文件(&M),DONE,工程窗口右键
+MENU,143,0/11,1033,Op&en Build Log,打开编译日志(&E),DONE,工程窗口右键
+MENU,143,0/13,1033,&Rebuild target,重新编译目标(&R),DONE,工程窗口右键
+MENU,143,0/14,1033,&Build target	F7,编译目标(&B)	F7,DONE,工程窗口右键
+MENU,143,0/15,1033,Tr&anslate File,编译当前文件(&A),DONE,工程窗口右键
+MENU,143,0/16,1033,Stop b&uild,停止编译(&U),DONE,工程窗口右键
+MENU,143,0/18,1033,Show I&nclude File Dependencies,显示头文件依赖关系(&N),DONE,工程窗口右键
+MENU,1200,0/0,1033,Global Outlining,全局大纲,DONE,编辑器右键>Global Outlining
+MENU,1200,0/0/0,1033,Collapse All Definitions,折叠全部定义,DONE,编辑器右键
+MENU,1200,0/0/2,1033,Collapse All Comments,折叠全部注释,DONE,编辑器右键
+MENU,1200,0/0/4,1033,Toggle All Outlining,切换全部大纲,DONE,编辑器右键
+MENU,1200,0/0/5,1033,Stop All Outlining,停止全部大纲,DONE,编辑器右键
+MENU,1200,0/1,1033,Selected Outlining,所选大纲,DONE,编辑器右键>Selected Outlining
+MENU,1200,0/1/0,1033,Hide Selection,隐藏所选,DONE,编辑器右键
+MENU,1200,0/1/3,1033,Collapse Current Block,折叠当前块,DONE,编辑器右键
+MENU,1200,0/1/4,1033,Collapse Current Procedure,折叠当前过程,DONE,编辑器右键
+MENU,1200,0/1/9,1033,Toggle Current Expansion,切换当前展开,DONE,编辑器右键
+MENU,1200,0/2,1033,Bookmarks,书签,DONE,编辑器右键>Bookmarks
+MENU,1200,0/2/0,1033,&Insert/Remove Bookmark,插入/移除书签(&I),DONE,编辑器右键
+MENU,1200,0/2/1,1033,&Next Bookmark,下一书签(&N),DONE,编辑器右键
+MENU,1200,0/2/2,1033,&Previous Bookmark,上一书签(&P),DONE,编辑器右键
+MENU,1200,0/2/3,1033,&Clear All Bookmarks,清除所有书签(&C),DONE,编辑器右键
+MENU,1200,0/3,1033,Toggle &Breakpoint,切换断点(&B),DONE,编辑器右键
+MENU,1205,0/0,1033,&Close,关闭(&C),DONE,编辑器标签右键
+MENU,1205,0/1,1033,Close All But This,关闭其他,DONE,编辑器标签右键
+MENU,1205,0/2,1033,Close &All,全部关闭(&A),DONE,编辑器标签右键
+MENU,1205,0/4,1033,Copy Full Path,复制完整路径,DONE,编辑器标签右键
+MENU,1205,0/5,1033,Open Containing Folder,打开所在文件夹,DONE,编辑器标签右键
+MENU,1205,0/7,1033,New Horizontal Tab Group,新建水平标签组,DONE,编辑器标签右键
+MENU,1205,0/8,1033,New Vertical Tab Group,新建垂直标签组,DONE,编辑器标签右键
+MENU,1205,0/9,1033,Move To Next Tab Group,移到下一标签组,DONE,编辑器标签右键
+MENU,1205,0/10,1033,Move To Previous Tab Group,移到上一标签组,DONE,编辑器标签右键
+MENU,1205,1/0,1033,Close,关闭,DONE,编辑器标签右键(pane)
+MENU,1205,1/1,1033,Close All But This,关闭其他,DONE,编辑器标签右键(pane)
+MENU,1205,1/2,1033,Close &All,全部关闭(&A),DONE,编辑器标签右键(pane)
+MENU,1205,1/3,1033,&Floating,浮动(&F),DONE,编辑器标签右键(pane)
+MENU,1205,1/4,1033,&Docking,停靠(&D),DONE,编辑器标签右键(pane)
+MENU,1205,1/5,1033,&Tabbed Document,标签式文档(&T),DONE,编辑器标签右键(pane)
+MENU,1205,1/6,1033,&Auto Hide,自动隐藏(&A),DONE,编辑器标签右键(pane)
+MENU,1205,1/7,1033,&Hide,隐藏(&H),DONE,编辑器标签右键(pane)
+MENU,1205,1/9,1033,New Horizontal Tab Group,新建水平标签组,DONE,编辑器标签右键(pane)
+MENU,1205,1/10,1033,New Vertical Tab Group,新建垂直标签组,DONE,编辑器标签右键(pane)
+MENU,1205,1/11,1033,Move To Next Tab Group,移到下一标签组,DONE,编辑器标签右键(pane)
+MENU,1205,1/12,1033,Move To Previous Tab Group,移到上一标签组,DONE,编辑器标签右键(pane)
+MENU,1205,2/1,1033,New Horizontal Tab Group,新建水平标签组,DONE,标签组右键
+MENU,1205,2/2,1033,New Vertical Tab Group,新建垂直标签组,DONE,编辑器标签右键
+MENU,1205,2/3,1033,Move To Next Tab Group,移到下一标签组,DONE,标签组右键
+MENU,1205,2/4,1033,Move To Previous Tab Group,移到上一标签组,DONE,标签组右键
