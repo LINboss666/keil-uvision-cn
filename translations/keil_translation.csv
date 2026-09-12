@@ -1,1 +1,44 @@
-ResourceType,ResourceID,Original,Chinese,Status,Notes
+﻿ResourceType,ResourceID,StringID,LANGID,Original,Chinese,Status,Notes
+STRING,8,117,1033,&File,文件(&F),DONE,顶层菜单 File
+STRING,9,139,1033,&Edit,编辑(&E),DONE,顶层菜单 Edit
+STRING,11,165,1033,Fl&ash,Flash(&A),DONE,"顶层菜单 Flash, 助记键在 a"
+STRING,43,681,1033,&View,视图(&V),DONE,顶层菜单 View
+STRING,46,729,1033,&Project,工程(&P),DONE,顶层菜单 Project
+STRING,48,759,1033,&Debug,调试(&D),DONE,顶层菜单 Debug
+STRING,50,784,1033,Pe&ripherals,外设(&R),DONE,顶层菜单 Peripherals(调试模式)
+STRING,50,786,1033,&Tools,工具(&T),DONE,顶层菜单 Tools
+STRING,50,793,1033,&SVCS,SVCS(&S),DONE,"顶层菜单 SVCS, 缩写不译"
+STRING,50,795,1033,&Window,窗口(&W),DONE,顶层菜单 Window
+STRING,50,799,1033,&Help,帮助(&H),DONE,顶层菜单 Help
+STRING,8,121,1033,&New...	Ctrl+N,新建(&N)...	Ctrl+N,DONE,File>New
+STRING,8,124,1033,&Open	Ctrl+O,打开(&O)	Ctrl+O,DONE,File>Open
+STRING,8,125,1033,&Close,关闭(&C),DONE,File>Close
+STRING,9,128,1033,&Save	Ctrl+S,保存(&S)	Ctrl+S,DONE,File>Save
+STRING,9,130,1033,Save &As...,另存为(&A)...,DONE,File>Save As
+STRING,9,131,1033,Save A&ll,全部保存(&L),DONE,File>Save All
+STRING,9,132,1033,Windows...,窗口...,DONE,File>Windows... 窗口列表
+STRING,9,136,1033,&Print...	Ctrl+P,打印(&P)	Ctrl+P,DONE,File>Print
+STRING,9,137,1033,Print Pre&view,打印预览(&V),DONE,File>Print Preview
+STRING,9,138,1033,E&xit,退出(&X),DONE,File>Exit
+STRING,10,152,1033,&Build Target	F7,编译目标(&B)	F7,DONE,Build Target
+STRING,10,154,1033,&Rebuild all target files,重新编译所有目标文件(&R),DONE,Rebuild all target files
+STRING,11,166,1033,&Download,下载(&D),DONE,Flash>Download
+STRING,47,738,1033,Run-Time &Environment...,运行时环境(&E)...,DONE,Manage Run-Time Environment
+STRING,47,741,1033,Pack &Installer...,Pack 安装器(&I)...,DONE,Pack Installer
+STRING,47,743,1033,&Select Device for Target ...,为目标选择器件(&S)...,DONE,Select Device for Target
+STRING,47,748,1033,O&ptions...	Alt+F7,选项(&P)...	Alt+F7,DONE,Options for Target
+STRING,48,756,1033,Clean &Targets,清理目标(&T),DONE,Clean Targets
+STRING,48,758,1033,&Configure Flash Tools...,配置 Flash 工具(&C)...,DONE,Configure Flash Tools
+STRING,48,760,1033,Start/Stop &Debug Session	Ctrl+F5,开始/停止调试(&D)	Ctrl+F5,DONE,Start/Stop Debug Session
+STRING,48,761,1033,Reset &CPU,复位 CPU(&C),DONE,Reset CPU
+STRING,48,762,1033,&Run	F5,运行(&R)	F5,DONE,Debug>Run
+STRING,48,763,1033,&Stop	Esc,停止(&S)	Esc,DONE,Debug>Stop
+STRING,48,764,1033,S&tep	F11,单步(&T)	F11,DONE,Debug>Step
+STRING,48,765,1033,Step O&ver	F10,跳过(&V)	F10,DONE,Debug>Step Over
+STRING,48,766,1033,Ste&p Out	Ctrl+F11,跳出(&P)	Ctrl+F11,DONE,Debug>Step Out
+STRING,48,767,1033,Run to Cursor &Line	Ctrl+F10,运行到光标行(&L)	Ctrl+F10,DONE,Debug>Run to Cursor Line
+STRING,49,768,1033,Show Ne&xt Statement,显示下一条语句(&X),DONE,Debug>Show Next Statement
+STRING,49,769,1033,&Breakpoints...,断点(&B)...,DONE,Debug>Breakpoints
+STRING,49,783,1033,Debug Settin&gs...,调试设置(&G)...,DONE,Debug>Debug Settings
+STRING,43,682,1033,Status Bar,状态栏,DONE,View>Status Bar
+STRING,8,115,1033,Show Trace Data,显示跟踪数据,DONE,Show Trace Data
