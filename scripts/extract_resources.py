@@ -373,6 +373,38 @@ def parse_menu_template(buf: bytes):
             "consumed_bytes": consumed, "total_bytes": n, "parse_note": err}
 
 
+def serialize_menu_template(menu):
+    """把 parse_menu_template 的结果重序列化为 RT_MENU 模板字节（仅 version 0）。
+
+    PHASE 1B1 的写入路径: 与 parse 严格互逆 —— 头部 (wVersion=0, wOffset) +
+    [WORD flags][WORD id(仅非 popup)][null 结尾 UTF-16 文本] + 子层级。
+    flags / id / 层级 / 顺序完全由解析结果决定, 调用方只允许改 text。
+    MF_BITMAP 项的 text 为 WORD 序号 (int), 原样写回。
+    """
+    if menu.get("version") != 0:
+        raise ValueError(
+            f"serialize_menu_template 仅支持 version 0 菜单, 实际 {menu.get('version')!r} — 拒绝序列化")
+    out = bytearray()
+    out += struct.pack("<HH", 0, int(menu.get("header_offset", 0)))
+
+    def emit(items):
+        for it in items:
+            flags = it["flags"]
+            out.extend(struct.pack("<H", flags))
+            if not (flags & 0x10):                     # 非 popup 项才有 ID 字
+                out.extend(struct.pack("<H", it["id"] or 0))
+            if flags & 0x0200:                         # MF_BITMAP: WORD 序号
+                out.extend(struct.pack("<H", int(it["text"])))
+            else:
+                out.extend((it["text"] or "").encode("utf-16le"))
+                out.extend(b"\x00\x00")
+            if flags & 0x10:                           # popup: 子项紧随其后
+                emit(it["children"] or [])
+
+    emit(menu["items"])
+    return bytes(out)
+
+
 def _parse_menu_ex(buf: bytes):
     # MENUEX_TEMPLATE_HEADER: WORD wVersion(=1); WORD wOffset; DWORD dwHelpId
     # wOffset 从 WORD 对之后 (byte 4) 量起, 通常为 4 → 首个 MENUEX_TEMPLATE_ITEM 在 byte 8
