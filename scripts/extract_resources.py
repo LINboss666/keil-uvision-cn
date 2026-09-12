@@ -302,10 +302,28 @@ def parse_string_table(buf: bytes):
     return out
 
 
+def serialize_string_table(strings):
+    """把 16 条字符串重序列化为完整 RT_STRING 块字节 ([WORD 长度][UTF-16LE] × 16)。
+
+    PHASE 1A 的写入路径是"整块重序列化", 而不是逐字符串原位覆盖:
+      * 长度计数按 UTF-16 编码单元数 (len(utf16_bytes)//2), 与 Windows 语义一致;
+      * 调用方需保证 len(new_blob) <= 原资源分配大小; 更短时只在整块末尾补 0,
+        绝不在字符串之间塞 0 (否则会破坏后续条目的索引定位)。
+    """
+    out = bytearray()
+    for s in strings:
+        b = s.encode("utf-16le")
+        out += struct.pack("<H", len(b) // 2)
+        out += b
+    return bytes(out)
+
+
 def parse_menu_template(buf: bytes):
     if len(buf) < 4:
         return {"error": "buffer too small"}
-    ver, _hdr = struct.unpack_from("<HH", buf, 0)
+    # MENUITEMTEMPLATEHEADER: WORD wVersion; WORD offset;
+    # offset = 从头部末尾 (byte 4) 到第一个 MENUITEMTEMPLATE 的字节数 (可为 0)
+    ver, woffset = struct.unpack_from("<HH", buf, 0)
     if ver == 1:
         return _parse_menu_ex(buf)
     if ver != 0:
@@ -346,13 +364,17 @@ def parse_menu_template(buf: bytes):
             if flags & 0x80:  # MF_END
                 return out, pos, None
 
-    tree, consumed, err = items(4)
-    return {"version": 0, "items": tree, "consumed_bytes": consumed,
-            "total_bytes": n, "parse_note": err}
+    tree, consumed, err = items(4 + woffset)
+    return {"version": 0, "header_offset": woffset, "items": tree,
+            "consumed_bytes": consumed, "total_bytes": n, "parse_note": err}
 
 
 def _parse_menu_ex(buf: bytes):
+    # MENUEX_TEMPLATE_HEADER: WORD wVersion(=1); WORD wOffset; DWORD dwHelpId
+    # wOffset 从 WORD 对之后 (byte 4) 量起, 通常为 4 → 首个 MENUEX_TEMPLATE_ITEM 在 byte 8
     n = len(buf)
+    ver, woffset = struct.unpack_from("<HH", buf, 0)
+    helpid = struct.unpack_from("<I", buf, 4)[0] if n >= 8 else 0
 
     def items(pos):
         out = []
@@ -378,8 +400,9 @@ def _parse_menu_ex(buf: bytes):
             if resinfo & 0x80:
                 return out, pos, None
 
-    tree, consumed, err = items(4)
-    return {"version": 1, "items": tree, "consumed_bytes": consumed,
+    tree, consumed, err = items(4 + woffset)
+    return {"version": 1, "header_offset": woffset, "helpid": helpid,
+            "items": tree, "consumed_bytes": consumed,
             "total_bytes": n, "parse_note": err}
 
 
@@ -577,8 +600,8 @@ def analyze(path: Path):
                 "res_id": r["name"], "lang": r["lang"], "size": r["size"],
                 "item_total": len(flat),
                 "parse_note": parsed.get("parse_note") or parsed.get("error"),
-                **{k: parsed[k] for k in ("version", "items", "consumed_bytes",
-                                          "total_bytes") if k in parsed},
+                **{k: parsed[k] for k in ("version", "header_offset", "items",
+                                          "consumed_bytes", "total_bytes") if k in parsed},
             })
 
     # ---- 对话框 ----
