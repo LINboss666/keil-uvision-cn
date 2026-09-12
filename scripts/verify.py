@@ -146,24 +146,32 @@ def describe(path: Path):
     }
 
 
-def find_string_block_ranges(pe: er.PEFile, targets):
-    """按 (block_id, lang) 从指定 PE 的资源树**重新推导** RT_STRING payload 范围。
+def find_resource_payload_ranges(pe: er.PEFile, targets):
+    """按 (resource_type, resource_id, lang) 从指定 PE 的资源树**重新推导**载荷范围。
 
+    支持任意数值 ID 资源类型 (PHASE 1B1: RT_STRING / RT_MENU)。
     安全规则: 绝不信任 manifest 中人为记录的 file_offset —— 允许范围永远以
-    对 ORIGINAL 文件资源树的实际解析结果为准; 引用不存在的块 → 记入 missing。
+    对 ORIGINAL 文件资源树的实际解析结果为准; 引用不存在的资源 → 记入 missing。
     """
     index = {}
     for r in er.flatten_resources(pe):
-        if r["type_name"] == "RT_STRING" and r["name_kind"] == "id" and r["file_offset"]:
-            index[(r["name"], r["lang"])] = (r["file_offset"], r["file_offset"] + r["size"])
+        if r["file_offset"] and r["name_kind"] == "id":
+            index[(r["type_name"], r["name"], r["lang"])] = (
+                r["file_offset"], r["file_offset"] + r["size"])
     out, missing = [], []
     for t in targets:
-        key = (int(t["block_id"]), int(t["lang"]))
+        rtype = str(t.get("resource_type", ""))
+        rid = t.get("resource_id", t.get("block_id"))
+        if rtype == "RT_STRING" and rid is not None:
+            rid = int(rid)                     # 旧 manifest 兼容
+        lang = int(t["lang"])
+        key = (rtype, rid, lang)
         if key not in index:
             missing.append(key)
         else:
             off, end = index[key]
-            out.append({"block_id": key[0], "lang": key[1], "start": off, "end": end})
+            out.append({"resource_type": rtype, "resource_id": rid, "lang": lang,
+                        "start": off, "end": end})
     return out, missing
 
 
@@ -236,18 +244,18 @@ def compare(a: dict, b: dict, manifest: dict | None = None) -> int:
                 fail_reasons.append(
                     f".rsrc 之外发现字节变化: 区域 {region} (首处 @0x{first[0]:X})")
 
-        # -- manifest-aware payload allowlist (PHASE 1A) --
+        # -- manifest-aware payload allowlist (PHASE 1A/1B1, 通用资源类型) --
         if manifest is not None:
             if a["sha256"] != manifest.get("original_sha256"):
                 fail_reasons.append("对照原版 SHA256 与 manifest 记录的基线不一致")
             if b["sha256"] != manifest.get("patched_sha256"):
                 fail_reasons.append("汉化版 SHA256 与 manifest 记录不一致")
-            allowed, missing = find_string_block_ranges(
+            allowed, missing = find_resource_payload_ranges(
                 er.PEFile(ba), manifest.get("targets", []))
-            print(f"manifest 载荷白名单: {len(allowed)} 个 RT_STRING 块范围 "
+            print(f"manifest 载荷白名单: {len(allowed)} 个资源范围 "
                   f"(由原版资源树重新推导)")
             if missing:
-                fail_reasons.append(f"manifest 引用了原版资源树中不存在的块: {missing}")
+                fail_reasons.append(f"manifest 引用了原版资源树中不存在的资源: {missing}")
             non_target = 0
             for s, e in audit["ranges"]:
                 covered = 0
@@ -258,8 +266,9 @@ def compare(a: dict, b: dict, manifest: dict | None = None) -> int:
                 non_target += (e - s) - covered
             print(f"non_target_resource_changes = {non_target} 字节 (必须为 0)")
             for al in allowed:
-                print(f"  allowed: block={al['block_id']:<5} lang={al['lang']} "
-                      f"@0x{al['start']:X}-0x{al['end']:X} ({al['end'] - al['start']} 字节)")
+                print(f"  allowed: {al['resource_type']:<10} id={al['resource_id']:<6} "
+                      f"lang={al['lang']} @0x{al['start']:X}-0x{al['end']:X} "
+                      f"({al['end'] - al['start']} 字节)")
             if non_target:
                 fail_reasons.append(
                     f"存在允许载荷范围之外的字节变化: {non_target} 字节 → FAIL")
@@ -304,7 +313,7 @@ def main(argv=None):
         manifest = None
         if args.manifest:
             manifest = json.loads(Path(args.manifest).read_text(encoding="utf-8"))
-            if manifest.get("version") != 1:
+            if manifest.get("version") not in (1, 2):
                 ap.error(f"不支持的 manifest 版本: {manifest.get('version')}")
         return compare(files[0], files[1], manifest)
     return EXIT_OK
