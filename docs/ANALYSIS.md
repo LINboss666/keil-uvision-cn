@@ -58,7 +58,11 @@
 | AFX_DIALOG_LAYOUT | 44 | 88 | MFC 布局 blob，不动 |
 
 **多语言副本注意**：同一资源 ID 可能同时存在 1033(en-US)、2057(en-GB)、1041(ja) 副本。
-翻译时 1033 与 2057 必须同步修改，1041 保留不动。
+翻译时 1033 与 2057 必须同步修改（各自资源分别改，禁止整块复制覆盖），1041 保留不动。
+
+**RT_MENU 版本直方图（PHASE 0.1，菜单头 offset 解析修复后复核）**：
+version 0 = 40、version 1 (MENUEX) = 0；40 个菜单 header_offset 全为 0（标准布局），
+40/40 consumed == total_bytes，**parse errors = 0**。菜单分析结论与修复前一致（修复为预防性正确）。
 
 ## 4. 关键发现：主菜单的存放机制（MFC 动态弹出菜单）
 
@@ -166,7 +170,7 @@ id=133 `&Device Database…` 与 id=134 `License &Management...`（**授权相�
 | 问题 | 结论 |
 |---|---|
 | A. 大部分 UI 文本是否标准 PE 资源？ | **是。** 菜单项（RT_MENU×40）、对话框（RT_DIALOG×246）、字符串/提示/主菜单标题（RT_STRING，955 条 1033）全部在 .rsrc，且 UTF-16LE。 |
-| B. 能否主要靠修改 .rsrc 完成汉化？ | **能。** PHASE 1 采用"同尺寸原位改写"（中文 UTF-16 字节数 ≤ 英文原文，尾部零填充）；这也是风险最小的方案。若个别文案必须加长，再评估"重建 .rsrc 节"方案（技术上可行：重排资源目录 + 更新节表，.reloc 不受影响，因为资源在运行时按目录树寻址）。 |
+| B. 能否主要靠修改 .rsrc 完成汉化？ | **能。** PHASE 1 采用 **resource-level reserialization**（见 §11 写入算法）：整块解析 → 修改目标字段 → 重序列化 → 整块回写原偏移；blob 变短只在**整块末尾**补 0，绝不逐字符串塞 0；绝不重建 .rsrc。早期"逐字符串同尺寸尾部零填充"方案已**废弃**（GPT 一轮审核否决）。 |
 | C. 有没有明显硬编码字符串？ | **有，但占比小。** .rdata 的 ANSI 格式串/消息、RT_240 列头、极少量 .data 串。PHASE 1 不动，登记留档；不采用任何 .text/.rdata 二进制补丁。 |
 | D. 是否存在 Unicode/UTF-16 字符串？ | **是。** 全部 UI 资源（String/Menu/Dialog 文本）均为 UTF-16LE，可直接写入中文，无需编码转换；仅 RT_240 为 ANSI（后续单独处理）。 |
 | E. 中文字体显示预计是否正常？ | **正常。** 对话框字体为标准 GUI 字体（MS Shell Dlg/Segoe UI 系），Windows 对中文有字体回退（YaHei 系）；资源 LANGID 保持不变即可。风险主要是**宽度差异导致的截断**，用 `UI_LAYOUT_ISSUES.md` 跟踪。 |
@@ -177,9 +181,10 @@ id=133 `&Device Database…` 与 id=134 `License &Management...`（**授权相�
 
 | 工具 | 用途 | 状态 |
 |---|---|---|
-| `scripts/extract_resources.py` | 只读资源扫描/导出（本项目自研，纯标准库） | ✅ 已就绪并自测 |
-| `scripts/verify.py` | 基线固化 + 汉化版/原版逐节哈希对照 | ✅ 已就绪并自测 |
-| `scripts/apply_translation.py` | 读取 CSV → 同尺寸原位改写 RT_STRING/RT_MENU/RT_DIALOG | PHASE 1 开发 |
+| `scripts/extract_resources.py` | 只读资源扫描/导出；含 `serialize_string_table()`（RT_STRING 整块重序列化） | ✅ 自测 259/259 块往返一致 |
+| `scripts/verify.py` | 基线固化 + 逐节**完整 SHA256** 对照 + **整文件字节级 diff guard**（大小变化 / .rsrc 之外任何字节变化 / PE 头或证书表变化 → FAIL 退出码 1） | ✅ VERIFY-1..4 自测通过 |
+| `tests/test_selftest.py` | 验证器/解析器自测（VERIFY-1..5，临时 PE 不进 Git） | ✅ 6/6 通过 |
+| `scripts/apply_translation.py` | 读取 CSV → 按 LANGID 逐资源重序列化写回（超长拒绝：`RESOURCE_TOO_LARGE`） | PHASE 1A 开发 |
 | Python 3.12 | 运行环境 | ✅ 本机 3.12.5 |
 | Git + GitHub CLI（gh） | 版本管理与审核流程 | ✅ 已登录 |
 | Resource Hacker（可选） | 人工抽查资源的 GUI 对照工具（**仅核对用，不参与生成**） | 按需 |
@@ -188,7 +193,8 @@ id=133 `&Device Database…` 与 id=134 `License &Management...`（**授权相�
 
 1. **数字签名失效**：修改后 Arm EV 签名必然无效（HashMismatch）。首次启动可能有
    SmartScreen/杀软提示。如实记录，不伪造签名、不绕过安全机制。
-2. **同尺寸约束**：中文若超长会被拒绝写入（宁可缩短措辞），避免破坏资源布局。
+2. **整块大小约束**：重序列化后 blob 必须 ≤ 原资源分配大小，否则 `RESOURCE_TOO_LARGE`
+   拒绝生成（宁可缩短中文措辞，绝不偷偷重建 .rsrc）；变短只允许整块末尾补 0。
 3. **结构化模板**：`%sptions for Target` 复用模板、`\t` 快捷键段、`&` 助记键、
    `\n` 分段提示，改写脚本必须逐项校验，`verify.py` 会复查。
 4. **多语言副本**：2057(en-GB) 与 1033 同 ID 并存，漏改 2057 会导致部分文本不生效。
@@ -199,13 +205,45 @@ id=133 `&Device Database…` 与 id=134 `License &Management...`（**授权相�
 8. **授权红线**：License Management 字符串、FlexNet、.text、调试器 DLL、工具链
    全部不动；`&Device Database…`、`License &Management...` 等授权相关文本**保留英文**。
 
-## 11. 下一步计划（PHASE 1 提案，待批准）
+## 11. 下一步计划（PHASE 0.1 审核后修订）
 
-1. `translations/keil_translation.csv`：从 `resource_inventory.json` 导出 PHASE 1 范围
-   （主菜单 11 个标题 + File/Edit/View/Project/Flash/Debug 一级与二级菜单项 + 主要对话框标题，
-   约 300–500 条），按 `TRANSLATION_GLOSSARY.md` 规范翻译。
-2. 开发 `scripts/apply_translation.py`：同尺寸原位改写 + 结构校验 + 长度守卫。
-3. 工作副本流程：官方 `UV4.exe` → `output/UV4_CN.exe`（全程不覆盖原版）。
-4. `verify.py` 双文件对照：确认 `.text/.rdata/.data/.reloc` 逐字节一致、仅 `.rsrc` 变化。
-5. 用户按 `docs/TEST_REPORT.md` 矩阵实测（TEST 1–15）+ 编译一致性对比。
-6. 生成 `docs/CHANGELOG.md` 条目、commit、push、REVIEW HANDOFF，STOP 等审核。
+### PHASE 1A（下一阶段，范围最小化）
+
+- 只处理 **RT_STRING**；不碰 RT_MENU / RT_DIALOG / RT_240 / .rdata / 任何 DLL。
+- 条目约 20–40 条：11 个顶层菜单标题（String ID 117 / 139 / 165 / 681 / 729 / 759 /
+  784 / 786 / 793 / 795 / 799）+ 10–30 个最常用项（`&Open`、`&Save`、`&Build Target`、
+  `&Rebuild all target files`、`&Download`、`O&ptions...`、`Start/Stop &Debug Session`、
+  `&Run`、`&Stop`、`S&tep`、`&Breakpoints...`、`Debug Settin&gs...` 等）。
+- 1033 与 2057 **各自资源分别修改**（翻译库按 LANGID 区分），1041 不动；
+  只修改已存在的资源，不新建资源。
+- 产出 `UV4_CN_TEST.exe` → `verify.py` 字节级审计 → STOP → GPT Review →
+  用户真机 GUI / Build / Flash / Debug 测试 → 通过后进入 PHASE 1B。
+
+### PHASE 1B+（按序解锁）
+
+RT_MENU / 主要对话框（含下表 LANGID 9/8192/1031 的英文用户 UI）→
+Options for Target / Device / Debug Settings / Flash Download / RTE / Pack →
+调试窗口长尾（对应原 V0.2 / V0.3）。
+
+### 非常规 LANGID 调查（PHASE 0.1，F 项要求）
+
+| LANGID | Resource | 内容 | 判定 |
+|---|---|---|---|
+| 9（English neutral） | RT_DIALOG 641 `Missing Device Information`（Install/Cancel + 运行时填充的 STATIC） | 英文 | **真实用户 UI**，且**无任何其他语言副本**（资源回退后用户必然可见）→ 纳入 PHASE 1B+ 翻译策略，在其自身资源上修改 |
+| 8192（Invariant） | RT_DIALOG 859 `Project Info/Layer`（Title / Brief Description / License / Interfaces 等 18 控件） | 英文 | **真实用户 UI**，无其他语言副本 → 同上；8192 属非常规 LANGID，动手前需再次确认 |
+| 1031（German 标记） | RT_DIALOG 807 `Manage Component Viewer Description Files`、811 `Show Event Levels` | **内容全是英文**（Keil 构建时的语言标记错误，并非德语） | 按英文 UI 对待，纳入策略；低频对话框，低优先级 |
+| 1041（Japanese） | RT_STRING 大量副本 | 日语 | **保持原样，不修改** |
+| 8192 | AFX_DIALOG_LAYOUT 若干 | MFC 布局 blob，无文本 | 不动 |
+
+### PHASE 1A 写入算法（resource-level reserialization）
+
+1. 定位目标 RT_STRING 资源块（ResourceID + LANGID 定位，如 1033 与 2057 各一份）；
+2. 完整解析块内全部 16 条字符串；
+3. 仅修改翻译表命中的目标条目；
+4. 重序列化全部 16 条为 `[WORD 长度][UTF-16LE]` 得到 new_resource_blob；
+5. 校验 `len(new_blob) <= 原块分配大小`，超过则 **`RESOURCE_TOO_LARGE` 拒绝生成**；
+6. 在原资源数据偏移整块回写；变短时只在**整块末尾**补 0，字符串之间绝不塞 0；
+7. 资源目录 / RVA / PE 布局 / 头部完全不变；`verify.py` 字节级审计兜底
+   （.rsrc 之外任何字节变化都会 FAIL）。
+
+整个 .rsrc rebuild 仍暂缓，未来版本再评估。

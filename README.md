@@ -64,8 +64,9 @@ python scripts/verify.py backup\UV4_5.43.1.0_ORIGINAL.exe output\UV4_CN.exe   # 
 | 阶段 | 内容 | 状态 |
 |---|---|---|
 | PHASE 0 | UV4 5.43.1.0 资源分析与可行性 | ✅ 完成（`docs/ANALYSIS.md`） |
-| PHASE 1 | 基础菜单 + 主要对话框汉化 (V0.1) | ⏸ 等待审核批准 |
-| PHASE 2+ | Options for Target / 调试窗口等 | 未开始 |
+| PHASE 0.1 | GPT 一轮审核修复（verifier 加固 / 菜单头 offset / 方案修订） | ✅ 完成 |
+| PHASE 1A | 仅 RT_STRING 基础汉化（20–40 条，最小可测版） | ⏸ 等待二轮审核批准 |
+| PHASE 1B+ | RT_MENU / 对话框 / Options for Target 等 | 未开始 |
 
 ## 环境
 

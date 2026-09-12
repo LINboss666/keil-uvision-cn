@@ -33,6 +33,19 @@
 |---|---|---|---|
 | *PHASE 1 起填写* | | | |
 
+## 验证器/解析器自测（PHASE 0.1 — `tests/test_selftest.py`，2026-09-13 执行，exit=0）
+
+| 用例 | 内容 | 结果 |
+|---|---|---|
+| VERIFY-1 | 原版 vs 原版 | ✅ PASS（exit 0） |
+| VERIFY-2 | 临时副本 .rsrc 内 1 字节翻转 | ✅ PASS（exit 0），仅报告 .rsrc 变化（1 处/1 字节） |
+| VERIFY-3 | 临时副本 .text 内 1 字节翻转 | ✅ 预期 FAIL（exit 1），报告 .text 变化 |
+| VERIFY-4 | 临时副本 PE 头部 1 字节翻转 | ✅ 预期 FAIL（exit 1），报告 PE-Headers 变化 |
+| VERIFY-5 | RT_STRING parse → serialize 无修改往返 | ✅ 259/259 块逐字节一致 |
+| 附加 | 缩短条目后整块变短（末尾补零语义演示） | ✅ 原块 622 字节 → 缩短后 598 字节 |
+
+临时 PE 均在系统临时目录生成并销毁，不进入 Git。完整输出：`output/selftest_phase01.log`（本地）。
+
 ## 签名状态
 
 | 文件 | Get-AuthenticodeSignature |

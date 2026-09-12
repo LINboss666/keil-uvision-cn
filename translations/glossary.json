@@ -63,7 +63,7 @@
     "shortcut": "菜单项内 '\\tCtrl+O' 等快捷键必须原样保留",
     "format_specifiers": "%s %d %u %x %X %02X %08X %lu %p 等格式符以及 \\n \\r \\t 必须原样保留",
     "reuse_templates": "类似 '%sptions for Target' 的复用模板保持结构不动",
-    "length": "中文应尽量短于等于英文原文字节数（UTF-16LE 同尺寸原位改写的前提）",
+    "length": "写入按 resource-level reserialization: 新块字节数须 ≤ 原块分配(否则 RESOURCE_TOO_LARGE 拒绝); 变短只在整块末尾补 0, 字符串之间绝不塞 0",
     "first_mention": "必要时可用 '中文（English）' 形式，但菜单文字避免过长"
   }
 }

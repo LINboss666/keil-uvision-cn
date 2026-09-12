@@ -66,8 +66,10 @@ MDK、µVision、SVCS、PC-Lint、**License Management（授权相关文本一�
 4. **快捷键段必须保留**：`&Open\tCtrl+O` → `打开(&O)\tCtrl+O`。
 5. **复用模板**：`%sptions for Target '%s'%s%s` 这类模板（首字符由运行时
    注入）结构完全不动，仅在不破坏 `%` 占位的前提下谨慎处理。
-6. **同尺寸约束**：中文替换文本的 UTF-16LE 字节数必须 ≤ 原文
-   （PHASE 1 采用原位改写方案）；放不下的先缩短措辞，记录到
-   `UI_LAYOUT_ISSUES.md`。
+6. **整块大小约束（resource-level reserialization）**：写入时按"整块解析 → 改目标条目 →
+   重序列化全部 16 条 → 整块回写"处理；只要 `新块字节数 ≤ 原块分配` 即可，
+   单条中文可以长于对应英文原文，但整块超长会被 `RESOURCE_TOO_LARGE` 拒绝；
+   块变短时只在整块末尾补 0，字符串之间绝不塞 0。放不下的先缩短措辞，
+   记录到 `UI_LAYOUT_ISSUES.md`。
 7. 多语言副本（en-GB/lang 2057）与 en-US（1033）同一 ID 都要改，防止
    资源加载器选到未翻译副本；日语副本（1041）不动。
