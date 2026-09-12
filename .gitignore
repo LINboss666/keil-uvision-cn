@@ -1,0 +1,42 @@
+# ---- Keil / Arm 二进制与敏感文件: 严禁进入 Git ----
+*.exe
+*.dll
+*.lic
+*.axf
+*.elf
+*.bin
+*.hex
+*.cdb
+*.bak
+*.tmp
+*.key
+*.pfx
+*.p12
+
+# ---- 本地产物目录 ----
+backup/
+output/
+work/
+temp/
+build/
+
+# ---- Keil 相关命名 ----
+UV4*.exe
+UV4*.dll
+UV4*.cdb
+
+# ---- 凭据 / 密钥 ----
+.env
+.env.*
+credentials.*
+secrets.*
+
+# ---- Python ----
+__pycache__/
+*.pyc
+*.pyo
+
+# ---- 编辑器 / 系统 ----
+Thumbs.db
+desktop.ini
+*.swp
