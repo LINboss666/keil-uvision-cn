@@ -307,9 +307,13 @@ def serialize_string_table(strings):
 
     PHASE 1A 的写入路径是"整块重序列化", 而不是逐字符串原位覆盖:
       * 长度计数按 UTF-16 编码单元数 (len(utf16_bytes)//2), 与 Windows 语义一致;
+      * 强制恰好 16 条 (RT_STRING 块的槽位契约), 否则抛错拒绝;
       * 调用方需保证 len(new_blob) <= 原资源分配大小; 更短时只在整块末尾补 0,
         绝不在字符串之间塞 0 (否则会破坏后续条目的索引定位)。
     """
+    if len(strings) != 16:
+        raise ValueError(
+            f"RT_STRING 块必须恰好包含 16 条字符串, 实际 {len(strings)} 条 — 拒绝序列化")
     out = bytearray()
     for s in strings:
         b = s.encode("utf-16le")
