@@ -22,7 +22,9 @@ verify.py — PE 基线校验 / 双文件对照 + 整文件字节级差异审计
 
 from __future__ import annotations
 
+import argparse
 import hashlib
+import json
 import sys
 from pathlib import Path
 
@@ -144,7 +146,28 @@ def describe(path: Path):
     }
 
 
-def compare(a: dict, b: dict) -> int:
+def find_string_block_ranges(pe: er.PEFile, targets):
+    """按 (block_id, lang) 从指定 PE 的资源树**重新推导** RT_STRING payload 范围。
+
+    安全规则: 绝不信任 manifest 中人为记录的 file_offset —— 允许范围永远以
+    对 ORIGINAL 文件资源树的实际解析结果为准; 引用不存在的块 → 记入 missing。
+    """
+    index = {}
+    for r in er.flatten_resources(pe):
+        if r["type_name"] == "RT_STRING" and r["name_kind"] == "id" and r["file_offset"]:
+            index[(r["name"], r["lang"])] = (r["file_offset"], r["file_offset"] + r["size"])
+    out, missing = [], []
+    for t in targets:
+        key = (int(t["block_id"]), int(t["lang"]))
+        if key not in index:
+            missing.append(key)
+        else:
+            off, end = index[key]
+            out.append({"block_id": key[0], "lang": key[1], "start": off, "end": end})
+    return out, missing
+
+
+def compare(a: dict, b: dict, manifest: dict | None = None) -> int:
     """对照两份 describe 结果。返回 EXIT_OK / EXIT_FAIL。"""
     fail_reasons = []
     print("=" * 72)
@@ -213,6 +236,34 @@ def compare(a: dict, b: dict) -> int:
                 fail_reasons.append(
                     f".rsrc 之外发现字节变化: 区域 {region} (首处 @0x{first[0]:X})")
 
+        # -- manifest-aware payload allowlist (PHASE 1A) --
+        if manifest is not None:
+            if a["sha256"] != manifest.get("original_sha256"):
+                fail_reasons.append("对照原版 SHA256 与 manifest 记录的基线不一致")
+            if b["sha256"] != manifest.get("patched_sha256"):
+                fail_reasons.append("汉化版 SHA256 与 manifest 记录不一致")
+            allowed, missing = find_string_block_ranges(
+                er.PEFile(ba), manifest.get("targets", []))
+            print(f"manifest 载荷白名单: {len(allowed)} 个 RT_STRING 块范围 "
+                  f"(由原版资源树重新推导)")
+            if missing:
+                fail_reasons.append(f"manifest 引用了原版资源树中不存在的块: {missing}")
+            non_target = 0
+            for s, e in audit["ranges"]:
+                covered = 0
+                for al in allowed:
+                    lo, hi = max(s, al["start"]), min(e, al["end"])
+                    if hi > lo:
+                        covered += hi - lo
+                non_target += (e - s) - covered
+            print(f"non_target_resource_changes = {non_target} 字节 (必须为 0)")
+            for al in allowed:
+                print(f"  allowed: block={al['block_id']:<5} lang={al['lang']} "
+                      f"@0x{al['start']:X}-0x{al['end']:X} ({al['end'] - al['start']} 字节)")
+            if non_target:
+                fail_reasons.append(
+                    f"存在允许载荷范围之外的字节变化: {non_target} 字节 → FAIL")
+
     # -- 结论 --
     print("-" * 72)
     if fail_reasons:
@@ -227,11 +278,15 @@ def compare(a: dict, b: dict) -> int:
 
 
 def main(argv=None):
-    argv = argv if argv is not None else sys.argv[1:]
-    if len(argv) not in (1, 2):
-        print(__doc__)
-        return EXIT_USAGE
-    files = [describe(Path(p)) for p in argv]
+    ap = argparse.ArgumentParser(
+        description="PE 基线/对照校验器（含 manifest 载荷白名单模式）")
+    ap.add_argument("file", nargs="+", help="1 个 = 基线模式; 2 个 = 对照模式")
+    ap.add_argument("--manifest", help="载荷白名单 JSON (对照模式可选, "
+                                        "将额外要求所有变化 ⊆ 白名单 RT_STRING 块范围)")
+    args = ap.parse_args(argv)
+    if len(args.file) not in (1, 2):
+        ap.error("需要 1 或 2 个文件")
+    files = [describe(Path(p)) for p in args.file]
     for f in files:
         print("=" * 72)
         print("文件:", f["path"])
@@ -246,7 +301,12 @@ def main(argv=None):
             print(f"  {n:<16} {c}")
     if len(files) == 2:
         print()
-        return compare(files[0], files[1])
+        manifest = None
+        if args.manifest:
+            manifest = json.loads(Path(args.manifest).read_text(encoding="utf-8"))
+            if manifest.get("version") != 1:
+                ap.error(f"不支持的 manifest 版本: {manifest.get('version')}")
+        return compare(files[0], files[1], manifest)
     return EXIT_OK
 
 
