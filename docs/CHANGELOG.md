@@ -2,6 +2,48 @@
 
 格式：日期 / 阶段 / 提交 / 修改内容 / 涉及 Resource ID / 新增翻译条目 / 已知问题 / 测试状态。
 
+## 2026-09-13 — PHASE 1B1（RT_MENU + 补充 RT_STRING；本地 UV4_CN_1B1_TEST.exe 已构建，待审核）
+
+- **feat: add byte-identical RT_MENU serializer**
+  - `serialize_menu_template()`：与 `parse_menu_template()` 严格互逆（仅 version 0，
+    对 version 1 明确拒绝）；写入前对全部 RT_MENU 执行 parse → serialize →
+    byte-identical 门禁，**40/40 通过**，任一失败即 STOP。
+- **test: add RT_MENU round-trip regression tests**
+  - `tests/test_selftest.py` 新增 VERIFY-6；自测 **7/7 通过**。
+- **feat: extend manifest verifier to RT_MENU payloads**
+  - `verify.py` 白名单从"仅 RT_STRING 块"升级为**通用资源范围**
+    (`resource_type` / `resource_id` / `lang`)；范围仍一律由 ORIGINAL 资源树
+    重新推导，不信任 manifest 写入的 offset；manifest v2。
+- **feat: add mnemonic/format validators and menu applier support**
+  - 新增 `scripts/text_validators.py`：printf 格式 token 完整解析
+    （flags/width/precision/length modifier/conversion，含 `%.*s`、`%%`、`%lld` 等），
+    Original/Chinese token 序列必须逐个一致；`\t` 后快捷键文本逐字一致
+    （`Ctrl+O → Ctrl+P` 直接 FAIL）；助记键规则（`&&` 字面、禁止悬空 `&`、
+    数量一致、字母变更必须在 Notes 记录）；同级助记键冲突 before/after 比对。
+  - `apply_translation.py` v2：支持 MENU 行（ItemRef=路径寻址）、菜单 round-trip
+    门禁、菜单语义树 diff（command ID / flags / 树形 / 数量 / header_offset）、
+    同级冲突检测；Original 逐条与资源实际文本比对。
+- **feat: add phase 1b1 menu translations**
+  - CSV 扩列 `ItemRef`（STRING=StringID 数字，MENU=`0/2` 式路径）；
+    **187 条（STRING 131 + MENU 56，全部 LANGID 1033）**：
+    用户截图清单全覆盖（Edit 的撤销/重做/剪切/复制/粘贴/导航/书签/查找替换/
+    大纲/高级/配置；View 的工具栏与各窗口；Project 的导入/导出/管理/批量编译；
+    Tools/Help），外加工程窗口右键（MENU 143，15 项）、编辑器右键（MENU 1200，16 项）、
+    编辑器标签右键（MENU 1205，25 项）。隐藏/internal 项（如弹出占位名
+    `TemplateViewMenu`）不翻译。
+- **涉及 Resource ID**：RT_STRING blocks 8/9/10/11/31/32/41/42/43/44/45/46/47/48/49/50/51/3841
+  + RT_MENU 143/1200/1205（共 21 个资源，均 LANGID 1033）。
+  RT_DIALOG / RT_240 / .rdata / 头部 / 证书表 / LANGID 9 / 1031 / 0x2000 / 1041 **零改动**。
+- **新增翻译条目**：187 条（1A 存量 43 + 1B1 新增 144）。
+- **已知问题**：无新增。守卫实录：applier 拦截 1 次 MENU 路径转录错误
+  （0/1/3 与 0/1/4 抄串）；block 3841 整块超长 +2 字节 → 缩短措辞解决。
+- **测试状态**：语义验证全过；`verify --manifest` PASS（changed_byte_count=6220 /
+  changed_ranges=4414 / allowed=21 / **non_target_resource_changes=0**）；
+  重扫描抽查通过（40 菜单/246 对话框/5 加速键不变）；签名 Valid → HashMismatch（预期）；
+  GUI 测试 ⛔ 未执行（等审核后用户手动测试）。
+- **产物**：`output/UV4_CN_1B1_TEST.exe`（SHA256 `5b2f421d02107e6c2509f45ed0f7bd5cbcd7530c7d8ee1bd9db2c2d6c8b21226`，
+  本地 only，未提交、未运行）；`output/uv4_cn_1b1_manifest.json`。
+
 ## 2026-09-13 — PHASE 1A FINAL VALIDATION（用户真机测试 PASS）
 
 - **修改内容**：仅文档（TEST_REPORT / CHANGELOG / README），代码与翻译数据零改动。

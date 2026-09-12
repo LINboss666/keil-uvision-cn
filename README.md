@@ -23,7 +23,7 @@ keil-uvision-cn/
 ├─ backup/                  # 原版备份 (gitignored, 不上传)
 ├─ translations/
 │  ├─ glossary.json         # 统一术语表 (含"禁止翻译"清单)
-│  └─ keil_translation.csv  # 翻译数据库: ResourceType,ResourceID,Original,Chinese,Status,Notes
+│  └─ keil_translation.csv  # 翻译数据库: ResourceType,ResourceID,ItemRef,LANGID,Original,Chinese,Status,Notes
 ├─ scripts/
 │  ├─ extract_resources.py  # 只读 PE 资源扫描器 (纯标准库)
 │  └─ verify.py             # 基线固化 / 双文件逐节对照校验
@@ -66,6 +66,8 @@ python scripts/verify.py backup\UV4_5.43.1.0_ORIGINAL.exe output\UV4_CN.exe   # 
 | PHASE 0 | UV4 5.43.1.0 资源分析与可行性 | ✅ 完成（`docs/ANALYSIS.md`） |
 | PHASE 0.1 | GPT 一轮审核修复（verifier 加固 / 菜单头 offset / 方案修订） | ✅ 完成（已审核通过） |
 | PHASE 1A | 仅 RT_STRING 基础汉化（43 条，`UV4_CN_TEST.exe`） | ✅ IMPLEMENTED / ✅ STATIC VERIFIED / ✅ **USER HARDWARE TESTED / PASSED** |
+| PHASE 1B1 | RT_MENU + 补充 RT_STRING（187 条，`UV4_CN_1B1_TEST.exe`） | 🔍 静态验证 PASS，待 GPT 审核 → 用户真机测试 |
+| PHASE 1B2 | RT_DIALOG（Options for Target 等，需 246/246 round-trip 门禁） | 未开始（GPT 明确禁止提前进入） |
 | PHASE 1B+ | RT_MENU / 对话框 / Options for Target 等 | 未开始 |
 
 ## 环境

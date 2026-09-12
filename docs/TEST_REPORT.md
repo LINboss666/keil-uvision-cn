@@ -90,6 +90,20 @@ IDE 崩溃、构建链异常、Flash 异常、Debugger 异常、工程损坏。
 | GUI 测试矩阵（TEST 1–15） | ✅ **已执行**（用户真机测试，见"PHASE 1A 用户真机测试报告"；TEST 3/5/8/9/14/15 未单独报告） |
 | 编译一致性（原版 vs 汉化版 Rebuild + 日志/产物哈希对比） | ⚠ 严格 A/B 未执行（间接证据：汉化版 0E/0W + Flash Verify OK，见真机报告） |
 
+## PHASE 1B1 静态验证（2026-09-13，RT_MENU + 补充 RT_STRING，`apply_translation.py` + `verify.py --manifest`）
+
+| 项 | 结果 |
+|---|---|
+| 菜单 round-trip 门禁 | 写入前 **40/40 RT_MENU** parse → serialize → byte-identical ✓（自测 VERIFY-6，7/7 通过） |
+| 写入 | RT_STRING 131 条（17 块）+ RT_MENU 56 条（资源 143/1200/1205）；全部**整资源重序列化**，new_blob ≤ 原分配（块 3841 等长 268→268） |
+| 守卫实录 | applier 拦截 1 次 CSV 路径转录错误（MENU 1200 的 0/1/3 与 0/1/4 抄串，Original 比对直接拒绝）→ 修正 CSV 后通过；另 1 处整块超长（block 3841 +2 字节）按规则缩短措辞解决 |
+| apply 语义验证 | 资源树布局不变；各 STRING 块 16 条；**MENU 树逐节点比较：command ID / flags / MF_POPUP 性 / 树形 / item 数量 / header_offset 全部不变**，仅 manifest 指定路径的 text 变化且 == Chinese；无新同级助记键冲突 ✓ |
+| `verify.py --manifest` | **PASS**：changed_byte_count=6220，changed_ranges=4414，载荷白名单 **21 个资源范围**（由原版资源树重新推导），**non_target_resource_changes=0**；PE 头/节表/.text/.rdata/.data/.reloc/证书表/overlay 逐字节一致 |
+| 结构抽查（汉化版重扫描） | 菜单 40 / 对话框 246 / 加速键表 5 不变；未动条目（如 MENU 1200 `0/1/2 Collapse Selected Definitions`、弹出标题 `&Edit`）逐字一致 |
+| 签名 | 原版 **Valid** (Arm Limited) → 1B1 测试版 **HashMismatch**（预期） |
+| 自测回归 | VERIFY-1..6 7/7 通过 |
+| GUI 测试（1B1） | ⛔ **未执行** —— 等 GPT 审核通过后由用户手动测试 `UV4_CN_1B1_TEST.exe` |
+
 ## 验证器/解析器自测（PHASE 0.1 — `tests/test_selftest.py`，2026-09-13 执行，exit=0）
 
 | 用例 | 内容 | 结果 |

@@ -224,6 +224,25 @@ id=133 `&Device Database…` 与 id=134 `License &Management...`（**授权相�
 - 下一步：GPT 审核实际写入代码与 diff → 用户手动 GUI/Build/Flash/Debug 测试
   （TEST 1–15 + 编译一致性）→ 通过后进入 PHASE 1B。
 
+### PHASE 1B1（已批准并实现，构建产物待审核）
+
+- 范围：**RT_MENU + 补充 RT_STRING**；RT_DIALOG / RT_240 / .rdata / 工具链 /
+  LANGID 9 / 1031 / 0x2000 / 1041 全部未动。
+- `serialize_menu_template()`：与 parser 严格互逆的 version-0 菜单序列化器；
+  写入前对全部 RT_MENU 执行 parse→serialize→byte-identical **门禁（40/40）**。
+- 翻译 **187 条（STRING 131 + MENU 56，LANGID 1033）**：覆盖用户截图清单
+  （Edit 的撤销/重做/剪切/复制/粘贴/导航/书签/查找替换/大纲/高级/配置；
+  View 的工具栏与各窗口；Project 的导入/导出/管理/批量编译；Tools；Help）
+  + 工程窗口右键（MENU 143）/ 编辑器右键（MENU 1200）/ 标签页右键（MENU 1205）。
+  隐藏/internal 项（如弹出占位名 TemplateViewMenu）不翻译。
+- CSV 格式升级：`ItemRef` 列（STRING=StringID 数字；MENU=`0/2` 式路径）。
+- 写入与验证：整资源重序列化 + 菜单语义树 diff（command ID / flags / 树形 /
+  数量 / header_offset 不变，仅目标路径 text 变化）+ 同级助记键冲突检测；
+  `verify.py --manifest` PASS（21 个白名单资源范围，non_target_resource_changes=0）。
+- 产物：`output/UV4_CN_1B1_TEST.exe`（本地 only）。下一步：GPT 审核 → 用户真机
+  测试 → PHASE 1B2（RT_DIALOG：需先实现 DLGTEMPLATE/EX 序列化器并通过
+  **246/246** round-trip 门禁）。
+
 ### PHASE 1B+（按序解锁）
 
 RT_MENU / 主要对话框（含下表 LANGID 9/8192/1031 的英文用户 UI）→
