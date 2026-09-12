@@ -120,6 +120,22 @@ def main(argv=None):
                not blocks_bad,
                f"不一致块: {blocks_bad[:10]}" if blocks_bad else "")
 
+        print("== TEST VERIFY-6: RT_MENU parse → serialize 无修改往返 (PHASE 1B1 门禁) ==")
+        menus_ok, menus_bad = 0, []
+        for r in er.flatten_resources(pe):
+            if r["type_name"] != "RT_MENU" or not r["file_offset"]:
+                continue
+            blob = data[r["file_offset"]: r["file_offset"] + r["size"]]
+            rebuilt = er.serialize_menu_template(er.parse_menu_template(blob))
+            if rebuilt == blob:
+                menus_ok += 1
+            else:
+                menus_bad.append((r["name"], r["lang"]))
+        total = menus_ok + len(menus_bad)
+        record(f"RT_MENU 往返一致 ({menus_ok}/{total} 菜单, 必须 40/40)",
+               not menus_bad,
+               f"不一致: {menus_bad[:8]}" if menus_bad else "")
+
         # 附加: 重序列化长度守卫演示 (缩短→整块变短; 由 PHASE 1A 保证末尾补零语义)
         sample = None
         for r in er.flatten_resources(pe):
