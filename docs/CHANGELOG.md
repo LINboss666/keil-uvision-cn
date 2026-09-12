@@ -2,6 +2,26 @@
 
 格式：日期 / 阶段 / 提交 / 修改内容 / 涉及 Resource ID / 新增翻译条目 / 已知问题 / 测试状态。
 
+## 2026-09-13 — PHASE 1A FINAL VALIDATION（用户真机测试 PASS）
+
+- **修改内容**：仅文档（TEST_REPORT / CHANGELOG / README），代码与翻译数据零改动。
+- **用户真机测试**（测试执行人：LMX 本人；Agent 未参与执行）：
+  - 环境：`UV4_CN_TEST.exe` + NS800 RT-Thread 工程 `project.uvprojx`（target `rt-thread`）
+    + ArmClang V6.24 + 真实硬件 NS800RT7P65D + CMSIS-DAP/DAPLink。
+  - GUI：启动/加载工程正常；中文顶层菜单（文件/编辑/视图/工程/Flash/调试/外设/工具/
+    SVCS/窗口/帮助）显示正常，无乱码、无崩溃、无明显布局异常；Options for Target 正常打开。
+  - Build：`Build target 'rt-thread'`，0 Error / 0 Warning，生成 `.\build\rt-thread.axf`。
+  - Flash：CMSIS-DAP 下 Erase Done → Programming Done → **Verify OK** → Flash Load finished。
+  - Debug：Ctrl+F5 进入/退出、F5 Run、Stop、F11 Step、F10 Step Over、Registers / Memory /
+    Watch / Call Stack + Locals / Disassembly、源码/PC 位置显示 —— 全部正常。
+- **结论**：PHASE 1A **FUNCTIONAL TEST PASSED** —— ✅ IMPLEMENTED / ✅ STATIC VERIFIED /
+  ✅ USER HARDWARE TESTED / ✅ PASSED。未发现汉化 RT_STRING 修改导致 IDE 崩溃、
+  构建链异常、Flash 异常、Debugger 异常、工程损坏。
+- **涉及 Resource ID / 新增翻译条目**：无（本阶段仅文档）。
+- **如实记录的保留项**：TEST 3/5/8/9/14/15 用户报告未单独列出（矩阵中标注 ➖）；
+  严格 A/B 编译一致性对比未执行（1B 前可选补充；间接证据：0E/0W + Flash Verify OK）。
+- **Git**：tag `v0.1-analysis` 不动；无任何 EXE/DLL/二进制入库。
+
 ## 2026-09-13 — PHASE 1A（RT_STRING 基础汉化；本地 UV4_CN_TEST.exe 已构建，待审核）
 
 - **feat: enforce 16-entry contract in string table serializer**
