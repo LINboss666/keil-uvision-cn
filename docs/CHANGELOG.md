@@ -2,6 +2,47 @@
 
 格式：日期 / 阶段 / 提交 / 修改内容 / 涉及 Resource ID / 新增翻译条目 / 已知问题 / 测试状态。
 
+## 2026-09-13 — PHASE 1A（RT_STRING 基础汉化；本地 UV4_CN_TEST.exe 已构建，待审核）
+
+- **feat: enforce 16-entry contract in string table serializer**
+  - `serialize_string_table()` 强制恰好 16 条，否则抛错拒绝（RT_STRING 槽位契约）。
+- **feat: manifest-aware payload allowlist for verifier**
+  - `verify.py --manifest <json>`：白名单载荷范围一律由 ORIGINAL 资源树按
+    (BlockID, LANGID) **重新推导**，不信任 manifest 中写入的 file_offset；
+  - 校验 original/patched SHA256 与 manifest 一致；
+  - 输出 `non_target_resource_changes`（必须为 0），白名单外任何字节变化 → FAIL。
+- **feat: add RT_STRING translation applier**
+  - `scripts/apply_translation.py`：输入 SHA256 必须等于固定 baseline →
+    CSV 加载（ResourceType/ResourceID/StringID/LANGID/Original/Chinese/Status）→
+    逐块完整解析 16 条 → 逐条校验"实际文本 == CSV Original"及 printf/`\t` 不变量 →
+    重序列化 → `new_blob ≤ 原分配`（否则 **RESOURCE_TOO_LARGE**）→
+    整块回写原偏移、变短只在整块末尾补 0 →
+    语义验证（资源树布局不变 / 每块 16 条 / 目标 == Chinese / 同块非目标与原版
+    完全一致 / 非目标资源逐字节一致 / 变化 ⊆ 目标载荷）→ 输出 exe + manifest。
+- **feat: add phase 1a translation entries**
+  - `translations/keil_translation.csv` 扩列（+StringID、+LANGID），**43 条（LANGID 1033）**：
+    11 个顶层菜单标题（117/139/165/681/729/759/784/786/793/795/799）+ 32 个常用项；
+    其中 115/125/132/136/137/682 为满足整块大小约束新增的同块真实翻译。
+- **涉及 Resource ID**：RT_STRING blocks 8/9/10/11/43/46/47/48/49/50（全部 LANGID 1033）。
+  **2057(en-GB) 未修改**（其 16 个块 1001–3633 不覆盖任何目标 ID，按规范不新建资源）；
+  **1041 未动**；RT_MENU/RT_DIALOG/RT_240/.rdata/头部/证书表零改动。
+- **新增翻译条目**：43 条（见上）。
+- **已知问题**：无新增。LANGID 文档修正：0x2000 ≠ Windows invariant（invariant = 0x007F），
+  语义按 unresolved/opaque 处理；LANGID 9 / 1031 / 0x2000 的英文对话框全部留到 PHASE 1B+，
+  其中 0x2000 修改前需进一步确认。
+- **测试状态**：
+  - ✅ apply 语义验证全部通过；块大小 616→606 / 490→464 / 622→590 / 386→386 /
+    702→690 / 570→566 / 822→758 / 666→588 / 692→648 / 486→480。
+  - ✅ `verify.py --manifest` PASS：changed_byte_count=1997、changed_ranges=1730、
+    allowed_payload_ranges=10、**non_target_resource_changes=0**。
+  - ✅ 汉化版重扫描抽查：菜单 40 / 对话框 246 / 加速键 5 不变；
+    未动条目（113/127/129 等）逐字一致。
+  - ✅ 自测回归 6/6；原版 UV4.exe 哈希仍为 428baf13…（未动）。
+  - ⛔ GUI 测试（TEST 1–15）与编译一致性测试：未执行（等审核通过后用户手动测试）。
+  - 签名：原版 Valid (Arm Limited) → 汉化版 **HashMismatch**（预期，未伪造、未绕过）。
+- **产物**：`output/UV4_CN_TEST.exe`（SHA256 `f43167cb333828150904ed38f22e7d3cadbb71df2030d33f1c73c4cdb7ef4584`，
+  本地 only，未提交 Git，未运行）；`output/uv4_cn_test_manifest.json`。
+
 ## 2026-09-13 — PHASE 0.1 REVIEW FIXES（GPT 第一轮审核结论：CHANGES REQUESTED）
 
 - **fix: harden verifier section comparison and add whole-file diff guard**

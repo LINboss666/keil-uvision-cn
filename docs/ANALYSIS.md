@@ -184,7 +184,7 @@ id=133 `&Device Database…` 与 id=134 `License &Management...`（**授权相�
 | `scripts/extract_resources.py` | 只读资源扫描/导出；含 `serialize_string_table()`（RT_STRING 整块重序列化） | ✅ 自测 259/259 块往返一致 |
 | `scripts/verify.py` | 基线固化 + 逐节**完整 SHA256** 对照 + **整文件字节级 diff guard**（大小变化 / .rsrc 之外任何字节变化 / PE 头或证书表变化 → FAIL 退出码 1） | ✅ VERIFY-1..4 自测通过 |
 | `tests/test_selftest.py` | 验证器/解析器自测（VERIFY-1..5，临时 PE 不进 Git） | ✅ 6/6 通过 |
-| `scripts/apply_translation.py` | 读取 CSV → 按 LANGID 逐资源重序列化写回（超长拒绝：`RESOURCE_TOO_LARGE`） | PHASE 1A 开发 |
+| `scripts/apply_translation.py` | 读取 CSV → 按 LANGID 逐资源重序列化写回（baseline/Original 双校验、`RESOURCE_TOO_LARGE` 拒绝、语义验证、manifest 生成） | ✅ PHASE 1A 已实现 |
 | Python 3.12 | 运行环境 | ✅ 本机 3.12.5 |
 | Git + GitHub CLI（gh） | 版本管理与审核流程 | ✅ 已登录 |
 | Resource Hacker（可选） | 人工抽查资源的 GUI 对照工具（**仅核对用，不参与生成**） | 按需 |
@@ -207,17 +207,22 @@ id=133 `&Device Database…` 与 id=134 `License &Management...`（**授权相�
 
 ## 11. 下一步计划（PHASE 0.1 审核后修订）
 
-### PHASE 1A（下一阶段，范围最小化）
+### PHASE 1A（已批准并实现，构建产物待审核）
 
-- 只处理 **RT_STRING**；不碰 RT_MENU / RT_DIALOG / RT_240 / .rdata / 任何 DLL。
-- 条目约 20–40 条：11 个顶层菜单标题（String ID 117 / 139 / 165 / 681 / 729 / 759 /
-  784 / 786 / 793 / 795 / 799）+ 10–30 个最常用项（`&Open`、`&Save`、`&Build Target`、
-  `&Rebuild all target files`、`&Download`、`O&ptions...`、`Start/Stop &Debug Session`、
-  `&Run`、`&Stop`、`S&tep`、`&Breakpoints...`、`Debug Settin&gs...` 等）。
-- 1033 与 2057 **各自资源分别修改**（翻译库按 LANGID 区分），1041 不动；
-  只修改已存在的资源，不新建资源。
-- 产出 `UV4_CN_TEST.exe` → `verify.py` 字节级审计 → STOP → GPT Review →
-  用户真机 GUI / Build / Flash / Debug 测试 → 通过后进入 PHASE 1B。
+- 状态：**已构建** `output/UV4_CN_TEST.exe`（本地 only，不提交 Git，不运行）。
+- 翻译 **43 条（LANGID 1033）**：11 个顶层菜单标题 + 32 个常用命令项；
+  其中 StringID 115/125/132/136/137/682（显示跟踪数据/关闭/窗口.../打印/打印预览/状态栏）
+  是为满足"整块不得超长"约束而新增的同块真实翻译。
+- 修改 **10 个 RT_STRING 块**（1033: 8/9/10/11/43/46/47/48/49/50），全部
+  "整块解析 → 改目标 → 重序列化 16 条 → 整块回写 + 仅末尾补 0"。
+- **2057(en-GB) 未修改**：其 16 个块（1001–3633）不覆盖任何目标 StringID；
+  按规范只修改已存在的资源，未创建任何新资源。1041 未动。
+- 验证：`verify.py --manifest` PASS —— changed_byte_count=1997 / changed_ranges=1730 /
+  载荷白名单 10 块（由原版资源树重新推导）/ **non_target_resource_changes=0**；
+  PE 头/节表/.text/.rdata/.data/.reloc/证书表/overlay 逐字节一致。
+- 签名：原版 Valid (Arm Limited) → 汉化版 HashMismatch（预期，未伪造、未绕过）。
+- 下一步：GPT 审核实际写入代码与 diff → 用户手动 GUI/Build/Flash/Debug 测试
+  （TEST 1–15 + 编译一致性）→ 通过后进入 PHASE 1B。
 
 ### PHASE 1B+（按序解锁）
 
@@ -230,7 +235,7 @@ Options for Target / Device / Debug Settings / Flash Download / RTE / Pack →
 | LANGID | Resource | 内容 | 判定 |
 |---|---|---|---|
 | 9（English neutral） | RT_DIALOG 641 `Missing Device Information`（Install/Cancel + 运行时填充的 STATIC） | 英文 | **真实用户 UI**，且**无任何其他语言副本**（资源回退后用户必然可见）→ 纳入 PHASE 1B+ 翻译策略，在其自身资源上修改 |
-| 8192（Invariant） | RT_DIALOG 859 `Project Info/Layer`（Title / Brief Description / License / Interfaces 等 18 控件） | 英文 | **真实用户 UI**，无其他语言副本 → 同上；8192 属非常规 LANGID，动手前需再次确认 |
+| 0x2000（8192） | RT_DIALOG 859 `Project Info/Layer`（Title / Brief Description / License / Interfaces 等 18 控件） | 英文 | **真实用户 UI**，无其他语言副本 → **留到 PHASE 1B+**。注意：0x2000 **不是** Windows invariant locale（invariant = 0x007F）；0x2000 的语义视为 unresolved/opaque，修改前必须先进一步确认其资源加载行为 |
 | 1031（German 标记） | RT_DIALOG 807 `Manage Component Viewer Description Files`、811 `Show Event Levels` | **内容全是英文**（Keil 构建时的语言标记错误，并非德语） | 按英文 UI 对待，纳入策略；低频对话框，低优先级 |
 | 1041（Japanese） | RT_STRING 大量副本 | 日语 | **保持原样，不修改** |
 | 8192 | AFX_DIALOG_LAYOUT 若干 | MFC 布局 blob，无文本 | 不动 |

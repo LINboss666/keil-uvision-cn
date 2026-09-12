@@ -33,6 +33,20 @@
 |---|---|---|---|
 | *PHASE 1 起填写* | | | |
 
+## PHASE 1A 静态验证（2026-09-13，apply_translation.py + verify.py --manifest）
+
+| 项 | 结果 |
+|---|---|
+| 基线校验 | 输入 SHA256 == `428baf13…`（固定 baseline）✓ |
+| 写入 | 43 条 / 10 个 RT_STRING 块（LANGID 1033）；new_blob ≤ 原分配（块 11 恰好等长，其余末尾补零） |
+| apply 语义验证 | 资源树布局不变；各块 16 条；目标条目 == Chinese；同块非目标与原版完全一致；非目标资源逐字节一致 ✓ |
+| `verify.py --manifest` | **PASS**：changed_byte_count=1997，changed_ranges=1730，载荷白名单 10 块（由原版资源树重新推导），**non_target_resource_changes=0**；PE 头/节表/.text/.rdata/.data/.reloc/证书表/overlay 逐字节一致 |
+| 结构抽查（汉化版重扫描） | 菜单 40 / 对话框 246 / 加速键表 5 不变；未动条目（113 `µVision`、127 `PANE_FOR_RTAH…`、129 `\nSnap…` 文档模板串）逐字一致 |
+| 签名 | 原版 **Valid** (Arm Limited) → 汉化版 **HashMismatch**（预期；未伪造签名、未绕过任何安全机制） |
+| 自测回归 | VERIFY-1..5 6/6 通过 |
+| GUI 测试矩阵（TEST 1–15） | ⛔ **未执行** —— 等待 GPT 审核通过后由用户手动测试 `UV4_CN_TEST.exe` |
+| 编译一致性（原版 vs 汉化版 Rebuild + 日志/产物哈希对比） | ⛔ **未执行** —— 同上 |
+
 ## 验证器/解析器自测（PHASE 0.1 — `tests/test_selftest.py`，2026-09-13 执行，exit=0）
 
 | 用例 | 内容 | 结果 |
