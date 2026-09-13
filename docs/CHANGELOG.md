@@ -2,6 +2,25 @@
 
 格式：日期 / 阶段 / 提交 / 修改内容 / 涉及 Resource ID / 新增翻译条目 / 已知问题 / 测试状态。
 
+## 2026-09-13 — v1.0 RELEASE（Resource-Safe Chinese Edition）
+
+- **发布版本**：v1.0 —— 基于 µVision 5.43.1.0（SHA256 `428baf13…c42f89`）
+- **产物**：UV4_CN_RC3_1.exe（SHA256 `b8f6a21e…7ce5`，本地 only，不提交不运行）
+- **翻译总量**：827 条（STRING 162 + MENU 79 + DIALOG 586）
+- **覆盖**：Options for Target 10 Tab、Manage Project Items 3 Tab、Configuration 6 Tab、Batch Setup、About、Device Database、Debug/Window 菜单、主菜单
+- **安全验证**：.rdata 逐位一致、.text 逐位一致、PE 头/证书表/overlay 逐字节一致、non_target_resource_changes=0、MENU 40/40、DIALOG 246/246 round-trip、DIALOG-1..9 38/38、自测 7/7
+- **签名**：Valid (Arm Limited) → HashMismatch（预期）
+- **Colors & Fonts 列表**：DEFER ALL 28 项（RT_STRING 多用途共享 / .rdata / runtime）
+- **Known Limitations**：见 README
+- **Git**：tag v1.0；tag v0.1-analysis 保持 50b5147 不动
+
+## 2026-09-13 — RC3.1（Configuration coverage fix）
+
+
+# CHANGELOG
+
+格式：日期 / 阶段 / 提交 / 修改内容 / 涉及 Resource ID / 新增翻译条目 / 已知问题 / 测试状态。
+
 ## 2026-09-13 — PHASE 1B2.2 批次（工程与目标管理 Dialog 群 8 个；本地 UV4_CN_1B2_2_TEST.exe 已构建，待审核）
 
 - **批次范围**（按新流程：批次开发 + 阶段审核，5–10 Dialog / 50–150 条）：

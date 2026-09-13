@@ -1,3 +1,39 @@
+## v1.0 RELEASE VALIDATION（2026-09-13，最终发布记录）
+
+| 项 | 值 |
+|---|---|
+| 发布版本 | **v1.0 Resource-Safe Chinese Edition** |
+| 基线 | µVision 5.43.1.0（SHA256 `428baf13…c42f89`，Arm EV 签名 Valid） |
+| 发布产物 | `UV4_CN_RC3_1.exe`（SHA256 `b8f6a21e…7ce5`，local only） |
+| 翻译总量 | **827 条**（STRING 162 + MENU 79 + DIALOG 586） |
+| 覆盖范围 | Options for Target（Device/Target/Output/Listing/User/C-C++/Asm/Linker/Debug/Utilities）、Manage Project Items（Project Items/Folders-Extensions/Books）、Editor/Colors & Fonts/Shortcut Keys/User Keywords/Text Completion、Batch Setup、About、Device Database、Debug/Window 菜单、Edit/View/Project/Flash/Tools/Help |
+| 签名 | Valid (Arm Limited) → HashMismatch（预期） |
+| .rdata | 逐位一致 `7e5438f7…f912` |
+| .text | 逐位一致 |
+| PE Header / Cert / Overlay | 逐字节一致 |
+
+### GUI 验证历史
+
+| 批次 | 结果 |
+|---|---|
+| PHASE 1A | ✅ PASS（GUI/Build/Flash/Debug） |
+| PHASE 1B1 | ✅ PASS（主菜单/Build 回归） |
+| PHASE 1B1.2 | ✅ PASS（Project/Flash/Editor Context 覆盖确认） |
+| PHASE 1B2.2 | ✅ PASS（Manage Project Items 三 Tab/Device 页/Editor 右键/Build 回归） |
+| PHASE 1B2.3 | ✅ PASS（Options for Target Target/C-C++/Debug/Utilities 四页/Build 回归） |
+| PHASE 1B2.4 | ✅ PASS（NoInit 恢复/Device 443/Listing/Asm/Linker 四页） |
+| RC1–RC3.1 | ✅ PASS（全量 827 条翻译静态验证全过） |
+
+### Known Limitations
+
+1. Colors & Fonts 的 Window/Element 预定义列表部分保持英文
+2. CMSIS-DAP Target Driver Setup / Flash Download 页面保持英文（driver DLL 未修改）
+3. .rdata runtime strings 保持英文
+4. 特殊 LANGID：9/1031/1041/2057/0x2000 未纳入 v1.0
+5. License/Legal 文本保持原文
+6. Property Sheet shell/runtime 文本可能仍存在少量英文
+
+
 # 测试报告 (TEST_REPORT)
 
 每个产出 `UV4_CN.exe` 的版本，必须执行以下矩阵并如实记录结果。
