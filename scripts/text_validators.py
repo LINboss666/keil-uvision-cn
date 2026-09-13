@@ -103,10 +103,24 @@ def sibling_mnemonic_conflicts(texts):
     return {l for l, n in Counter(letters).items() if n > 1}
 
 
+def check_prompt_segments(original: str, chinese: str):
+    """MFC command prompt 结构校验 (PHASE 1B1.2):
+    任何含 \\n 的 STRING entry 必须整条处理, newline 分段数不得改变
+    (long prompt\\nshort caption 的结构必须完整保留, 禁止只改某一段)。"""
+    problems = []
+    so, sc = original.split("\n"), chinese.split("\n")
+    if len(so) != len(sc):
+        problems.append(
+            f"newline 分段数不一致: 原文 {len(so)} 段 vs 中文 {len(sc)} 段 "
+            f"(prompt 结构必须逐段对应: {[s[:24] for s in so]} → {[s[:24] for s in sc]})")
+    return problems
+
+
 def check_entry(original: str, chinese: str, notes: str = ""):
     """单条翻译的全部机械校验。返回问题列表 (空 = 通过)。"""
     problems = []
     problems += check_format_tokens(original, chinese)
     problems += check_shortcut_segments(original, chinese)
+    problems += check_prompt_segments(original, chinese)
     problems += check_mnemonics(original, chinese, notes)
     return problems
