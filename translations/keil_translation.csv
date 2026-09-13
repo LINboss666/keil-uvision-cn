@@ -572,3 +572,6 @@ DIALOG,468,ctl:13,1223,BUTTON,1033,New/Change Book...,新建/更改书籍...,DON
 STRING,2045,32704,,,1033,"Manage Project Items
 File Extensions, Books and Environment...","管理工程项目
 设置文件扩展名、书籍和开发环境...",DONE,"Manage Project Items 属性表标题/command prompt (整条处理,2 段,1B2.1b1)"
+DIALOG,642,ctl:19,1715,BUTTON,1033,No Auto Includes,禁止自动包含,DONE,hotfix: 恢复 1B2.3 GUI 已验证翻译
+DIALOG,642,ctl:21,2097,BUTTON,1033,Execute-only Code,仅执行代码,DONE,hotfix: 恢复 1B2.3 GUI 已验证翻译
+DIALOG,500,ctl:23,1815,BUTTON,1033,Use Cross-Module Optimization,使用跨模块优化,DONE,hotfix: 恢复 1B2.3 翻译
