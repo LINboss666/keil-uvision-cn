@@ -312,6 +312,155 @@ DIALOG,2047,ctl:8,10003,STATIC,1033,The device support for MDK Version 5 is prov
 DIALOG,2047,ctl:9,4294967295,STATIC,1033,Project:,工程:,DONE,PHASE 1B2.2 批次
 DIALOG,2047,ctl:0,1,BUTTON,1033,OK,确定,DONE,PHASE 1B2.2 批次
 DIALOG,2047,ctl:1,2,BUTTON,1033,Cancel,取消,DONE,PHASE 1B2.2 批次
+DIALOG,500,title,,,1033,Target,目标,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:1,4294967295,STATIC,1033,&Xtal (MHz):,晶振(&X)(MHz):,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:3,4294967295,STATIC,1033,Operating system:,操作系统:,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:5,4294967295,STATIC,1033,System Viewer File:,System Viewer 文件:,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:7,1700,BUTTON,1033,Use Custom File,使用自定义文件,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:8,4294967295,BUTTON,1033,Code Generation,代码生成,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:10,1904,STATIC,1033,ARM Compiler:,ARM 编译器:,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:12,1905,STATIC,1033,Software Model:,软件模型:,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:14,2216,STATIC,1033,CDE CoProcessors [0..7]:,CDE 协处理器 [0..7]:,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:23,1815,BUTTON,1033,Use Cross-Module Optimization,使用跨模块优化,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:24,1699,BUTTON,1033,Use MicroLIB,使用 MicroLIB,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:25,1906,BUTTON,1033,B&ig Endian,大端(&I),DONE,1B2.3 Options sheet
+DIALOG,500,ctl:26,1903,STATIC,1033,Floating Point Hardware:,浮点硬件:,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:28,2214,STATIC,1033,Vector Extensions:,向量扩展:,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:30,4294967295,BUTTON,1033,Read/Only Memory Areas,只读存储区,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:31,4294967295,STATIC,1033,default,默认,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:32,4294967295,STATIC,1033,off-chip,片外,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:33,4294967295,STATIC,1033,Start,起始地址,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:34,4294967295,STATIC,1033,Size,大小,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:35,4294967295,STATIC,1033,Startup,启动,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:36,1423,BUTTON,1033,ROM1:,ROM1:,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:39,1424,BUTTON,1033,ROM2:,ROM2:,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:42,1426,BUTTON,1033,ROM3:,ROM3:,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:45,4294967295,STATIC,1033,on-chip,片上,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:46,1425,BUTTON,1033,IROM1:,IROM1:,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:49,1427,BUTTON,1033,IROM2:,IROM2:,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:57,4294967295,BUTTON,1033,Read/Write Memory Areas,读写存储区,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:58,4294967295,STATIC,1033,default,默认,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:59,4294967295,STATIC,1033,off-chip,片外,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:60,4294967295,STATIC,1033,Start,起始地址,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:61,4294967295,STATIC,1033,Size,大小,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:62,4294967295,STATIC,1033,NoInit,不初始化,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:63,1428,BUTTON,1033,RAM1:,RAM1:,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:67,1429,BUTTON,1033,RAM2:,RAM2:,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:71,1430,BUTTON,1033,RAM3:,RAM3:,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:75,4294967295,STATIC,1033,on-chip,片上,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:76,1431,BUTTON,1033,IRAM1:,IRAM1:,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:80,1432,BUTTON,1033,IRAM2:,IRAM2:,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:84,1943,BUTTON,1033,Use Link-Time Code Generation,使用链接时代码生成,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:86,1434,BUTTON,1033,...,...,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:88,2218,STATIC,1033,Branch Protection:,分支保护:,DONE,1B2.3 Options sheet
+DIALOG,642,title,,,1033,C/C++ (AC6),C/C++ (AC6),DONE,1B2.3 Options sheet
+DIALOG,642,ctl:0,4294967295,BUTTON,1033, Preprocessor Symbols , 预处理器符号 ,DONE,1B2.3 Options sheet
+DIALOG,642,ctl:1,4294967295,STATIC,1033,&Define:,定义(&D):,DONE,1B2.3 Options sheet
+DIALOG,642,ctl:3,4294967295,STATIC,1033,U&ndefine:,取消定义(&U):,DONE,1B2.3 Options sheet
+DIALOG,642,ctl:5,4294967295,STATIC,1033,"&Include
+Paths","包含
+路径(&I)",DONE,1B2.3 Options sheet
+DIALOG,642,ctl:8,4294967295,STATIC,1033,"&Misc
+Controls","杂项
+控制(&M)",DONE,1B2.3 Options sheet
+DIALOG,642,ctl:10,4294967295,STATIC,1033,"Compiler
+control
+string","编译器
+控制
+字符串",DONE,1B2.3 Options sheet
+DIALOG,642,ctl:12,4294967295,BUTTON,1033, Language / Code Generation, 语言 / 代码生成,DONE,1B2.3 Options sheet
+DIALOG,642,ctl:13,4294967295,STATIC,1033,&Optimization:,优化(&O):,DONE,1B2.3 Options sheet
+DIALOG,642,ctl:17,4294967295,STATIC,1033,&Warnings:,警告(&W):,DONE,1B2.3 Options sheet
+DIALOG,642,ctl:18,4294967295,STATIC,1033,Language C:,C 语言:,DONE,1B2.3 Options sheet
+DIALOG,642,ctl:19,1715,BUTTON,1033,No Auto Includes,禁止自动包含,DONE,1B2.3 Options sheet
+DIALOG,642,ctl:20,1686,BUTTON,1033,One &ELF Section per Function,每个函数独立 &ELF 段,DONE,1B2.3 Options sheet
+DIALOG,642,ctl:21,2097,BUTTON,1033,Execute-only Code,仅执行代码,DONE,1B2.3 Options sheet
+DIALOG,642,ctl:22,1714,BUTTON,1033,Thum&b Mode,Thumb 模式(&B),DONE,1B2.3 Options sheet
+DIALOG,642,ctl:23,1685,BUTTON,1033,&Split Load and Store Multiple,拆分加载与存储多重指令(&S),DONE,1B2.3 Options sheet
+DIALOG,642,ctl:24,1613,BUTTON,1033,Read-Onl&y Position Independent,只读位置无关(&Y),DONE,1B2.3 Options sheet
+DIALOG,642,ctl:25,1614,BUTTON,1033,&Read-Write Position Independent,读写位置无关(&R),DONE,1B2.3 Options sheet
+DIALOG,642,ctl:26,1612,BUTTON,1033,&Plain Char is Signed,普通 char 为有符号(&P),DONE,1B2.3 Options sheet
+DIALOG,642,ctl:28,4294967295,STATIC,1033,Language C++:,C++ 语言:,DONE,1B2.3 Options sheet
+DIALOG,642,ctl:29,1615,BUTTON,1033,&Short enums/wchar,短枚举/wchar(&S),DONE,1B2.3 Options sheet
+DIALOG,642,ctl:30,1616,BUTTON,1033,Link-Time Optimization,链接时优化,DONE,1B2.3 Options sheet
+DIALOG,642,ctl:31,1617,BUTTON,1033,Turn Warnings into Errors,警告转为错误,DONE,1B2.3 Options sheet
+DIALOG,642,ctl:32,1618,BUTTON,1033,use RTTI,使用 RTTI,DONE,1B2.3 Options sheet
+DIALOG,209,title,,,1033,Debug,调试,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:0,1423,BUTTON,1033,Use &Simulator,使用仿真器(&S),DONE,1B2.3 Options sheet
+DIALOG,209,ctl:1,1524,BUTTON,1033,Settings,设置,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:2,1812,BUTTON,1033,Limit Speed to Real-Time,限制速度为实时,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:3,1426,BUTTON,1033,Load Application at Startup,启动时加载应用程序,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:4,1451,BUTTON,1033,Run to main(),运行到 main(),DONE,1B2.3 Options sheet
+DIALOG,209,ctl:6,1429,BUTTON,1033,...,...,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:7,1438,BUTTON,1033,Edit...,编辑...,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:8,1430,BUTTON,1033,Breakpoints,断点,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:9,1431,BUTTON,1033,Watch Windows && Performance Analyzer,观察窗口与性能分析器,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:10,1432,BUTTON,1033,Memory Display,内存显示,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:11,1194,BUTTON,1033,Toolbox,工具箱,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:12,1193,BUTTON,1033,System Viewer,System Viewer,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:17,1424,BUTTON,1033,&Use:,使用(&U):,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:19,1523,BUTTON,1033,Settings,设置,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:20,1427,BUTTON,1033,Load Application at Startup,启动时加载应用程序,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:21,1452,BUTTON,1033,Run to main(),运行到 main(),DONE,1B2.3 Options sheet
+DIALOG,209,ctl:23,1224,BUTTON,1033,...,...,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:24,1439,BUTTON,1033,Edit...,编辑...,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:25,1198,BUTTON,1033,Breakpoints,断点,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:26,1202,BUTTON,1033,Watch Windows,观察窗口,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:27,1200,BUTTON,1033,Memory Display,内存显示,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:28,1201,BUTTON,1033,Toolbox,工具箱,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:29,1205,BUTTON,1033,Tracepoints,跟踪点,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:30,1207,BUTTON,1033,System Viewer,System Viewer,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:36,4294967295,STATIC,1033,Initialization File:,初始化文件:,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:37,4294967295,BUTTON,1033,Restore Debug Session Settings,恢复调试会话设置,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:38,4294967295,STATIC,1033,CPU DLL:,CPU DLL:,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:39,4294967295,STATIC,1033,Parameter:,参数:,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:40,1434,BUTTON,1033,CPU DLL Settings...,CPU DLL 设置...,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:41,4294967295,STATIC,1033,Dialog DLL:,Dialog DLL:,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:42,4294967295,STATIC,1033,Parameter:,参数:,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:43,4294967295,STATIC,1033,Initialization File:,初始化文件:,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:44,4294967295,BUTTON,1033,Restore Debug Session Settings,恢复调试会话设置,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:45,4294967295,STATIC,1033,Driver DLL:,驱动 DLL:,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:46,4294967295,STATIC,1033,Parameter:,参数:,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:47,1233,BUTTON,1033,Driver DLL Settings...,驱动 DLL 设置...,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:48,4294967295,STATIC,1033,Dialog DLL:,Dialog DLL:,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:49,4294967295,STATIC,1033,Parameter:,参数:,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:52,1223,BUTTON,1033,Manage Component Viewer Description Files ...,管理 Component Viewer 描述文件...,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:53,1453,BUTTON,1033,Warn if outdated Executable is loaded,加载过期的可执行文件时警告,DONE,1B2.3 Options sheet
+DIALOG,209,ctl:54,2153,BUTTON,1033,Warn if outdated Executable is loaded,加载过期的可执行文件时警告,DONE,1B2.3 Options sheet
+DIALOG,446,title,,,1033,Utilities,实用工具,DONE,1B2.3 Options sheet
+DIALOG,446,ctl:0,4294967295,BUTTON,1033,Configure Flash Menu Command,配置 Flash 菜单命令,DONE,1B2.3 Options sheet
+DIALOG,446,ctl:1,1423,BUTTON,1033,Use Target Driver for Flash Programming,使用目标驱动进行 Flash 编程,DONE,1B2.3 Options sheet
+DIALOG,446,ctl:2,2002,BUTTON,1033,Use Debug Driver,使用调试驱动,DONE,1B2.3 Options sheet
+DIALOG,446,ctl:4,1523,BUTTON,1033,Settings,设置,DONE,1B2.3 Options sheet
+DIALOG,446,ctl:5,1754,BUTTON,1033,Update Target before Debugging,调试前更新目标,DONE,1B2.3 Options sheet
+DIALOG,446,ctl:6,4294967295,STATIC,1033,Init File:,初始化文件:,DONE,1B2.3 Options sheet
+DIALOG,446,ctl:8,1746,BUTTON,1033,...,...,DONE,1B2.3 Options sheet
+DIALOG,446,ctl:9,1747,BUTTON,1033,Edit...,编辑...,DONE,1B2.3 Options sheet
+DIALOG,446,ctl:10,1424,BUTTON,1033,Use External Tool for Flash Programming,使用外部工具进行 Flash 编程,DONE,1B2.3 Options sheet
+DIALOG,446,ctl:11,4294967295,STATIC,1033,Command:,命令:,DONE,1B2.3 Options sheet
+DIALOG,446,ctl:13,4294967295,STATIC,1033,Arguments:,参数:,DONE,1B2.3 Options sheet
+DIALOG,446,ctl:15,1638,BUTTON,1033,Run Independent,独立运行,DONE,1B2.3 Options sheet
+DIALOG,446,ctl:17,4294967295,BUTTON,1033,Configure Image File Processing (FCARM):,配置映像文件处理 (FCARM):,DONE,1B2.3 Options sheet
+DIALOG,446,ctl:19,4294967295,STATIC,1033,Output File:,输出文件:,DONE,1B2.3 Options sheet
+DIALOG,446,ctl:21,4294967295,STATIC,1033,Add Output File  to Group:,将输出文件添加到组:,DONE,1B2.3 Options sheet
+DIALOG,446,ctl:22,2088,STATIC,1033,--- Use Debug Driver ---,--- 使用调试驱动 ---,DONE,1B2.3 Options sheet
+DIALOG,446,ctl:24,1749,BUTTON,1033,...,...,DONE,1B2.3 Options sheet
+DIALOG,446,ctl:25,4294967295,STATIC,1033,Image Files Root Folder:,映像文件根目录:,DONE,1B2.3 Options sheet
+DIALOG,446,ctl:26,2003,BUTTON,1033,Generate Listing,生成列表,DONE,1B2.3 Options sheet
+DIALOG,510,title,,,1033,User,用户,DONE,1B2.3 Options sheet
+DIALOG,510,ctl:0,4294967295,BUTTON,1033,Run User Programs Before Compilation of a C/C++ File,在编译 C/C++ 文件前运行用户程序,DONE,1B2.3 Options sheet
+DIALOG,510,ctl:1,1842,BUTTON,1033,Run #1:,Run #1:,DONE,1B2.3 Options sheet
+DIALOG,510,ctl:3,1844,BUTTON,1033,...,...,DONE,1B2.3 Options sheet
+DIALOG,510,ctl:5,1859,BUTTON,1033,Run #2:,Run #2:,DONE,1B2.3 Options sheet
+DIALOG,510,ctl:9,4294967295,BUTTON,1033,Run User Programs Before Build/Rebuild,在构建/重构建前运行用户程序,DONE,1B2.3 Options sheet
+DIALOG,510,ctl:10,1847,BUTTON,1033,Run #1:,Run #1:,DONE,1B2.3 Options sheet
+DIALOG,510,ctl:12,1846,BUTTON,1033,...,...,DONE,1B2.3 Options sheet
+DIALOG,510,ctl:14,1850,BUTTON,1033,Run #2:,Run #2:,DONE,1B2.3 Options sheet
+DIALOG,510,ctl:18,4294967295,BUTTON,1033,Run User Programs After Build/Rebuild,在构建/重构建后运行用户程序,DONE,1B2.3 Options sheet
+DIALOG,510,ctl:19,1853,BUTTON,1033,Run #1:,Run #1:,DONE,1B2.3 Options sheet
+DIALOG,510,ctl:21,1852,BUTTON,1033,...,...,DONE,1B2.3 Options sheet
+DIALOG,510,ctl:23,1855,BUTTON,1033,Run #2:,Run #2:,DONE,1B2.3 Options sheet
+DIALOG,510,ctl:26,1910,BUTTON,1033,DOS16,...,DONE,1B2.3 Options sheet
 DIALOG,465,title,,,1033,Project Items,工程项目,DONE,property page title (1B2.1b1)
 DIALOG,465,ctl:3,1728,BUTTON,1033,&Set as Current Target,设为当前目标(&S),DONE,1B2.1b1
 DIALOG,465,ctl:4,1729,BUTTON,1033,&Add Files...,添加文件(&A)...,DONE,1B2.1b1
