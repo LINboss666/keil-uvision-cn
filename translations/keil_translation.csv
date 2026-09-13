@@ -262,3 +262,38 @@ DIALOG,511,ctl:7,2,BUTTON,1033,Cancel,取消,DONE,Batch Setup
 DIALOG,511,ctl:8,57670,BUTTON,1033,&Help,帮助(&H),DONE,Batch Setup
 DIALOG,511,ctl:9,1,BUTTON,1033,Close,关闭,DONE,Batch Setup
 DIALOG,511,ctl:10,2253,BUTTON,1033,Stop after first failing project,在首个失败工程后停止,DONE,Batch Setup
+DIALOG,465,title,,,1033,Project Items,工程项目,DONE,property page title (1B2.1b1)
+DIALOG,465,ctl:3,1728,BUTTON,1033,&Set as Current Target,设为当前目标(&S),DONE,1B2.1b1
+DIALOG,465,ctl:4,1729,BUTTON,1033,&Add Files...,添加文件(&A)...,DONE,1B2.1b1
+DIALOG,465,ctl:5,1730,BUTTON,1033,Add Files as &Image...,添加文件为图像(&I)...,DONE,1B2.1b1
+DIALOG,466,title,,,1033,Folders/Extensions,文件夹/扩展名,DONE,property page title (1B2.1b1)
+DIALOG,466,ctl:0,1534,BUTTON,1033,&Use Settings from TOOLS.INI:,使用 TOOLS.INI 中的设置(&U):,DONE,1B2.1b1
+DIALOG,466,ctl:1,4294967295,STATIC,1033,Tool Base Folder:,工具基础目录:,DONE,1B2.1b1
+DIALOG,466,ctl:11,4294967295,STATIC,1033,C Source:,C 源文件:,DONE,1B2.1b1
+DIALOG,466,ctl:13,4294967295,STATIC,1033,C++ Source:,C++ 源文件:,DONE,1B2.1b1
+DIALOG,466,ctl:15,4294967295,STATIC,1033,Asm Source:,汇编源文件:,DONE,1B2.1b1
+DIALOG,466,ctl:17,4294967295,STATIC,1033,Object:,目标文件:,DONE,1B2.1b1
+DIALOG,466,ctl:19,4294967295,STATIC,1033,Library:,库文件:,DONE,1B2.1b1
+DIALOG,466,ctl:21,4294967295,STATIC,1033,Document:,文档:,DONE,1B2.1b1
+DIALOG,466,ctl:23,1543,BUTTON,1033,Use ARM Compiler,使用 ARM 编译器,DONE,1B2.1b1
+DIALOG,466,ctl:24,1542,BUTTON,1033,Use &GCC Compiler (GNU) for ARM projects,ARM 工程使用 &GCC 编译器 (GNU),DONE,1B2.1b1
+DIALOG,466,ctl:25,4294967295,STATIC,1033,ARMCC Folder:,ARMCC 目录:,DONE,1B2.1b1
+DIALOG,466,ctl:27,4294967295,STATIC,1033,Prefi&x:,前缀(&X):,DONE,1B2.1b1
+DIALOG,466,ctl:29,4294967295,STATIC,1033,Folder:,目录:,DONE,1B2.1b1
+DIALOG,466,ctl:31,1546,BUTTON,1033,U&se Keil CARM,使用 Keil CARM(&S),DONE,1B2.1b1
+DIALOG,466,ctl:32,2006,STATIC,1033,CMSIS Folder:,CMSIS 目录:,DONE,1B2.1b1
+DIALOG,466,ctl:34,4294967295,STATIC,1033,Select ARM Development Tools:,选择 ARM 开发工具:,DONE,1B2.1b1
+DIALOG,466,ctl:35,2008,STATIC,1033,RL-ARM Folder:,RL-ARM 目录:,DONE,1B2.1b1
+DIALOG,466,ctl:37,4294967295,STATIC,1033,Development Tool Folders:,开发工具目录:,DONE,1B2.1b1
+DIALOG,466,ctl:38,2007,STATIC,1033,RTX-ARM Folder:,RTX-ARM 目录:,DONE,1B2.1b1
+DIALOG,466,ctl:40,4294967295,STATIC,1033,Default File Extensions:,默认文件扩展名:,DONE,1B2.1b1
+DIALOG,466,ctl:45,1223,BUTTON,1033,Setup Default ARM Compiler Version,设置默认 ARM 编译器版本,DONE,1B2.1b1
+DIALOG,468,title,,,1033,Books,书籍,DONE,property page title (1B2.1b1)
+DIALOG,468,ctl:0,4294967295,STATIC,1033,File:,文件:,DONE,1B2.1b1
+DIALOG,468,ctl:7,4294967295,STATIC,1033,Default Root:,默认根目录:,DONE,1B2.1b1
+DIALOG,468,ctl:9,4294967295,STATIC,1033,Default Root:,默认根目录:,DONE,1B2.1b1
+DIALOG,468,ctl:11,4294967295,STATIC,1033,Default Root:,默认根目录:,DONE,1B2.1b1
+DIALOG,468,ctl:13,1223,BUTTON,1033,New/Change Book...,新建/更改书籍...,DONE,1B2.1b1
+STRING,2045,32704,,,1033,"Manage Project Items
+File Extensions, Books and Environment...","管理工程项目
+设置文件扩展名、书籍和开发环境...",DONE,"Manage Project Items 属性表标题/command prompt (整条处理,2 段,1B2.1b1)"
