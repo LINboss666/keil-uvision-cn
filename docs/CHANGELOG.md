@@ -2,6 +2,54 @@
 
 格式：日期 / 阶段 / 提交 / 修改内容 / 涉及 Resource ID / 新增翻译条目 / 已知问题 / 测试状态。
 
+## 2026-09-13 — PHASE 1B2.0（LOSSLESS RT_DIALOG CODEC；只调查不翻译，零修改）
+
+- **fix: make dialog parser lossless**
+  - `extract_resources.py` 新增无损 AST 解析：`parse_dialog_ast()`（std/ex 双格式）；
+    sz_Or_Ord 升级为结构化 `{kind: none|ordinal|string, value, display}`，
+    **不再丢失 ordinal class atom**（display 仅作展示）；
+    补齐此前丢失的控件 exStyle 与 creation data；
+    **alignment padding 原样捕获**（`pad_before` / `trailing`，不假设全零）。
+  - STANDARD creation data 语义（按 Windows 标准）：首 WORD S 非零时 S 包含
+    size WORD 自身（总消耗 S*2 字节）；EXTENDED extraCount 仅为其后字节数。
+    两种格式不混用；UV4 样本 nonzero creation data = 0（std/ex 均无），
+    语义由合成 fixture 锁定。
+  - 旧分析视图 `parse_dialog_template()` 重写为 AST 投影（输出形状兼容，
+    map_dynamic_strings 等既有消费方回归通过）。
+- **feat: add standard and extended dialog serializers**
+  - `serialize_dialog_ast()`：从 lossless AST 完整重序列化（std/ex 各自实现，
+    禁止 raw search/replace / hex patch）。
+  - `dialog_semantic_snapshot()` / `compare_semantic_snapshots()`：结构语义快照
+    （Dialog: style/exStyle/rect/menu/windowClass/title/font/控件数；
+    Control: helpID/style/exStyle/rect/id/class/title/creation 长度）——
+    后续正式翻译时只允许 Dialog title / Control title(text) 变化。
+- **test: add 246-dialog round-trip gate**
+  - `tests/test_dialog_codec.py`（DIALOG-1..6，10/10 断言通过）：
+    ① parse 246/246；② serialize 246/246；③ **byte-identical 246/246**
+    （std 52/52 + ex 194/194，含 first-diff/字节数/hexdump mismatch 报告）；
+    ④ Standard 合成 fixture（string/ordinal class、string/ordinal title、
+    nonzero creation data）round-trip；⑤ Extended 合成 fixture（helpID/exStyle/
+    DS_SETFONT/weight/italic/charset/ordinal+string/nonzero extraCount）round-trip；
+    ⑥ 故意破坏字段 → 语义验证器必须发现（实测捕获 style 位翻转 + 标题篡改）。
+- **docs: add dialog resource inventory**
+  - `scripts/dialog_inventory.py` + `docs/DIALOG_INVENTORY.md`（脚本自动生成，
+    baseline SHA256 绑定）：RT_DIALOG total 246（Standard 52 / Extended 194），
+    LANGID {1033:218, 2057:24, 9:1, 1031:2, 0x2000:1}，controls 3389，
+    DS_SETFONT 246 / DS_SHELLFONT 62，dialogs with menu 0 / custom windowClass 0，
+    ordinal 控件类 3327 / string 62，nonzero creation data 0，parse warnings 0，
+    round-trip 246/246；并列出 About/Target/Device/Output/C51/C251 等可识别
+    重要 Dialog。
+- **docs: mark 1b1.2 gui test executed**：TEST_REPORT 中 1B1.2 GUI 行由
+  "⛔ 未执行" 修正为 "✅ 已执行（见 PHASE 1B1 最终 GUI 验证）"（审核第 0 项）。
+- **涉及 Resource ID / 新增翻译条目**：无（本阶段只调查，**零修改、零翻译、
+  未生成任何汉化 EXE**）。
+- **测试状态**：DIALOG-1..6 10/10；自测回归 VERIFY-1..6 7/7；mapper 回归 exit=0；
+  原版 UV4.exe SHA256 复验未动（428baf13…）。
+- **已知问题**：无。STANDARD creation data "size 含 size WORD 自身" 语义按审核
+  要求实现并由合成 fixture 锁定；UV4 样本无 nonzero creation data，
+  该语义无法用本样本经验性区分（已如实记录）。
+- **Git**：tag `v0.1-analysis` 不动；无 EXE/DLL/binary dump 入库。
+
 ## 2026-09-13 — PHASE 1B1 FINAL VALIDATION（用户真机 GUI 验证 PASS；1B1 关闭）
 
 - **修改内容**：仅文档（TEST_REPORT / CHANGELOG / README / DYNAMIC_MENU_MAPPING 附录），
