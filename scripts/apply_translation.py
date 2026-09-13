@@ -347,7 +347,7 @@ def main(argv=None):
         print(f"  写回 RT_MENU id={rid:<6} lang={lang} ({size} → {len(new_blob)} 字节) "
               f"路径={sorted(expected)}")
 
-    if dlg_entries:
+    if any(e["res_type"] == "DIALOG" for e in entries):
         total = dialog_roundtrip_gate(pe, data)
         print(f"  RT_DIALOG round-trip 门禁: {total}/{total} byte-identical ✓")
 
