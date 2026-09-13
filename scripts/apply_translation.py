@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 r"""
-apply_translation.py — 官方原版 UV4.exe + 翻译数据库 → 本地汉化测试版 (UV4_CN_*_TEST.exe)
+Keil Resource Localization Applier — 官方原版 UV4.exe + 翻译数据库 → 本地汉化测试版 (UV4_CN_*_TEST.exe)
 
 PHASE 1B1 支持: RT_STRING + RT_MENU。
 
@@ -83,6 +83,20 @@ def menu_roundtrip_gate(pe: er.PEFile, data: bytes) -> int:
                 bad.append((r["name"], r["lang"]))
     if bad:
         fail(f"RT_MENU round-trip 门禁失败 {len(bad)}/{total}: {bad[:8]} — STOP, 不生成汉化菜单")
+    return total
+
+
+def dialog_roundtrip_gate(pe: er.PEFile, data: bytes) -> int:
+    """全部 RT_DIALOG parse→serialize→byte-identical; 任一失败 → STOP (1B2.1b1)。"""
+    total, bad = 0, []
+    for r in er.flatten_resources(pe):
+        if r["type_name"] == "RT_DIALOG" and r["file_offset"]:
+            total += 1
+            blob = data[r["file_offset"]: r["file_offset"] + r["size"]]
+            if er.serialize_dialog_ast(er.parse_dialog_ast(blob)) != blob:
+                bad.append((r["name"], r["lang"]))
+    if bad:
+        fail(f"RT_DIALOG round-trip 门禁失败 {len(bad)}/{total}: {bad[:8]} — STOP")
     return total
 
 
@@ -215,7 +229,7 @@ def main(argv=None):
 
     original_path = Path(args.original)
     print("=" * 72)
-    print("PHASE 1B1: 应用 RT_STRING + RT_MENU 翻译")
+    print("PHASE 1B Resource Localization: 应用翻译 (RT_STRING/RT_MENU/RT_DIALOG)")
     print(f"  原版   : {original_path}")
     print(f"  翻译库 : {args.csv}")
     print(f"  输出   : {args.output}")
@@ -332,6 +346,10 @@ def main(argv=None):
         targets_for_manifest[("RT_MENU", rid, lang)] = sorted(expected)
         print(f"  写回 RT_MENU id={rid:<6} lang={lang} ({size} → {len(new_blob)} 字节) "
               f"路径={sorted(expected)}")
+
+    if dlg_entries:
+        total = dialog_roundtrip_gate(pe, data)
+        print(f"  RT_DIALOG round-trip 门禁: {total}/{total} byte-identical ✓")
 
     # ---- 3.5 RT_DIALOG 写入 (PHASE 1B2.1a: 仅 Dialog title / BUTTON·STATIC string title) ----
     dlg_entries = [e for e in entries if e["res_type"] == "DIALOG"]
@@ -496,7 +514,7 @@ def main(argv=None):
     patched_sha = hashlib.sha256(patched).hexdigest()
     manifest = {
         "version": 2,
-        "generator": "apply_translation.py (PHASE 1B1)",
+        "generator": "apply_translation.py (Keil Resource Localization Applier)",
         "baseline": "docs/BASELINE.md — µVision 5.43.1.0",
         "original_sha256": sha,
         "patched_sha256": patched_sha,
