@@ -767,6 +767,50 @@ def compare_semantic_snapshots(a, b, path=""):
     return diffs
 
 
+def dialog_semantic_diff(orig_ast, patched_ast, allowed):
+    """PHASE 1B2.1a: Dialog 语义白名单比较。
+
+    allowed = {"dialog_title": 中文 or None,
+               "control_titles": {control_index: 中文}}
+    规则: 除 manifest 指定的 dialog.title.value 与 control[index].title.value
+    (且必须为 string kind) 外, 其余语义字段 (style/exStyle/rect/ID/class/font/
+    helpID/menu/windowClass/creation size+content hash) 必须 identical。
+    trailing 由调用方按 allocation padding 规则单独校验 (此处剥离不比较)。
+    返回问题列表 (空 = 通过)。
+    """
+    problems = []
+    so = dialog_semantic_snapshot(orig_ast)
+    sp = dialog_semantic_snapshot(patched_ast)
+    for s in (so, sp):
+        s.pop("trailing_len", None)
+        s.pop("trailing_sha256", None)
+    for k in ("kind", "dlgver", "signature", "style", "exstyle", "cdit", "helpid",
+              "rect", "menu", "window_class", "font", "control_count"):
+        if so[k] != sp[k]:
+            problems.append(f"dialog.{k} 变化: {so[k]!r} → {sp[k]!r}")
+    dt = allowed.get("dialog_title")
+    if dt is not None:
+        if sp["title"] != dt:
+            problems.append(f"dialog title != 预期中文 ({sp['title']!r})")
+    elif so["title"] != sp["title"]:
+        problems.append(f"dialog title 未列入 manifest 却变化: {so['title']!r} → {sp['title']!r}")
+    allowed_ctl = allowed.get("control_titles", {})
+    if len(so["controls"]) != len(sp["controls"]):
+        problems.append("控件数量变化")
+        return problems
+    for i, (co, cp) in enumerate(zip(so["controls"], sp["controls"])):
+        if i in allowed_ctl:
+            if cp["title"] != ("string", allowed_ctl[i]):
+                problems.append(f"控件 {i} title != 预期中文 ({cp['title']!r})")
+            co_x = {k: v for k, v in co.items() if k != "title"}
+            cp_x = {k: v for k, v in cp.items() if k != "title"}
+            if co_x != cp_x:
+                problems.append(f"控件 {i} 非 title 字段变化")
+        elif co != cp:
+            problems.append(f"控件 {i} 未列入 manifest 却变化: {co!r} → {cp!r}")
+    return problems
+
+
 def parse_dialog_template(buf: bytes):
     """兼容旧输出形状的分析视图 (内部基于无损 AST 投影)。"""
     try:

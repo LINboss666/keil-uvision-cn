@@ -126,7 +126,7 @@ def load_translation_csv(path: Path):
         if (r.get("Status") or "").strip().upper() != "DONE":
             continue
         rtype = (r.get("ResourceType") or "").strip().upper()
-        if rtype not in ("STRING", "MENU"):
+        if rtype not in ("STRING", "MENU", "DIALOG"):
             skipped += 1
             continue
         entry = {
@@ -143,8 +143,23 @@ def load_translation_csv(path: Path):
             entry["string_id"] = int(r["ItemRef"])
             if entry["res_id"] != entry["string_id"] // 16 + 1:
                 fail(f"CSV 行 ResourceID 与 StringID 不自洽: {entry}")
-        else:
+        elif rtype == "MENU":
             entry["item_path"] = parse_item_ref(r["ItemRef"])
+        else:  # DIALOG
+            ref = (r.get("ItemRef") or "").strip()
+            if ref == "title":
+                entry["field"] = "dialog_title"
+            elif ref.startswith("ctl:"):
+                entry["field"] = "control_title"
+                entry["control_index"] = int(ref.split(":", 1)[1])
+                ctl_id = (r.get("CtlID") or "").strip()
+                ctl_cls = (r.get("CtlClass") or "").strip()
+                if not ctl_id or not ctl_cls:
+                    fail(f"DIALOG 控件行缺少 CtlID/CtlClass 交叉校验列: {entry}")
+                entry["control_id"] = int(ctl_id)
+                entry["control_class"] = ctl_cls
+            else:
+                fail(f"DIALOG ItemRef 非法 (须为 title 或 ctl:<index>): {ref!r}")
         entries.append(entry)
     return entries, skipped
 
@@ -318,6 +333,76 @@ def main(argv=None):
         print(f"  写回 RT_MENU id={rid:<6} lang={lang} ({size} → {len(new_blob)} 字节) "
               f"路径={sorted(expected)}")
 
+    # ---- 3.5 RT_DIALOG 写入 (PHASE 1B2.1a: 仅 Dialog title / BUTTON·STATIC string title) ----
+    dlg_entries = [e for e in entries if e["res_type"] == "DIALOG"]
+    grouped_dlg = {}
+    for e in dlg_entries:
+        grouped_dlg.setdefault((e["res_id"], e["lang"]), []).append(e)
+    missing = [k for k in grouped_dlg if ("RT_DIALOG", k[0], k[1]) not in index]
+    if missing:
+        fail(f"翻译表引用了不存在的 RT_DIALOG 资源: {missing}")
+    dialog_mods = []
+    for (rid, lang) in sorted(grouped_dlg):
+        off, size = index[("RT_DIALOG", rid, lang)]
+        ast = er.parse_dialog_ast(bytes(patched[off: off + size]))
+        orig_ast_copy = copy.deepcopy(ast)
+        if ast.get("trailing", b"") != b"":
+            fail(f"RT_DIALOG {rid}: 原版 logical trailing 非空, 不符合 246 全量基线")
+        allowed = {"dialog_title": None, "control_titles": {}}
+        for e in sorted(grouped_dlg[(rid, lang)], key=lambda x: x["field"]):
+            if e["field"] == "dialog_title":
+                if ast["title"]["kind"] != "string":
+                    fail(f"RT_DIALOG {rid}: dialog title 非 string, 禁止修改")
+                if ast["title"]["value"] != e["original"]:
+                    fail(f"Original 不一致: RT_DIALOG {rid} title CSV={e['original']!r} "
+                         f"实际={ast['title']['value']!r}")
+                problems = tv.check_entry(e["original"], e["chinese"], e["notes"])
+                if problems:
+                    fail(f"机械校验失败 RT_DIALOG {rid} title: {problems}")
+                allowed["dialog_title"] = e["chinese"]
+                ast["title"]["value"] = e["chinese"]
+            else:
+                idx = e["control_index"]
+                if idx >= len(ast["controls"]):
+                    fail(f"RT_DIALOG {rid}: control_index {idx} 越界")
+                c = ast["controls"][idx]
+                cls_disp = c["window_class"]["display"]
+                if c["id"] != e["control_id"]:
+                    fail(f"locator 交叉校验失败: RT_DIALOG {rid} 控件 {idx} "
+                         f"实际 id={c['id']} != manifest {e['control_id']}")
+                if cls_disp != e["control_class"]:
+                    fail(f"locator 交叉校验失败: RT_DIALOG {rid} 控件 {idx} "
+                         f"实际 class={cls_disp!r} != manifest {e['control_class']!r}")
+                if c["title"]["kind"] != "string":
+                    fail(f"RT_DIALOG {rid} 控件 {idx}: title 非 string (ordinal title 禁改)")
+                if cls_disp not in ("BUTTON", "STATIC"):
+                    fail(f"RT_DIALOG {rid} 控件 {idx}: 首轮仅允许 BUTTON/STATIC, "
+                         f"实际 {cls_disp}")
+                if c["title"]["value"] != e["original"]:
+                    fail(f"Original 不一致: RT_DIALOG {rid} 控件 {idx} "
+                         f"CSV={e['original']!r} 实际={c['title']['value']!r}")
+                problems = tv.check_entry(e["original"], e["chinese"], e["notes"])
+                if problems:
+                    fail(f"机械校验失败 RT_DIALOG {rid} 控件 {idx}: {problems}")
+                c["title"]["value"] = e["chinese"]
+                allowed["control_titles"][idx] = e["chinese"]
+        logical = er.serialize_dialog_ast(ast)
+        if len(logical) > size:
+            fail(f"RESOURCE_TOO_LARGE: RT_DIALOG {rid} lang={lang} "
+                 f"logical {len(logical)} 字节 > 原分配 {size} 字节 - 拒绝生成")
+        alloc_pad = size - len(logical)
+        patched[off: off + size] = logical + b"\x00" * alloc_pad
+        modified.append(("RT_DIALOG", rid, lang))
+        targets_for_manifest[("RT_DIALOG", rid, lang)] = sorted(
+            ("title" if e["field"] == "dialog_title"
+             else f"ctl:{e['control_index']}") for e in grouped_dlg[(rid, lang)])
+        dialog_mods.append({"rid": rid, "lang": lang, "off": off, "size": size,
+                            "orig_ast": orig_ast_copy, "allowed": allowed,
+                            "alloc_pad": alloc_pad, "logical_len": len(logical),
+                            "kind": ast["kind"]})
+        print(f"  写回 RT_DIALOG id={rid:<6} lang={lang} ({size} -> {len(logical)} 字节, "
+              f"allocation padding {alloc_pad}) 路径={targets_for_manifest[('RT_DIALOG', rid, lang)]}")
+
     # ---- 5. 语义验证 ----
     print("-" * 72)
     print("语义验证:")
@@ -364,6 +449,21 @@ def main(argv=None):
     if grouped_menu:
         print("  ✓ RT_MENU: command ID / flags / 树形 / 数量 / header_offset 不变; "
               "仅目标路径文本变化; 无新同级助记键冲突")
+
+    for dm in dialog_mods:
+        ast2 = er.parse_dialog_ast(bytes(patched[dm["off"]: dm["off"] + dm["size"]]))
+        expected_pad = b"\x00" * dm["alloc_pad"]
+        if ast2.get("trailing", b"") != expected_pad:
+            fail(f"RT_DIALOG {dm['rid']} 资源尾部不是预期长度/内容的纯 00 allocation padding")
+        o = copy.deepcopy(dm["orig_ast"]); o["trailing"] = b""
+        p2 = copy.deepcopy(ast2); p2["trailing"] = b""
+        problems = er.dialog_semantic_diff(o, p2, dm["allowed"])
+        if problems:
+            fail(f"RT_DIALOG {dm['rid']} 语义验证失败: {problems[:6]}")
+    if dialog_mods:
+        print("  ✓ RT_DIALOG: 仅 manifest 指定 title 路径变化; "
+              "style/exStyle/rect/ID/class/font/helpID/creation data 全部一致; "
+              "资源尾部仅含机械生成的 00 allocation padding")
 
     modified_keys = set(modified)
     for r in er.flatten_resources(pe):

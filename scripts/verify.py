@@ -293,7 +293,7 @@ def main(argv=None):
     ap.add_argument("--manifest", help="载荷白名单 JSON (对照模式可选, "
                                         "将额外要求所有变化 ⊆ 白名单 RT_STRING 块范围)")
     args = ap.parse_args(argv)
-    if len(args.file) not in (1, 2):
+    if len(args.file) not in (1, 2, 3):
         ap.error("需要 1 或 2 个文件")
     files = [describe(Path(p)) for p in args.file]
     for f in files:
@@ -313,7 +313,7 @@ def main(argv=None):
         manifest = None
         if args.manifest:
             manifest = json.loads(Path(args.manifest).read_text(encoding="utf-8"))
-            if manifest.get("version") not in (1, 2):
+            if manifest.get("version") not in (1, 2, 3):
                 ap.error(f"不支持的 manifest 版本: {manifest.get('version')}")
         return compare(files[0], files[1], manifest)
     return EXIT_OK

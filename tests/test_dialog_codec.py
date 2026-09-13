@@ -373,6 +373,82 @@ def main(argv=None):
     mt["trailing"] = b"\x01"
     record("DIALOG-8.8 trailing 不透明字节变化 → 发现", mutation_detected(mt, snap_base))
 
+    record("DIALOG-8.8 trailing 不透明字节变化 → 发现", mutation_detected(mt, snap_base))
+
+    # ---- DIALOG-9: 语义白名单 + allocation padding (PHASE 1B2.1a) ----
+    print("== TEST DIALOG-9: dialog_semantic_diff 白名单 + allocation padding ==")
+    key129 = next(key for key in asts if key[0] == 129 and key[1] == 1033)
+    d_orig = copy.deepcopy(asts[key129])
+    d_allowed = {
+        "dialog_title": "目标",
+        "control_titles": {
+            0: " 要添加的目标(&T): ", 2: "添加(&A)",
+            3: "从当前目标复制全部设置(&C)", 4: " 可用目标(&A): ",
+            6: "设为当前目标(&S)", 7: "移除目标(&R)",
+        },
+    }
+    d_patch = copy.deepcopy(d_orig)
+    d_patch["title"]["value"] = "目标"
+    for idx, zh in d_allowed["control_titles"].items():
+        d_patch["controls"][idx]["title"]["value"] = zh
+    logical = er.serialize_dialog_ast(d_patch)
+    blob_size = len(blobs[key129])
+    alloc_pad = blob_size - len(logical)
+    record("DIALOG-9.1 逻辑尺寸 <= 原分配 ( Fits Original Allocation )",
+           len(logical) <= blob_size, f"{len(logical)} <= {blob_size}, padding {alloc_pad}")
+    patched_payload = logical + b"\x00" * alloc_pad
+    d_re = er.parse_dialog_ast(patched_payload)
+    record("DIALOG-9.2 资源尾部 = 纯 00 allocation padding 且长度精确",
+           d_re.get("trailing", b"") == b"\x00" * alloc_pad
+           and d_orig.get("trailing", b"") == b"")
+    o = copy.deepcopy(d_orig); o["trailing"] = b""
+    p2 = copy.deepcopy(d_re); p2["trailing"] = b""
+    diffs_ok = er.dialog_semantic_diff(o, p2, d_allowed)
+    record("DIALOG-9.3 白名单内变化 → 语义 diff 为空", not diffs_ok,
+           f"diffs={diffs_ok[:3]}" if diffs_ok else "")
+    # 非白名单变化必须被发现
+    d_bad = copy.deepcopy(d_patch)
+    d_bad["controls"][1]["style"] = d_bad["controls"][1]["style"] ^ 0xFF  # EDIT 未列入 manifest
+    o = copy.deepcopy(d_orig); o["trailing"] = b""
+    p3 = copy.deepcopy(d_bad); p3["trailing"] = b""
+    diffs_bad = er.dialog_semantic_diff(o, p3, d_allowed)
+    record("DIALOG-9.4 非 manifest 字段变化 (EDIT style) → 发现",
+           any("控件 1" in d for d in diffs_bad), f"diffs={diffs_bad[:2]}")
+    # 非 manifest 控件 title 变化必须被发现: 用 Dialog 100 的 'Copy Info'
+    # (string title, 未列入 1B2.1a manifest —— About 对话框按规则仅译标题与 OK)
+    key100 = next(key for key in asts if key[0] == 100 and key[1] == 1033)
+    d100_orig = copy.deepcopy(asts[key100])
+    d100_patch = copy.deepcopy(d100_orig)
+    d100_patch["title"]["value"] = "关于 µVision"
+    d100_patch["controls"][9]["title"]["value"] = "确定"
+    d100_allowed = {"dialog_title": "关于 µVision",
+                    "control_titles": {9: "确定"}}
+    o100 = copy.deepcopy(d100_orig); o100["trailing"] = b""
+    p100 = copy.deepcopy(d100_patch); p100["trailing"] = b""
+    diffs100 = er.dialog_semantic_diff(o100, p100, d100_allowed)
+    record("DIALOG-9.5a About 白名单 (title + OK) → 语义 diff 为空", not diffs100,
+           f"diffs={diffs100[:3]}" if diffs100 else "")
+    d_bad2 = copy.deepcopy(d100_patch)
+    d_bad2["controls"][7]["title"]["value"] = "未授权文本"  # Copy Info 未列入 manifest
+    p_bad2 = copy.deepcopy(d_bad2); p_bad2["trailing"] = b""
+    o_bad2 = copy.deepcopy(d100_orig); o_bad2["trailing"] = b""
+    diffs_bad2 = er.dialog_semantic_diff(o_bad2, p_bad2, d100_allowed)
+    record("DIALOG-9.5 非 manifest 控件 title 变化 (Copy Info) → 发现",
+           any("控件 7" in d for d in diffs_bad2), f"diffs={diffs_bad2[:2]}")
+    d_bad3 = copy.deepcopy(d_patch)
+    d_bad3["title"]["value"] = "错误的中文"
+    o = copy.deepcopy(d_orig); o["trailing"] = b""
+    p5 = copy.deepcopy(d_bad3); p5["trailing"] = b""
+    diffs_bad3 = er.dialog_semantic_diff(o, p5, d_allowed)
+    record("DIALOG-9.6 dialog title 与预期中文不一致 → 发现",
+           any("title" in d for d in diffs_bad3), f"diffs={diffs_bad3[:2]}")
+    # RESOURCE_TOO_LARGE 条件演示: 超长中文标题 → logical > 原分配
+    d_big = copy.deepcopy(d_orig)
+    d_big["title"]["value"] = "目" * 400
+    big = er.serialize_dialog_ast(d_big)
+    record("DIALOG-9.7 超长文本 → logical > 原分配 (RESOURCE_TOO_LARGE 条件可触发)",
+           len(big) > blob_size, f"{len(big)} > {blob_size}")
+
     print("=" * 72)
     if all(results):
         print(f"自测结论: {len(results)}/{len(results)} 项全部通过")
