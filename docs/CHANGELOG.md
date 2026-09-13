@@ -2,6 +2,54 @@
 
 格式：日期 / 阶段 / 提交 / 修改内容 / 涉及 Resource ID / 新增翻译条目 / 已知问题 / 测试状态。
 
+## 2026-09-13 — PHASE 1B2.0a（dialog codec correctness hardening；纯 codec/测试/文档，零修改零翻译）
+
+- **fix: correct standard dialog creation-data byte semantics**
+  - 修正 STANDARD DLGITEMTEMPLATE creation-data 语义：首 WORD S 非零时
+    **S 为总字节数且包含 size WORD 自身**（payload = buf[pos+2 : pos+S]，
+    消耗 S 字节；非零时要求 S >= 2），废除错误的 `S * 2` WORD 计数；
+    字段由 `cb_word` 更名 `size_bytes`；非零时 S < 2 或越界 → 解析报错。
+  - 两种格式 size 语义保持独立：EXTENDED extraCount 仍为"其后字节数"（不含字段）。
+  - 控件 AST 新增 `offset`（blob 内起始偏移，用于对齐断言；序列化不依赖）。
+- **feat: make dialog serializer translation-alignment aware**
+  - 两个 serializer 均改为**翻译感知对齐**：原 pad 长度 == 当前所需 DWORD 对齐
+    时原样复用（无损 round-trip 不变），文本长度变化时按当前位置机械生成
+    `b"\x00" * required`（`required = (-len(out)) & 3`），禁止错长度旧 pad；
+  - serializer 一致性拒绝：cDlgItems != controls 数量、EXTENDED
+    extraCount != creation data 字节数、STANDARD size_bytes != len(payload)+2
+    或非零但 < 2 → 一律 ValueError 拒绝。
+- **test: harden dialog semantic mutation guards**（tests/test_dialog_codec.py，
+  **25/25 通过**）
+  - DIALOG-4 扩展：std 合成 fixture 两组 —— size_bytes=6/payload=4 与
+    **odd size_bytes=7/payload=5**（验证奇数尾部后下一控件仍 DWORD 对齐）；
+  - DIALOG-5 重构：ex fixture c1 无 creation（标题奇偶驱动 c2 pad 0↔2）、
+    c2 extraCount=5（ordinal title + nonzero creation data）；
+  - DIALOG-6 保留：破坏字段 → 语义验证器发现；
+  - **DIALOG-7 新增（对齐突变）**：std+ex 各做标题奇偶突变
+    （**0-byte pad → 2-byte pad 与 2-byte → 0-byte 均覆盖**），
+    突变后全部控件 offset % 4 == 0，且除 title/text 外语义字段未变化；
+  - **DIALOG-8 新增（语义破坏守卫，8 项）**：dialog helpID 改 1 bit /
+    signature 改变 / cDlgItems 不一致（serializer 拒绝）/ control exStyle 改变 /
+    creation data 同长度改 1 字节 / extraCount 与数据不一致（serializer 拒绝）/
+    std size_bytes 与 payload 不一致（serializer 拒绝）/ trailing 字节变化
+    → 全部 FAIL 或拒绝。
+- **docs: extend dialog slack inventory**
+  - `DIALOG_INVENTORY.md` 新增 trailing 统计：**246 个对话框 trailing 全为 0**
+    （无任何尾部 slack）→ 未来 Dialog 文本变长时**没有可消耗的尾部空间**，
+    整块大小约束（RESOURCE_TOO_LARGE）同样适用于 Dialog。
+  - 语义快照升级：纳入 kind/dlgVer/signature/helpID/cDlgItems/逐控件
+    creation size 字段 + 内容 SHA256（同长度单字节变化可发现）/
+    trailing 长度与哈希。
+- **docs: mark 1b1.2 gui test executed**（41f4573，审核第 0 项）。
+- **涉及 Resource ID / 新增翻译条目**：无（纯 codec/测试/文档；**Translations Added = 0**，
+  **Binary Modified = NO**，未生成任何 EXE，keil_translation.csv 未改动）。
+- **测试状态**：DIALOG-1..8 25/25；真实 gate 重新执行 **52/52 std + 194/194 ex =
+  246/246 byte-identical**（语义修复后与修复前一致 —— 符合预期，因 UV4
+  nonzero creation data = 0）；自测 VERIFY-1..6 7/7；原版 UV4.exe 未动。
+- **已知问题**：无新增。STANDARD creation data 字节语义现按审核指定实现
+  （S 含 size WORD 自身），并有两组合成 fixture 锁定（含 odd payload 对齐路径）。
+- **Git**：tag `v0.1-analysis` 不动；无 EXE/DLL/binary dump 入库。
+
 ## 2026-09-13 — PHASE 1B2.0（LOSSLESS RT_DIALOG CODEC；只调查不翻译，零修改）
 
 - **fix: make dialog parser lossless**
