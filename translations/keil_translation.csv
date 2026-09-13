@@ -809,3 +809,49 @@ DIALOG,32737,ctl:1,2,BUTTON,1033,Cancel,取消,DONE,1B3 auto-standard
 DIALOG,32738,ctl:0,1,BUTTON,1033,OK,确定,DONE,1B3 auto-standard
 DIALOG,32738,ctl:1,2,BUTTON,1033,Cancel,取消,DONE,1B3 auto-standard
 DIALOG,32738,ctl:2,57670,BUTTON,1033,Help,帮助,DONE,1B3 auto-standard
+DIALOG,375,title,,,1033,Editor,编辑器,DONE,RC2 config
+DIALOG,375,ctl:2,1484,BUTTON,1033,Virtual Spaces,虚拟空格,DONE,RC2 config
+DIALOG,375,ctl:3,1486,BUTTON,1033,View White Space,查看空白字符,DONE,RC2 config
+DIALOG,375,ctl:4,405,BUTTON,1033,View End of Line,查看行尾,DONE,RC2 config
+DIALOG,375,ctl:5,1504,BUTTON,1033,Display Modules,显示模块,DONE,RC2 config
+DIALOG,375,ctl:6,1492,BUTTON,1033,Scan function names in project files,扫描工程文件中的函数名,DONE,RC2 config
+DIALOG,375,ctl:7,1494,BUTTON,1033,Scan function names in current editor files,扫描当前编辑器文件中的函数名,DONE,RC2 config
+DIALOG,375,ctl:8,2078,BUTTON,1033,Show Message Dialog during Find,查找时显示消息对话框,DONE,RC2 config
+DIALOG,375,ctl:9,1506,BUTTON,1033,Highlight Current Line,高亮当前行,DONE,RC2 config
+DIALOG,375,ctl:10,1493,BUTTON,1033,Highlight matching and mismatched braces ,高亮匹配与不匹配的括号,DONE,RC2 config
+DIALOG,375,ctl:11,1501,BUTTON,1033,Print with syntax coloring,打印时使用语法着色,DONE,RC2 config
+DIALOG,375,ctl:12,1799,BUTTON,1033,Colored Editor Tabs,彩色编辑器标签,DONE,RC2 config
+DIALOG,375,ctl:15,1482,BUTTON,1033,Create Backup files (*.BAK),创建备份文件 (*.BAK),DONE,RC2 config
+DIALOG,375,ctl:16,1490,BUTTON,1033,Automatic reload of externally modified files,自动重载外部修改的文件,DONE,RC2 config
+DIALOG,375,ctl:17,1839,BUTTON,1033,Save Project before entering Debug,进入调试前保存工程,DONE,RC2 config
+DIALOG,375,ctl:18,1841,BUTTON,1033,Save Files before entering Debug,进入调试前保存文件,DONE,RC2 config
+DIALOG,375,ctl:19,2001,BUTTON,1033,Auto save modified File every,自动保存已修改文件，每,DONE,RC2 config
+DIALOG,375,ctl:22,1485,BUTTON,1033,Use syntax coloring,使用语法着色,DONE,RC2 config
+DIALOG,375,ctl:23,1487,BUTTON,1033,Insert spaces for tabs,Tab 插入空格,DONE,RC2 config
+DIALOG,375,ctl:26,1491,BUTTON,1033,Show Line Numbers,显示行号,DONE,RC2 config
+DIALOG,375,ctl:27,407,BUTTON,1033,Use monospaced Font,使用等宽字体,DONE,RC2 config
+DIALOG,375,ctl:28,1986,BUTTON,1033,Open with Outlining,打开时显示大纲,DONE,RC2 config
+DIALOG,375,ctl:29,1495,BUTTON,1033,Use syntax coloring,使用语法着色,DONE,RC2 config
+DIALOG,375,ctl:30,1497,BUTTON,1033,Insert spaces for tabs,Tab 插入空格,DONE,RC2 config
+DIALOG,375,ctl:33,1503,BUTTON,1033,Show Line Numbers,显示行号,DONE,RC2 config
+DIALOG,375,ctl:34,408,BUTTON,1033,Use monospaced Font,使用等宽字体,DONE,RC2 config
+DIALOG,375,ctl:35,1194,BUTTON,1033,Use syntax coloring,使用语法着色,DONE,RC2 config
+DIALOG,375,ctl:36,1196,BUTTON,1033,Insert spaces for tabs,Tab 插入空格,DONE,RC2 config
+DIALOG,375,ctl:37,4294967295,STATIC,1033,Tab size:,Tab 大小:,DONE,RC2 config
+DIALOG,375,ctl:40,1505,BUTTON,1033,Show Line Numbers,显示行号,DONE,RC2 config
+DIALOG,375,ctl:41,409,BUTTON,1033,Use monospaced Font,使用等宽字体,DONE,RC2 config
+DIALOG,375,ctl:42,4294967295,STATIC,1033,Function Display:,函数显示:,DONE,RC2 config
+DIALOG,375,ctl:47,4294967295,STATIC,1033,C/C++ Files:,C/C++ 文件:,DONE,RC2 config
+DIALOG,375,ctl:49,4294967295,STATIC,1033,Tab size:,Tab 大小:,DONE,RC2 config
+DIALOG,375,ctl:51,4294967295,STATIC,1033,ASM Files:,ASM 文件:,DONE,RC2 config
+DIALOG,375,ctl:52,4294967295,STATIC,1033,Tab size:,Tab 大小:,DONE,RC2 config
+DIALOG,375,ctl:54,4294967295,STATIC,1033,Other Files:,其他文件:,DONE,RC2 config
+DIALOG,375,ctl:55,4294967295,STATIC,1033,Encoding:,编码:,DONE,RC2 config
+DIALOG,375,ctl:56,4294967295,STATIC,1033,General Editor Settings:,常规编辑器设置:,DONE,RC2 config
+DIALOG,375,ctl:57,4294967295,STATIC,1033,Auto Indent:,自动缩进:,DONE,RC2 config
+DIALOG,375,ctl:58,4294967295,STATIC,1033,Minutes.,分钟。,DONE,RC2 config
+DIALOG,375,ctl:59,4294967295,STATIC,1033,Right Margin:,右边距:,DONE,RC2 config
+DIALOG,375,ctl:61,4294967295,STATIC,1033,at,位于,DONE,RC2 config
+DIALOG,399,title,,,1033,Shortcut Keys,快捷键,DONE,RC2 config
+DIALOG,32716,title,,,1033,User Keywords,用户关键字,DONE,RC2 config
+DIALOG,32718,title,,,1033,Text Completion,文本补全,DONE,RC2 config
