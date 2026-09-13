@@ -90,6 +90,18 @@ IDE 崩溃、构建链异常、Flash 异常、Debugger 异常、工程损坏。
 | GUI 测试矩阵（TEST 1–15） | ✅ **已执行**（用户真机测试，见"PHASE 1A 用户真机测试报告"；TEST 3/5/8/9/14/15 未单独报告） |
 | 编译一致性（原版 vs 汉化版 Rebuild + 日志/产物哈希对比） | ⚠ 严格 A/B 未执行（间接证据：汉化版 0E/0W + Flash Verify OK，见真机报告） |
 
+## PHASE 1B1 用户 GUI 测试结果（GPT 转述汇总，2026-09-13）
+
+| 项 | 结果 |
+|---|---|
+| RT_STRING / RT_MENU 写入机制 | ✅ PASS |
+| 主菜单 Edit / View / Project 等 | ✅ PASS（大量条目已中文） |
+| 文件标签页右键（MENU 1205） | ✅ PASS |
+| Project Tree 右键 | ⚠ PARTIAL —— 运行时更新的条目仍英文（根/组上下文来自未覆盖的 MENU 592/624 + .rdata 驱动，见 `DYNAMIC_MENU_MAPPING.md`） |
+| 源码编辑器右键 | ⚠ PARTIAL —— 多数运行时生成/更新条目仍英文（MENU 191/800/22565 未覆盖 + .rdata ANSI 字面量驱动；"大纲/高级"弹出标题已中文） |
+| 崩溃 / 乱码 / 菜单结构损坏 / command ID 异常 | 无 |
+| 1B1 技术验证 | ✅ PASS（写入机制正确；覆盖率缺口源于 MFC 运行时机制，已由 PHASE 1B1.1 映射定位） |
+
 ## PHASE 1B1 静态验证（2026-09-13，RT_MENU + 补充 RT_STRING，`apply_translation.py` + `verify.py --manifest`）
 
 | 项 | 结果 |

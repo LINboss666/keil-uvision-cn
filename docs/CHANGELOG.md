@@ -2,6 +2,29 @@
 
 格式：日期 / 阶段 / 提交 / 修改内容 / 涉及 Resource ID / 新增翻译条目 / 已知问题 / 测试状态。
 
+## 2026-09-13 — PHASE 1B1.1（运行时菜单文本来源调查；**纯只读，零修改**）
+
+- **feat: add dynamic menu text source mapper**
+  - 新增 `scripts/map_dynamic_strings.py`：对 GUI 观察文本做六路来源搜索
+    （RT_STRING / RT_MENU / RT_DIALOG 只查 / RT_240 / .rdata UTF-16 / .rdata ANSI），
+    并做 command ID → 同 ID RT_STRING → RT_ACCELERATOR 关联分析。
+- **docs: map runtime-generated menu text sources**
+  - 新增 `docs/DYNAMIC_MENU_MAPPING.md`：29 条 GUI 观察文本的来源映射表 +
+    Command ID 映射表。
+  - **MFC 动态覆盖假设证实**，三种机制：① 隐藏/未覆盖菜单资源
+    （MENU 22565 'Popups' 编辑命令骨架、191/800 'DbWinMenu' 编辑器右键真身、
+    592/624 工程树组/根上下文 —— 1B1 未覆盖）；② LoadString/prompt 第二段
+    （159/744/164/167/104/181/5763x 等，1B1 未译）；③ .rdata ANSI 字面量经
+    CCmdUI::SetText（@0x7C0790-0x7C0AA8：Go To Definition/References of '%s' 家族、
+    Split Window horizontally、Toggle Header/Code File、断点两项等 —— 按红线不可改）。
+  - **1B1 GUI 结果入档**：写入机制/主菜单/标签右键 PASS；Project Tree 与编辑器
+    右键 PARTIAL（缺口全部归因到上述机制）；无崩溃/乱码/结构损坏/ID 异常。
+- **涉及 Resource ID / 新增翻译条目**：无（纯调查，零修改、零产物）。
+- **测试状态**：不适用（静态调查）；`docs/DYNAMIC_MENU_MAPPING.md` 为唯一交付物，
+  另含 1B1.2 候选清单（RT_STRING 159/162/164/167/744/770/771/104/181/2062x/5763x +
+  RT_MENU 592/624/191/800/22565/400）与 .rdata 不可覆盖项清单，均**未执行**。
+- **Git**：tag `v0.1-analysis` 不动；无二进制入库。
+
 ## 2026-09-13 — PHASE 1B1（RT_MENU + 补充 RT_STRING；本地 UV4_CN_1B1_TEST.exe 已构建，待审核）
 
 - **feat: add byte-identical RT_MENU serializer**
