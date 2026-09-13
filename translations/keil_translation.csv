@@ -575,3 +575,15 @@ File Extensions, Books and Environment...","管理工程项目
 DIALOG,642,ctl:19,1715,BUTTON,1033,No Auto Includes,禁止自动包含,DONE,hotfix: 恢复 1B2.3 GUI 已验证翻译
 DIALOG,642,ctl:21,2097,BUTTON,1033,Execute-only Code,仅执行代码,DONE,hotfix: 恢复 1B2.3 GUI 已验证翻译
 DIALOG,500,ctl:23,1815,BUTTON,1033,Use Cross-Module Optimization,使用跨模块优化,DONE,hotfix: 恢复 1B2.3 翻译
+DIALOG,453,title,,,1033,Output,输出,DONE,1B2.5
+DIALOG,453,ctl:0,1244,BUTTON,1033,Select Folder for &Objects...,选择目标文件目录(&O)...,DONE,1B2.5
+DIALOG,453,ctl:1,1970,STATIC,1033,&Name of Executable:,可执行文件名称(&N):,DONE,1B2.5
+DIALOG,453,ctl:4,1230,BUTTON,1033,Cr&eate Executable: <rel path>\basename,创建可执行文件(&E),DONE,1B2.5
+DIALOG,453,ctl:5,1231,BUTTON,1033,Create &Library: <rel path>\basename,创建库(&L),DONE,1B2.5
+DIALOG,453,ctl:6,1246,BUTTON,1033,&Debug Information,调试信息(&D),DONE,1B2.5
+DIALOG,453,ctl:7,1248,BUTTON,1033,Create &ELF File: <relpath>\basename.ELF,创建 ELF 文件(&E),DONE,1B2.5
+DIALOG,453,ctl:8,1715,BUTTON,1033,Create Batch File,创建批处理文件,DONE,1B2.5
+DIALOG,453,ctl:9,1247,BUTTON,1033,Create HE&X File,创建 HEX 文件(&X),DONE,1B2.5
+DIALOG,453,ctl:16,1530,BUTTON,1033,Bro&wse Information,浏览信息(&W),DONE,1B2.5
+DIALOG,461,ctl:17,1695,BUTTON,1033,...,...,DONE,1B2.5
+DIALOG,461,ctl:18,1722,BUTTON,1033,Edit...,编辑...,DONE,1B2.5
