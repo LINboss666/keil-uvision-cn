@@ -1,14 +1,27 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-test_dialog_codec.py — PHASE 1B2.0 无损 Dialog 编解码器门禁 (DIALOG-1..6)
+test_dialog_codec.py — PHASE 1B2.0/1B2.0a 无损 Dialog 编解码器门禁 (DIALOG-1..8)
 
 用法:
     python tests/test_dialog_codec.py <UV4.exe 原版路径>
 
-全部通过 → exit 0; 任一失败 → exit 1。
-基线保护: 输入 SHA256 必须等于 µVision 5.43.1.0 固定基线, 否则直接 FAIL。
-本测试只读原始 EXE (合成 fixture 在内存中构造), 不修改任何文件。
+DIALOG-1  246 dialogs parse
+DIALOG-2  246 dialogs serialize
+DIALOG-3  246 dialogs parse → serialize → byte-identical
+DIALOG-4  Standard 合成 fixture (string/ordinal class, string/ordinal title,
+          creation size_bytes=6/payload=4 与 odd size_bytes=7/payload=5)
+DIALOG-5  Extended 合成 fixture (helpID/exStyle/DS_SETFONT/weight/italic/charset/
+          ordinal+string/extraCount=5)
+DIALOG-6  语义验证器: 字段破坏必须被发现 (style 位翻转 / 标题篡改)
+DIALOG-7  对齐突变测试: 文本奇偶长度变化后每个控件起始 offset % 4 == 0,
+          且覆盖 0-byte pad → 2-byte pad 与 2-byte → 0-byte 两种变化 (std+ex)
+DIALOG-8  语义破坏守卫: dialog helpID / dlgVer·signature / cDlgItems /
+          control exStyle / creation data 同长度改 1 字节 /
+          extraCount·size field 变化 → 必须全部 FAIL,
+          serializer 自身拒绝 cDlgItems/extraCount/size_bytes 不一致
+
+基线保护: 输入 SHA256 必须等于 µVision 5.43.1.0 固定基线。只读, 不修改文件。
 """
 
 from __future__ import annotations
@@ -28,10 +41,8 @@ BASELINE_SHA256 = "428baf13d15e6760af1618def9c9815c97f0321cc5e459ec7adc4dde41c42
 
 
 def diff_summary(a: bytes, b: bytes, limit: int = 3):
-    """逐字节差异摘要 (PHASE 1B2.0 第 12 条 mismatch 报告要求)。"""
     n = min(len(a), len(b))
-    first = None
-    count = 0
+    first, count = None, 0
     for i in range(n):
         if a[i] != b[i]:
             count += 1
@@ -39,17 +50,26 @@ def diff_summary(a: bytes, b: bytes, limit: int = 3):
                 first = i
     if len(a) != len(b):
         count += abs(len(a) - len(b))
-    out = []
-    if first is not None:
-        s = max(0, first - 8)
-        for k in range(limit):
-            e = min(n, s + 16)
-            out.append(f"@0x{s:X}: {a[s:e].hex(' ')} | {b[s:e].hex(' ')}")
-            s = e
-            if s >= n:
-                break
+    out, s = [], (first or 0)
+    for _ in range(limit):
+        e = min(n, s + 16)
+        out.append(f"@file+0x{s:X}: {a[s:e].hex(' ')} | {b[s:e].hex(' ')}")
+        s = e
+        if s >= n:
+            break
     return {"first_diff_offset": first, "diff_byte_count": count,
             "size_original": len(a), "size_rebuilt": len(b), "hex_context": out}
+
+
+def mutation_detected(ast_mutated, snap_orig):
+    """序列化被改 AST → 重解析 → 语义快照对比; 异常也视为发现。"""
+    try:
+        ser = er.serialize_dialog_ast(ast_mutated)
+        ast2 = er.parse_dialog_ast(ser)
+        snap2 = er.dialog_semantic_snapshot(ast2)
+        return bool(er.compare_semantic_snapshots(snap_orig, snap2))
+    except ValueError:
+        return True
 
 
 def main(argv=None):
@@ -76,154 +96,257 @@ def main(argv=None):
 
     print(f"RT_DIALOG 总数: {len(dialogs)}; 基线校验: 通过")
 
-    # ---- DIALOG-1: 246 parse ----
-    print("== TEST DIALOG-1: parse ==")
+    # ---- DIALOG-1..3: 真实 246 全量门禁 ----
     parse_fail, kinds = [], {"std": 0, "ex": 0}
-    asts = {}
+    asts, blobs = {}, {}
     for r in dialogs:
         blob = data[r["file_offset"]: r["file_offset"] + r["size"]]
+        blobs[(r["name"], r["lang"])] = blob
         try:
             ast = er.parse_dialog_ast(blob)
             asts[(r["name"], r["lang"])] = ast
             kinds[ast["kind"]] += 1
         except Exception as exc:
             parse_fail.append((r["name"], r["lang"], str(exc)))
-    record(f"parse {len(dialogs) - len(parse_fail)}/{len(dialogs)}",
-           not parse_fail, f"kinds={kinds}; 失败: {parse_fail[:5]}" if parse_fail else "")
+    record(f"DIALOG-1 parse {len(asts)}/{len(dialogs)}", not parse_fail,
+           f"kinds={kinds}; 失败: {parse_fail[:5]}" if parse_fail else "")
 
-    # ---- DIALOG-2: 246 serialize ----
-    print("== TEST DIALOG-2: serialize ==")
-    ser_fail = []
-    rebuilt = {}
+    ser_fail, rebuilt = [], {}
     for key, ast in asts.items():
         try:
             rebuilt[key] = er.serialize_dialog_ast(ast)
         except Exception as exc:
             ser_fail.append((key, str(exc)))
-    record(f"serialize {len(rebuilt)}/{len(asts)}",
+    record(f"DIALOG-2 serialize {len(rebuilt)}/{len(asts)}",
            not ser_fail and len(rebuilt) == len(dialogs),
            f"失败: {ser_fail[:5]}" if ser_fail else "")
 
-    # ---- DIALOG-3: 246 byte-identical ----
-    print("== TEST DIALOG-3: parse → serialize → byte-identical ==")
     rt_ok = {"std": 0, "ex": 0}
     rt_total = {"std": 0, "ex": 0}
     mismatches = []
     for r in dialogs:
         key = (r["name"], r["lang"])
-        blob = data[r["file_offset"]: r["file_offset"] + r["size"]]
         kind = asts[key]["kind"]
         rt_total[kind] += 1
-        if rebuilt[key] == blob:
+        if rebuilt[key] == blobs[key]:
             rt_ok[kind] += 1
         else:
-            mismatches.append((key, kind, diff_summary(blob, rebuilt[key])))
-    ok3 = not mismatches and rt_ok["std"] + rt_ok["ex"] == len(dialogs)
-    record(f"byte-identical {rt_ok['std'] + rt_ok['ex']}/{len(dialogs)} "
+            mismatches.append((key, kind, diff_summary(blobs[key], rebuilt[key])))
+    record(f"DIALOG-3 byte-identical {rt_ok['std'] + rt_ok['ex']}/{len(dialogs)} "
            f"(std {rt_ok['std']}/{rt_total['std']}, ex {rt_ok['ex']}/{rt_total['ex']})",
-           ok3)
+           not mismatches and rt_ok["std"] + rt_ok["ex"] == len(dialogs))
     for (key, kind, rep) in mismatches[:5]:
         print(f"    MISMATCH {key} {kind}: first_diff=0x{rep['first_diff_offset']:X} "
               f"count={rep['diff_byte_count']} size {rep['size_original']}→{rep['size_rebuilt']}")
         for line in rep["hex_context"]:
             print(f"      {line}")
 
+    # ---- 合成 fixture ----
+    def std_fixture(title_text, creation):
+        return {
+            "kind": "std",
+            "header": {"style": 0x50000440, "exstyle": 1, "cdit": 2,
+                       "rect": [10, 20, 300, 200]},
+            "menu": {"kind": "none", "value": None, "display": None},
+            "window_class": {"kind": "ordinal", "value": 0x82, "display": "ordinal:0x82"},
+            "title": {"kind": "string", "value": "测试对话框", "display": "测试对话框"},
+            "font": {"pointsize": 9, "typeface": "宋体"},
+            "controls": [
+                {"offset": 0, "pad_before": b"", "style": 0x50010000, "exstyle": 0,
+                 "rect": [5, 5, 60, 14], "id": 1001,
+                 "window_class": {"kind": "string", "value": "MyButton",
+                                  "display": "MyButton"},
+                 "title": {"kind": "string", "value": title_text,
+                           "display": title_text},
+                 "creation_data": creation},
+                {"offset": 0, "pad_before": b"", "style": 0x50010001, "exstyle": 0,
+                 "rect": [5, 25, 60, 14], "id": 1002,
+                 "window_class": {"kind": "ordinal", "value": 0x80, "display": "BUTTON"},
+                 "title": {"kind": "ordinal", "value": 0x0101,
+                           "display": "ordinal:257"},
+                 "creation_data": {"size_bytes": 0, "data": b""}},
+            ],
+            "trailing": b"",
+        }
+
+    def ex_fixture(c1_title):
+        return {
+            "kind": "ex", "dlgver": 1, "signature": 0xFFFF,
+            "header": {"helpid": 0x1234, "exstyle": 1, "style": 0x50000448,
+                       "cdit": 2, "rect": [12, 24, 320, 220]},
+            "menu": {"kind": "none", "value": None, "display": None},
+            "window_class": {"kind": "ordinal", "value": 0x82, "display": "ordinal:0x82"},
+            "title": {"kind": "string", "value": "扩展对话框", "display": "扩展对话框"},
+            "font": {"pointsize": 9, "weight": 400, "italic": 0, "charset": 1,
+                     "typeface": "Microsoft YaHei UI"},
+            "controls": [
+                {"offset": 0, "pad_before": b"", "helpid": 0x5678, "exstyle": 2,
+                 "style": 0x50010000, "rect": [6, 6, 70, 15], "id": 2001,
+                 "window_class": {"kind": "string", "value": "RichEdit20W",
+                                  "display": "RichEdit20W"},
+                 "title": {"kind": "string", "value": c1_title,
+                           "display": c1_title},
+                 "extra_count": 0, "creation_data": b""},
+                {"offset": 0, "pad_before": b"", "helpid": 0, "exstyle": 0,
+                 "style": 0x50010001, "rect": [6, 30, 70, 15], "id": 2002,
+                 "window_class": {"kind": "ordinal", "value": 0x80, "display": "BUTTON"},
+                 "title": {"kind": "ordinal", "value": 0x0202,
+                           "display": "ordinal:514"},
+                 "extra_count": 5,
+                 "creation_data": bytes([0xDE, 0xAD, 0xBE, 0xEF, 0x01])},
+            ],
+            "trailing": b"",
+        }
+
+    def stable_roundtrip(ast):
+        ser1 = er.serialize_dialog_ast(ast)
+        ast2 = er.parse_dialog_ast(ser1)
+        ser2 = er.serialize_dialog_ast(ast2)
+        return ser1 == ser2, ast2
+
+    def offsets_aligned(ast):
+        return all(c["offset"] % 4 == 0 for c in ast["controls"])
+
     # ---- DIALOG-4: Standard 合成 fixture ----
-    print("== TEST DIALOG-4: Standard 合成 fixture (string/ordinal class, "
-          "string/ordinal title, nonzero creation data) ==")
-    TAB2 = b"\x00\x00"
-    std_ast = {
-        "kind": "std",
-        "header": {"style": 0x50000440 | er.DS_SETFONT, "exstyle": 0x00000001,
-                   "cdit": 2, "rect": [10, 20, 300, 200]},
-        "menu": {"kind": "none", "value": None, "display": None},
-        "window_class": {"kind": "ordinal", "value": 0x82, "display": "ordinal:0x82"},
-        "title": {"kind": "string", "value": "测试对话框", "display": "测试对话框"},
-        "font": {"pointsize": 9, "typeface": "宋体"},
-        "controls": [
-            {"pad_before": b"", "style": 0x50010000, "exstyle": 0x0,
-             "rect": [5, 5, 60, 14], "id": 1001,
-             "window_class": {"kind": "string", "value": "MyButton",
-                              "display": "MyButton"},
-             "title": {"kind": "string", "value": "确定", "display": "确定"},
-             "creation_data": {"cb_word": 3, "data": bytes([0x11, 0x22, 0x33, 0x44])}},
-            {"pad_before": b"", "style": 0x50010001, "exstyle": 0x0,
-             "rect": [5, 25, 60, 14], "id": 1002,
-             "window_class": {"kind": "ordinal", "value": 0x80, "display": "BUTTON"},
-             "title": {"kind": "ordinal", "value": 0x0101, "display": "ordinal:257"},
-             "creation_data": {"cb_word": 0, "data": b""}},
-        ],
-        "trailing": b"",
-    }
-    ser1 = er.serialize_dialog_ast(std_ast)
-    ast2 = er.parse_dialog_ast(ser1)
-    ser2 = er.serialize_dialog_ast(ast2)
-    record("std 合成: serialize → parse → serialize 稳定", ser1 == ser2)
-    record("std 合成: 语义一致 (ordinal/string/creation-data 保真)",
-           er.compare_semantic_snapshots(er.dialog_semantic_snapshot(std_ast),
-                                         er.dialog_semantic_snapshot(ast2)) == [])
-    record("std 合成: nonzero creation data 保留",
-           ast2["controls"][0]["creation_data"] == std_ast["controls"][0]["creation_data"])
+    print("== TEST DIALOG-4: Standard 合成 fixture ==")
+    f_a = std_fixture("确定", {"size_bytes": 6, "data": bytes([0x11, 0x22, 0x33, 0x44])})
+    ok_a, a2 = stable_roundtrip(f_a)
+    record("std: size_bytes=6/payload=4 round-trip 稳定", ok_a)
+    record("std: nonzero creation data 保真",
+           a2["controls"][0]["creation_data"] == f_a["controls"][0]["creation_data"])
+    f_b = std_fixture("确定", {"size_bytes": 7, "data": bytes([1, 2, 3, 4, 5])})
+    ok_b, b2 = stable_roundtrip(f_b)
+    record("std: odd size_bytes=7/payload=5 round-trip 稳定", ok_b)
+    record("std: 两 fixture 控件起始 offset 均 DWORD 对齐",
+           offsets_aligned(a2) and offsets_aligned(b2),
+           f"offsets={[[c['offset'] for c in x['controls']] for x in (a2, b2)]}")
+    record("std: 语义一致",
+           er.compare_semantic_snapshots(er.dialog_semantic_snapshot(f_a),
+                                         er.dialog_semantic_snapshot(a2)) == [])
 
     # ---- DIALOG-5: Extended 合成 fixture ----
-    print("== TEST DIALOG-5: Extended 合成 fixture (helpID/exStyle/DS_SETFONT/"
-          "weight/italic/charset/ordinal+string/nonzero extraCount) ==")
-    ex_ast = {
-        "kind": "ex", "dlgver": 1, "signature": 0xFFFF,
-        "header": {"helpid": 0x1234, "exstyle": 0x00000001,
-                   "style": 0x50000448, "cdit": 2, "rect": [12, 24, 320, 220]},
-        "menu": {"kind": "none", "value": None, "display": None},
-        "window_class": {"kind": "ordinal", "value": 0x82, "display": "ordinal:0x82"},
-        "title": {"kind": "string", "value": "扩展对话框", "display": "扩展对话框"},
-        "font": {"pointsize": 9, "weight": 400, "italic": 0, "charset": 1,
-                 "typeface": "Microsoft YaHei UI"},
-        "controls": [
-            {"pad_before": b"", "helpid": 0x5678, "exstyle": 0x2, "style": 0x50010000,
-             "rect": [6, 6, 70, 15], "id": 2001,
-             "window_class": {"kind": "string", "value": "RichEdit20W",
-                              "display": "RichEdit20W"},
-             "title": {"kind": "string", "value": "内容", "display": "内容"},
-             "extra_count": 5, "creation_data": bytes([0xDE, 0xAD, 0xBE, 0xEF, 0x01])},
-            {"pad_before": b"\x00\x00\x00", "helpid": 0x0, "exstyle": 0x0, "style": 0x50010001,
-             "rect": [6, 30, 70, 15], "id": 2002,
-             "window_class": {"kind": "ordinal", "value": 0x80, "display": "BUTTON"},
-             "title": {"kind": "ordinal", "value": 0x0202, "display": "ordinal:514"},
-             "extra_count": 0, "creation_data": b""},
-        ],
-        "trailing": b"",
-    }
-    ser3 = er.serialize_dialog_ast(ex_ast)
-    ast4 = er.parse_dialog_ast(ser3)
-    ser4 = er.serialize_dialog_ast(ast4)
-    record("ex 合成: serialize → parse → serialize 稳定", ser3 == ser4)
-    record("ex 合成: 语义一致 (helpID/weight/italic/charset/extraCount 保真)",
-           er.compare_semantic_snapshots(er.dialog_semantic_snapshot(ex_ast),
-                                         er.dialog_semantic_snapshot(ast4)) == [])
-    record("ex 合成: nonzero extraCount 保留",
-           ast4["controls"][0]["extra_count"] == 5
-           and ast4["controls"][0]["creation_data"] == bytes([0xDE, 0xAD, 0xBE, 0xEF, 0x01]))
+    print("== TEST DIALOG-5: Extended 合成 fixture ==")
+    g_a = ex_fixture("内容")
+    ok_g, g2 = stable_roundtrip(g_a)
+    record("ex: round-trip 稳定", ok_g)
+    record("ex: helpID/exStyle/weight/italic/charset/extraCount=5 保真",
+           er.compare_semantic_snapshots(er.dialog_semantic_snapshot(g_a),
+                                         er.dialog_semantic_snapshot(g2)) == []
+           and g2["controls"][1]["extra_count"] == 5
+           and g2["controls"][1]["creation_data"] == bytes([0xDE, 0xAD, 0xBE, 0xEF, 0x01]))
+    record("ex: 控件起始 offset 均 DWORD 对齐", offsets_aligned(g2))
 
-    # ---- DIALOG-6: 语义验证器必须发现字段被破坏 ----
+    # ---- DIALOG-6: 语义验证器破坏检测 ----
     print("== TEST DIALOG-6: 字段破坏 → 语义验证器必须发现 ==")
-    target_key = None
-    for key in asts:
-        if key[1] == 1033 and asts[key]["controls"]:
-            target_key = key
-            break
+    target_key = next(key for key in asts
+                      if key[1] == 1033 and asts[key]["controls"])
     ast_orig = copy.deepcopy(asts[target_key])
     snap_orig = er.dialog_semantic_snapshot(ast_orig)
     blob_orig = er.serialize_dialog_ast(ast_orig)
     corrupted = copy.deepcopy(ast_orig)
-    # 等长破坏: 保持模板格式合法 (不改变任何长度字段/creation data 定位)
     corrupted["title"]["value"] = (
         "X" + corrupted["title"]["value"][1:] if corrupted["title"]["value"] else "X")
     corrupted["controls"][0]["style"] = corrupted["controls"][0]["style"] ^ 0xFF
     ser_c = er.serialize_dialog_ast(corrupted)
     snap_c = er.dialog_semantic_snapshot(er.parse_dialog_ast(ser_c))
     diffs = er.compare_semantic_snapshots(snap_orig, snap_c)
-    record(f"破坏字段被语义验证器发现 ({target_key[0]},{target_key[1]})",
-           len(diffs) >= 2 and ser_c != blob_orig,
-           f"diffs={diffs[:3]}")
+    record(f"DIALOG-6 破坏字段被语义验证器发现 ({target_key[0]},{target_key[1]})",
+           len(diffs) >= 2 and ser_c != blob_orig, f"diffs={diffs[:3]}")
+
+    # ---- DIALOG-7: 对齐突变 (0→2 / 2→0, std+ex) ----
+    print("== TEST DIALOG-7: 文本长度奇偶突变 → 对齐自动重建 ==")
+    f_even = std_fixture("确定", {"size_bytes": 6, "data": bytes([0x11, 0x22, 0x33, 0x44])})
+    f_odd = std_fixture("确", {"size_bytes": 6, "data": bytes([0x11, 0x22, 0x33, 0x44])})
+    p_even = [len(c["pad_before"]) for c in er.parse_dialog_ast(
+        er.serialize_dialog_ast(f_even))["controls"]]
+    p_odd = [len(c["pad_before"]) for c in er.parse_dialog_ast(
+        er.serialize_dialog_ast(f_odd))["controls"]]
+    even_ast = er.parse_dialog_ast(er.serialize_dialog_ast(f_even))
+    odd_ast = er.parse_dialog_ast(er.serialize_dialog_ast(f_odd))
+    record("std 对齐突变: 全部控件 offset % 4 == 0",
+           offsets_aligned(even_ast) and offsets_aligned(odd_ast),
+           f"pads even={p_even} odd={p_odd}")
+    record("std 覆盖 0-byte→2-byte 与 2-byte→0-byte",
+           p_even[1] == 0 and p_odd[1] == 2,
+           f"c2 pad: 偶长度标题 {p_even[1]} 字节 ↔ 奇长度标题 {p_odd[1]} 字节")
+    g_even = ex_fixture("内容")
+    g_odd = ex_fixture("内")
+    q_even = [len(c["pad_before"]) for c in er.parse_dialog_ast(
+        er.serialize_dialog_ast(g_even))["controls"]]
+    q_odd = [len(c["pad_before"]) for c in er.parse_dialog_ast(
+        er.serialize_dialog_ast(g_odd))["controls"]]
+    g_even_ast = er.parse_dialog_ast(er.serialize_dialog_ast(g_even))
+    g_odd_ast = er.parse_dialog_ast(er.serialize_dialog_ast(g_odd))
+    record("ex 对齐突变: 全部控件 offset % 4 == 0",
+           offsets_aligned(g_even_ast) and offsets_aligned(g_odd_ast),
+           f"pads even={q_even} odd={q_odd}")
+    record("ex 覆盖 0-byte→2-byte 与 2-byte→0-byte",
+           q_even[1] == 0 and q_odd[1] == 2,
+           f"c2 pad: 偶长度标题 {q_even[1]} 字节 ↔ 奇长度标题 {q_odd[1]} 字节")
+    snap_even = er.dialog_semantic_snapshot(er.parse_dialog_ast(
+        er.serialize_dialog_ast(f_even)))
+    snap_odd_t = er.dialog_semantic_snapshot(er.parse_dialog_ast(
+        er.serialize_dialog_ast(f_odd)))
+    semantic_ok = True
+    for a, b in zip(snap_even["controls"], snap_odd_t["controls"]):
+        x = dict(a); y = dict(b)
+        x.pop("title"); y.pop("title")
+        if x != y:
+            semantic_ok = False
+    record("std 突变前后除 title/text 外语义字段未变化", semantic_ok)
+
+    # ---- DIALOG-8: 语义破坏守卫 ----
+    print("== TEST DIALOG-8: 语义破坏守卫 (必须全部 FAIL/拒绝) ==")
+    base = copy.deepcopy(g_a)
+    snap_base = er.dialog_semantic_snapshot(base)
+
+    m1 = copy.deepcopy(base)
+    m1["header"]["helpid"] = m1["header"]["helpid"] ^ 0x100
+    record("DIALOG-8.1 dialog helpID 改 1 bit → 发现", mutation_detected(m1, snap_base))
+
+    m2 = copy.deepcopy(base)
+    m2["signature"] = 0xFFFE
+    record("DIALOG-8.2 signature 改变 → 发现", mutation_detected(m2, snap_base))
+
+    m3 = copy.deepcopy(base)
+    m3["header"]["cdit"] = 5
+    rejected = False
+    try:
+        er.serialize_dialog_ast(m3)
+    except ValueError:
+        rejected = True
+    record("DIALOG-8.3 cDlgItems 与控件数不一致 → serializer 拒绝", rejected)
+
+    m4 = copy.deepcopy(base)
+    m4["controls"][0]["exstyle"] = m4["controls"][0]["exstyle"] ^ 0x1
+    record("DIALOG-8.4 control exStyle 改变 → 发现", mutation_detected(m4, snap_base))
+
+    m5 = copy.deepcopy(base)
+    m5["controls"][1]["creation_data"] = bytes([0xDE, 0xAD, 0xBE, 0xEF, 0x02])
+    record("DIALOG-8.5 creation data 同长度改 1 字节 → 发现",
+           mutation_detected(m5, snap_base))
+
+    m6 = copy.deepcopy(base)
+    m6["controls"][1]["extra_count"] = 6
+    rejected6 = False
+    try:
+        er.serialize_dialog_ast(m6)
+    except ValueError:
+        rejected6 = True
+    record("DIALOG-8.6 extraCount 与 creation data 不一致 → serializer 拒绝", rejected6)
+
+    ms = copy.deepcopy(f_a)
+    ms["controls"][0]["creation_data"]["size_bytes"] = 5
+    rejected_s = False
+    try:
+        er.serialize_dialog_ast(ms)
+    except ValueError:
+        rejected_s = True
+    record("DIALOG-8.7 std size_bytes 与 payload 不一致 → serializer 拒绝", rejected_s)
+
+    mt = copy.deepcopy(base)
+    mt["trailing"] = b"\x01"
+    record("DIALOG-8.8 trailing 不透明字节变化 → 发现", mutation_detected(mt, snap_base))
 
     print("=" * 72)
     if all(results):
