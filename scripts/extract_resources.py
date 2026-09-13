@@ -523,15 +523,19 @@ def _parse_dialog_ast_std(buf: bytes):
             raise ValueError(f"控件 {i} creation size 越界 (std)")
         (S,) = struct.unpack_from("<H", buf, pos)
         if S == 0:
-            creation = {"cb_word": 0, "data": b""}
+            creation = {"size_bytes": 0, "data": b""}
             pos += 2
         else:
-            total = S * 2                       # S 包含 size WORD 自身
-            if pos + total > n:
+            if S < 2:
+                raise ValueError(f"控件 {i} creation size 非法 (S={S}, 非零时须 >= 2)")
+            if pos + S > n:
                 raise ValueError(f"控件 {i} creation data 越界 (std)")
-            creation = {"cb_word": S, "data": buf[pos + 2: pos + total]}
-            pos += total
-        controls.append({"pad_before": pad_before, "style": st, "exstyle": ex,
+            # Microsoft DLGITEMTEMPLATE: S 为 creation data 总字节数,
+            # 包含 size WORD 自身 (payload = S - 2 字节)
+            creation = {"size_bytes": S, "data": buf[pos + 2: pos + S]}
+            pos += S
+        controls.append({"offset": aligned, "pad_before": pad_before,
+                         "style": st, "exstyle": ex,
                          "rect": [ix, iy, icx, icy], "id": cid,
                          "window_class": wcls, "title": wtitle,
                          "creation_data": creation})
@@ -584,7 +588,7 @@ def _parse_dialog_ast_ex(buf: bytes):
         if len(data) != cb:
             raise ValueError(f"控件 {i} creation data 越界 (ex)")
         pos += cb
-        controls.append({"pad_before": pad_before, "helpid": chelpid,
+        controls.append({"offset": aligned, "pad_before": pad_before, "helpid": chelpid,
                          "exstyle": cex, "style": cst,
                          "rect": [ix, iy, icx, icy], "id": cid,
                          "window_class": wcls, "title": wtitle,
