@@ -26,6 +26,30 @@
 - **Git**：tag v0.1-analysis 不动；无 EXE/DLL/binary dump 入库。
 
 
+## 2026-09-13 — PHASE 1B2.3 批次（Options for Target ARM 属性表 6 页；本地 UV4_CN_1B2_3_TEST.exe 已构建，待审核）
+
+- **批次范围**：RT_DIALOG 500（Target/ARM, 89 控件）/ 642（C/C++ AC6, 33 控件）/
+  209（Debug, 55 控件）/ 446（Utilities, 27 控件）/ 510（User, 35 控件）/ 170（Device 结转）
+  —— 按 ARM Target 指纹（12/19 命中）选定 500 为 ARM Target 页。
+- **Target 三变体指纹结论**：142 (1/19) = C251 → DEFER；163 (3/19) = C51 → DEFER；
+  178 (1/19) = C251/MCX → DEFER；**500 (12/19) = ARM → SELECTED**。
+- **本轮新增 191 条**；CSV 扩至 **475 条（STRING 153 + MENU 79 + DIALOG 243）**。
+- **涉及 Resource ID**：RT_DIALOG 500/642/209/446/510（1033）+ 170（1B2.2 结转）
+  + 465/466/468/511/100/129（此前批次）—— 其余 235 个 bit-identical。
+- **测试状态**：DIALOG-1..9 38/38；自测 7/7；verify --manifest PASS
+  （changed 23369B / 12937 段 / non_target=0 / .rdata 逐位一致）。
+  GUI 测试 ⛔ 未执行。
+- **产物**：output/UV4_CN_1B2_3_TEST.exe
+  （SHA256 28b6210512a23f8cef6881866be05c81d0cb158e00d72b4864e4b8db80f4e410，
+  本地 only）；output/uv4_cn_1b2_3_manifest.json。
+- **上一批 (1B2.2) GUI 结论**：Manage Project Items 属性表 PASS
+  （三 Tab 中文化成功、第四页 0x2000 仍英文预期、shell 按钮仍英文预期、
+   .rdata 驱动标签仍英文预期、Build 回归 PASS 0E/0W）。
+  外层标题 32704 已翻译但 sheet title 未变化 →
+  **sheet title runtime source unresolved**（不继续追查）。
+- **Git**：tag v0.1-analysis 不动；无二进制入库。
+
+
 ## 2026-09-13 — PHASE 1B2.1b1（Manage Project Items 1033 资源汉化；本地 UV4_CN_1B2_1B_TEST.exe 已构建，待审核）
 
 - **docs: fix Manage Project Items mapping presentation**

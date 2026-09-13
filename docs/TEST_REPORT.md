@@ -149,6 +149,32 @@ LOCALIZATION 专项评估（当前禁止实施）。
 | GUI 测试（1B2.2） | ⛔ **未执行** —— 等 GPT 批准后由用户手动测试 `UV4_CN_1B2_2_TEST.exe`（重点：Project 内文件/组窗口、File Extensions 页、Get Filetype 对话框（%s 文件名正常代入）、Device 页中文渲染、RTE/MDK 器件支持窗口按钮；裁切 → UI_LAYOUT_ISSUES.md） |
 
 
+## PHASE 1B2.3 批次静态验证（2026-09-13，Options for Target ARM 属性表 6 页：500/642/209/446/510/170 结转）
+
+| 项 | 结果 |
+|---|---|
+| 基线 / 门禁 | SHA256 通过；40/40 MENU ✓；**246/246 DIALOG** ✓（applier 内置 + 独立测试）；DIALOG-1..9 38/38 |
+| 写入 | 累计 475 条（STRING 153 + MENU 79 + DIALOG 243）；1B2.3 新增 191 条：500 Target/ARM ×41、642 C/C++(AC6) ×25、209 Debug ×35、446 Utilities ×20、510 User ×14、170 Device 结转 ×9+3 |
+| Target 变体指纹 | 142: 1/19 → **DEFER (C251)**；163: 3/19 → **DEFER (C51)**；**178: 1/19 → DEFER (C251/MCX)**；**500: 12/19 → SELECTED (ARM)** |
+| 逐 Dialog 验证 | 500: 3920→3442（pad 478）；642: 2040→1606（pad 434）；209: 3238→？（见 apply log）；446: 1704→1280（pad 424）；510: 1956→1788（pad 168）—— 仅 manifest 指定 title 路径变化 ✓ |
+| allocation padding | 资源尾部纯 00、长度精确 ✓ |
+| `verify.py --manifest` | **PASS**：changed_byte_count=23369，changed_ranges=12937，载荷白名单 46 个，**non_target_resource_changes=0**；其余 Dialog bit-identical |
+| .rdata bit-identical | original == patched：`7e5438f7…f912` ✓ |
+| 签名 | 原版 Valid → 测试版 HashMismatch（预期） |
+| 自测回归 | DIALOG-1..9 38/38；VERIFY 7/7 |
+| GUI 测试（1B2.3） | ⛔ **未执行** —— 等 GPT 批准后由用户手动测试 UV4_CN_1B2_3_TEST.exe（重点：Options for Target 各 Tab 的中文渲染、长标签裁切、Debug 页大量按钮、Device 页 0x2000 对话框是否受影响） |
+
+### 汉化覆盖率抽查
+
+| Dialog | 标题 | 中文创面数 / 总控件数 |
+|---|---|---|
+| 500 | `目标` | 29/89 |
+| 642 | `C/C++ (AC6)` | 23/33 |
+| 209 | `调试` | 34/55 |
+| 446 | `实用工具` | 17/27 |
+| 510 | `用户` | 3/35 (大部分是 Run #N 按钮对与 DOS16 按钮，保持原文) |
+
+
 ## PHASE 1B2.1b1 静态验证（2026-09-13，Manage Project Items 1033 资源：RT_STRING 32704 + RT_DIALOG 465/466/468）
 
 | 项 | 结果 |
