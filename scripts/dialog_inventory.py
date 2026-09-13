@@ -77,10 +77,13 @@ def main(argv=None):
                 "id": c["id"], "class": c["window_class"],
                 "title": c["title"],
                 "helpid": c.get("helpid"),
-                "creation": (c["creation_data"]["cb_word"] if ast["kind"] == "std"
+                "creation": (c["creation_data"]["size_bytes"] if ast["kind"] == "std"
                              else c["extra_count"]),
             } for c in ast["controls"]],
             "roundtrip": rebuilt == blob,
+            "trailing_len": len(ast.get("trailing", b"")),
+            "trailing_all_zero": all(b == 0 for b in ast.get("trailing", b"")),
+            "trailing_hex": ast.get("trailing", b"").hex(),
             "major_keywords": major,
         })
 
@@ -112,9 +115,24 @@ def main(argv=None):
             elif k == "string":
                 title_str += 1
             if c["creation"]:
-                creation_nonzero.append((d["res_id"], d["lang"], c["id"], c["creation"]))
+                szf = (c["creation"]["size_bytes"] if isinstance(c["creation"], dict)
+                       and "size_bytes" in c["creation"] else c["creation"])
+                creation_nonzero.append((d["res_id"], d["lang"], c["id"], szf))
     rt_total = n_std + n_ex
 
+    # trailing / allocation slack 统计 (PHASE 1B2.0a 第 G 条)
+    trailing_lens = [d["trailing_len"] for d in dialogs]
+    n_trailing = sum(1 for L in trailing_lens if L > 0)
+    total_trailing = sum(trailing_lens)
+    max_trailing = max(trailing_lens, default=0)
+    nonzero_trailing = [(d["res_id"], d["lang"], d["trailing_len"], d["trailing_hex"])
+                        for d in dialogs
+                        if d["trailing_len"] > 0 and not d["trailing_all_zero"]]
+    candidate_slack = sum(1 for d in dialogs
+                          if d["trailing_len"] > 0 and d["trailing_all_zero"])
+
+    std_nz = [(x[0], x[1], x[2], x[3]) for x in creation_nonzero
+              if isinstance(x[3], int) and x[3] > 0]
     # ---- 输出 ----
     lines = [
         "# RT_DIALOG 资源清单 (PHASE 1B2.0)",
@@ -139,19 +157,21 @@ def main(argv=None):
         f"| string control classes | {class_str} |",
         f"| ordinal titles | {title_ord} |",
         f"| string titles | {title_str} |",
-        f"| nonzero creation data (std) | {sum(1 for x in creation_nonzero if isinstance(x[3], int) and x[3] and (x[0], x[1], x[2], x[3]) and creation_nonzero and x[3] > 0)} |",
+        f"| nonzero creation data | {len(std_nz)} |",
+        f"| dialogs with trailing bytes | {n_trailing} |",
+        f"| max trailing bytes | {max_trailing} |",
+        f"| total trailing bytes | {total_trailing} |",
+        f"| dialogs with NONZERO trailing | {len(nonzero_trailing)} |",
+        f"| candidate slack (trailing 全 00) | {candidate_slack} |",
         "",
     ]
-    # 修正上一行: std creation data 以 cb_word 计, ex 以 extra_count 字节计
-    std_nz = [(rid, lang, cid, sz) for rid, lang, cid, sz in creation_nonzero
-              if isinstance(sz, int) and sz > 0]
-    lines[-2] = f"| nonzero creation data | {len(std_nz)} |"
     if std_nz:
-        lines += ["", "| Dialog ID | LANGID | Control ID | creation size |", "|---|---|---|---|"]
+        lines += ["", "### nonzero creation data 明细", "",
+                  "| Dialog ID | LANGID | Control ID | size_bytes |", "|---|---|---|---|"]
         for rid, lang, cid, sz in std_nz[:60]:
             lines.append(f"| {rid} | {lang} | {cid} | {sz} |")
     else:
-        lines += ["", "nonzero creation data：**无**（std cb_word 与 ex extraCount 均为 0，"
+        lines += ["", "nonzero creation data：**无**（std size_bytes 与 ex extraCount 均为 0，"
                   "UV4 样本不触发两种 size 语义差异；语义仍按微软标准分别实现并由合成 fixture 锁定）。"]
     lines += ["", "## 可识别的重要 Dialog（标题/控件文本关键词匹配）", ""]
     seen_titles = set()

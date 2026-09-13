@@ -20,9 +20,14 @@
 | ordinal titles | 5 |
 | string titles | 2307 |
 | nonzero creation data | 0 |
+| dialogs with trailing bytes | 0 |
+| max trailing bytes | 0 |
+| total trailing bytes | 0 |
+| dialogs with NONZERO trailing | 0 |
+| candidate slack (trailing 全 00) | 0 |
 
 
-nonzero creation data：**无**（std cb_word 与 ex extraCount 均为 0，UV4 样本不触发两种 size 语义差异；语义仍按微软标准分别实现并由合成 fixture 锁定）。
+nonzero creation data：**无**（std size_bytes 与 ex extraCount 均为 0，UV4 样本不触发两种 size 语义差异；语义仍按微软标准分别实现并由合成 fixture 锁定）。
 
 ## 可识别的重要 Dialog（标题/控件文本关键词匹配）
 
