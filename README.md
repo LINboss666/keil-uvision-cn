@@ -68,8 +68,8 @@ python scripts/verify.py backup\UV4_5.43.1.0_ORIGINAL.exe output\UV4_CN.exe   # 
 | PHASE 1A | 仅 RT_STRING 基础汉化（43 条，`UV4_CN_TEST.exe`） | ✅ IMPLEMENTED / ✅ STATIC VERIFIED / ✅ **USER HARDWARE TESTED / PASSED** |
 | PHASE 1B1 | RT_MENU + 补充 RT_STRING（187 条，`UV4_CN_1B1_TEST.exe`） | ✅ 静态验证 PASS / 用户 GUI：写入机制 PASS，上下文菜单 PARTIAL（运行时覆盖已定位） |
 | PHASE 1B1.1/.1a | 运行时来源调查 + mapping 工具加固 | ✅ 完成并审核通过（`DYNAMIC_MENU_MAPPING.md`） |
-| PHASE 1B1.2 | resource-only menu completion（231 条，`UV4_CN_1B1_2_TEST.exe`） | 🔍 静态验证 PASS，待 GPT 审核 → 用户真机测试 |
-| PHASE 1B2 | RT_DIALOG（Options for Target 等，需 246/246 round-trip 门禁） | 未开始（GPT 明确禁止提前进入） |
+| PHASE 1B1.2 | resource-only menu completion（231 条，`UV4_CN_1B1_2_TEST.exe`） | ✅ **RESOURCE-LEVEL COMPLETE / USER HARDWARE TESTED / COVERAGE PARTIAL BY DESIGN**（1B1 关闭） |
+| PHASE 1B2 | RT_DIALOG（Options for Target 等，需 246/246 round-trip 门禁） | 未开始（等待 GPT 批准） |
 | PHASE 1B+ | RT_MENU / 对话框 / Options for Target 等 | 未开始 |
 
 ## 环境

@@ -2,6 +2,33 @@
 
 格式：日期 / 阶段 / 提交 / 修改内容 / 涉及 Resource ID / 新增翻译条目 / 已知问题 / 测试状态。
 
+## 2026-09-13 — PHASE 1B1 FINAL VALIDATION（用户真机 GUI 验证 PASS；1B1 关闭）
+
+- **修改内容**：仅文档（TEST_REPORT / CHANGELOG / README / DYNAMIC_MENU_MAPPING 附录），
+  **不改源码、不改翻译、不生成新 EXE**。
+- **用户真机 GUI 验证**（1B1.2 构建版 `UV4_CN_1B1_2_TEST.exe`）：
+  - Project 主菜单：PASS/PARTIAL —— `新建 µVision 工程...`、`停止编译` 生效，
+    Build/Rebuild/Batch Build 中文正常；仍英文 `Options for File/Target...`、
+    `Remove File ...`、`Translate <filepath> ...`（动态文本，不视为 patch 失败）。
+  - Flash 菜单：PASS —— `擦除` 生效，Download 保持中文。
+  - Project Window 右键（Target/Group/File）：PARTIAL BY DESIGN —— 结构正常、
+    Build/Rebuild 类中文；`Options for ...`/`Add Group`/`Manage Project Items`/
+    `Open Map File`/`Open Build Log`/`Show Include File Dependencies` 等仍英文
+    （context menu 按当前对象动态适配）。
+  - Editor Context Menu：结构 PASS；`大纲/高级` 中文；Split Window horizontally、
+    Toggle Header/Code File、Go To/References 家族、断点/书签、Undo/Redo/Cut/Copy/
+    Paste/Select All 仍英文 —— resource-vs-GUI behavior strongly supports runtime
+    command-UI text replacement, consistent with MFC ON_UPDATE_COMMAND_UI /
+    CCmdUI::SetText mechanism（不声称具体 .rdata 地址已证明传入 SetText）。
+  - Build 回归：PASS（V6.24，`rt-thread.axf`，0 Error / 0 Warning）。
+- **特殊剩余项**：`Refresh Source Browser View`（RT_STRING 181 已译仍英文）→
+  记录 `unresolved runtime source / runtime override likely`，不在 1B1 深挖。
+- **最终结论**：PHASE 1B1 PASS — RESOURCE-LEVEL COMPLETE — COVERAGE PARTIAL BY
+  DESIGN；.rdata UNCHANGED；无崩溃/乱码/菜单结构损坏/command ID 异常/Build 异常。
+  剩余英文接受；更高覆盖率走 PHASE 2 — EXPERIMENTAL RDATA LOCALIZATION（未批准）。
+- **涉及 Resource ID / 新增翻译条目**：无（仅文档）。
+- **Git**：tag `v0.1-analysis` 不动；无二进制入库。
+
 ## 2026-09-13 — PHASE 1B1.2（resource-only menu completion；本地 UV4_CN_1B1_2_TEST.exe 已构建，待审核）
 
 - **feat: validate command prompt segment structure**

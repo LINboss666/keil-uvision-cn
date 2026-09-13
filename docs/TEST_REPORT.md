@@ -90,6 +90,48 @@ IDE 崩溃、构建链异常、Flash 异常、Debugger 异常、工程损坏。
 | GUI 测试矩阵（TEST 1–15） | ✅ **已执行**（用户真机测试，见"PHASE 1A 用户真机测试报告"；TEST 3/5/8/9/14/15 未单独报告） |
 | 编译一致性（原版 vs 汉化版 Rebuild + 日志/产物哈希对比） | ⚠ 严格 A/B 未执行（间接证据：汉化版 0E/0W + Flash Verify OK，见真机报告） |
 
+## PHASE 1B1 最终 GUI 验证（2026-09-13，GPT 转述用户实测）
+
+### 实测结果
+
+| 区域 | 结果 | 明细 |
+|---|---|---|
+| Project 主菜单 | ✅ PASS / PARTIAL | `New µVision Project...` → **新建 µVision 工程...** ✓；`Stop build` → **停止编译** ✓；Build Target / Rebuild / Batch Build 等既有条目继续正常中文。仍英文：`Options for File/Target...`、`Remove File ...`、`Translate <filepath> ...` —— 属动态文本 / runtime-updated 项，**不视为 RT_STRING/RT_MENU patch 失败** |
+| Flash 菜单 | ✅ PASS | `Erase` → **擦除** ✓；Download 保持中文 |
+| Project Window 右键（Target / Group / File 三种） | ⚠ PARTIAL BY DESIGN | 三种结构均正常；Build/Rebuild 类正常中文。仍英文：`Options for Target/Group/File`、`Add Group`、`Add New Item`、`Add Existing Files`、`Remove File/Group`、`Manage Project Items`、`Open Map File`、`Open Build Log`、`Show Include File Dependencies`、`Translate <file>`。结论：Keil 的 Project Window context menu 会按当前对象（Target/Group/File）动态适配文本 |
+| Editor Context Menu | ⚠ PARTIAL（结构 PASS） | 菜单结构正常，无崩溃/乱码/层级异常。仍英文：Split Window horizontally、Toggle Header/Code File、Insert/Remove Breakpoint、Enable/Disable Breakpoint、Refresh Source Browser View、Update Source Browser Information、Go To Definition/Declaration/Next·Previous Reference...、Show All References...、Insert/Remove Bookmark、Undo、Redo、Cut、Copy、Paste、Select All。中文项：大纲、高级 |
+| Build 回归 | ✅ PASS | F7：`Using Compiler V6.24`，生成 `rt-thread.axf`，**0 Error(s) / 0 Warning(s)**，无构建回归 |
+
+### 重要结论（措辞按审核要求）
+
+即使 RT_STRING / RT_MENU / command prompt 相关资源已经补齐，
+编辑器右键最终 GUI 仍显示英文 —— **resource-vs-GUI behavior strongly supports
+runtime command-UI text replacement, consistent with MFC ON_UPDATE_COMMAND_UI /
+CCmdUI::SetText mechanism**（未经 dynamic tracing / call-site analysis，
+不声称任何具体 .rdata 地址"已被证明传给 CCmdUI::SetText"）。
+
+特殊剩余项：`Refresh Source Browser View`（RT_STRING 181 已翻译，GUI 仍英文）
+→ 记录为 **unresolved runtime source / runtime override likely**，
+按审核指示不在 PHASE 1B1 继续深挖。
+
+### PHASE 1B1 最终结论
+
+| 维度 | 结果 |
+|---|---|
+| STATIC VALIDATION | ✅ PASS |
+| GUI STRUCTURE | ✅ PASS |
+| RT_STRING | ✅ PASS |
+| RT_MENU | ✅ PASS |
+| BUILD REGRESSION | ✅ PASS |
+| RESOURCE-LEVEL LOCALIZATION | ✅ PASS |
+| COVERAGE | ⚠ PARTIAL BY DESIGN（runtime override text remains English） |
+| .rdata | ✅ UNCHANGED（bit-identical，PHASE 1.x 禁改维持） |
+| 崩溃 / 乱码 / 菜单结构损坏 / command ID 异常 / Build 异常 | 无 |
+
+**PHASE 1B1 PASS — RESOURCE-LEVEL COMPLETE — COVERAGE PARTIAL BY DESIGN。**
+剩余英文接受；未来如追求更高覆盖率，走 PHASE 2 — EXPERIMENTAL RDATA
+LOCALIZATION 专项评估（当前禁止实施）。
+
 ## PHASE 1B1.2 静态验证（2026-09-13，RT_MENU 592/624/191/800/22565/400 + 补充 RT_STRING 含 command prompt）
 
 | 项 | 结果 |
