@@ -631,7 +631,7 @@ def _serialize_dialog_ast_std(ast):
         pad = c.get("pad_before", b"")
         # 翻译感知对齐: 原文长度未变时复用原 padding (无损);
         # 文本长度变化时按当前位置机械生成必要的 DWORD 对齐 (禁止错长度旧 pad)
-        out += pad if len(pad) == required else b" " * required
+        out += pad if len(pad) == required else b"\x00" * required
         out += struct.pack("<IIhhhhH", c["style"], c["exstyle"], *c["rect"], c["id"])
         out += serialize_sz_or_ord_ast(c["window_class"])
         out += serialize_sz_or_ord_ast(c["title"])
@@ -670,7 +670,7 @@ def _serialize_dialog_ast_ex(ast):
     for c in ast["controls"]:
         required = (-len(out)) & 3
         pad = c.get("pad_before", b"")
-        out += pad if len(pad) == required else b" " * required
+        out += pad if len(pad) == required else b"\x00" * required
         out += struct.pack("<IIIhhhhI", c["helpid"], c["exstyle"], c["style"],
                            *c["rect"], c["id"])
         out += serialize_sz_or_ord_ast(c["window_class"])
@@ -693,7 +693,13 @@ def serialize_dialog_ast(ast) -> bytes:
 
 
 def dialog_semantic_snapshot(ast):
-    """结构语义快照 (与具体 padding/字节布局无关, 用于语义级比较)。"""
+    """结构语义快照 (PHASE 1B2.0a 加硬)。
+
+    覆盖 kind/dlgVer/signature/helpID/style/exStyle/cDlgItems/rect/menu/
+    windowClass/font/逐控件 (helpID/style/exStyle/rect/id/class + creation
+    size 字段与内容 SHA256)/trailing 不透明字节 —— 同长度单字节变化也可发现。
+    与 padding 布局无关 (padding 属于布局, 不属于语义)。
+    """
     def sz(node):
         if node is None or node["kind"] == "none":
             return None
@@ -701,10 +707,18 @@ def dialog_semantic_snapshot(ast):
             return ("ordinal", node["value"])
         return ("string", node["value"])
 
+    def chash(b):
+        return hashlib.sha256(b).hexdigest() if b else ""
+
+    trailing = ast.get("trailing", b"")
     snap = {
         "kind": ast["kind"],
+        "dlgver": ast.get("dlgver"),
+        "signature": ast.get("signature"),
         "style": ast["header"]["style"],
         "exstyle": ast["header"]["exstyle"],
+        "cdit": ast["header"]["cdit"],
+        "helpid": ast["header"].get("helpid"),
         "rect": list(ast["header"]["rect"]),
         "menu": sz(ast["menu"]),
         "window_class": sz(ast["window_class"]),
@@ -712,16 +726,25 @@ def dialog_semantic_snapshot(ast):
         "font": dict(ast["font"]) if ast["font"] else None,
         "control_count": len(ast["controls"]),
         "controls": [],
+        "trailing_len": len(trailing),
+        "trailing_sha256": chash(trailing),
     }
     for c in ast["controls"]:
-        clen = (len(c["creation_data"]["data"])
-                if ast["kind"] == "std" and c["creation_data"]["cb_word"]
-                else len(c.get("creation_data", b"")))
+        if ast["kind"] == "std":
+            creation = {"size_bytes": c["creation_data"]["size_bytes"],
+            "creation_data_len": len(c["creation_data"]["data"]),
+                        "creation_data_sha256": chash(c["creation_data"]["data"])}
+        else:
+            creation = {"extra_count": c["extra_count"],
+            "creation_data_len": len(c["creation_data"]),
+                        "creation_data_sha256": chash(c["creation_data"])}
         snap["controls"].append({
             "helpid": c.get("helpid"),
             "style": c["style"], "exstyle": c["exstyle"], "rect": list(c["rect"]),
             "id": c["id"], "class": sz(c["window_class"]), "title": sz(c["title"]),
-            "creation_len": clen,
+            "creation_size_bytes": (c["creation_data"]["size_bytes"] if ast["kind"] == "std" else None),
+            "creation_extra_count": (c["extra_count"] if ast["kind"] == "ex" else None),
+            "creation": creation,
         })
     return snap
 
