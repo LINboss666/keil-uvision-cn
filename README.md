@@ -72,7 +72,8 @@ python scripts/verify.py backup\UV4_5.43.1.0_ORIGINAL.exe output\UV4_CN.exe   # 
 | PHASE 1B2.0/.0a | 无损 RT_DIALOG 编解码器（246/246 byte-identical 门禁） | ✅ 完成并审核通过（含 1B2.0b 加固） |
 | PHASE 1B2.1a | 首批 Dialog 烟雾测试（About/Targets/Batch Setup，20 条） | ✅ **STATIC PASS / GUI PASS / BUILD PASS**（1B2.1 关闭） |
 | PHASE 1B2.1b0 | Manage Project Items 来源调查 | ✅ 完成并审核通过 |
-| PHASE 1B2.1b1 | Manage Project Items 1033 汉化（32704 + 465/466/468） | 🔍 静态验证 PASS，待 GPT 审核 → 用户真机测试 |
+| PHASE 1B2.1b1 | Manage Project Items 1033 汉化（32704 + 465/466/468） | ✅ 静态验证 PASS（并入 1B2.2 累积测试版） |
+| PHASE 1B2.2 批次 | 工程与目标管理 Dialog 群 8 个（128/132/135/139/147/170/614/2047，+50 条） | 🔍 静态验证 PASS，待 GPT 审核 → 用户真机测试 |
 | PHASE 1B+ | RT_MENU / 对话框 / Options for Target 等 | 未开始 |
 
 ## 环境

@@ -2,6 +2,30 @@
 
 格式：日期 / 阶段 / 提交 / 修改内容 / 涉及 Resource ID / 新增翻译条目 / 已知问题 / 测试状态。
 
+## 2026-09-13 — PHASE 1B2.2 批次（工程与目标管理 Dialog 群 8 个；本地 UV4_CN_1B2_2_TEST.exe 已构建，待审核）
+
+- **批次范围**（按新流程：批次开发 + 阶段审核，5–10 Dialog / 50–150 条）：
+  RT_DIALOG 128（工程内文件）/ 132（组 / 添加文件）/ 135（文件扩展名）/
+  139（获取 '%s' 的文件类型）/ 147（选项）/ 170（器件）/ 614（管理运行时环境）/
+  2047（MDK Version 5: 器件支持），均 LANGID 1033。
+- **本轮新增 50 条**（含 8 个 Dialog title）；CSV 扩至 **334 条**。
+- **涉及 Resource ID**：RT_DIALOG 128/132/135/139/147/170/614/2047 ——
+  其余 **238 个 bit-identical**；.rdata/.text/RT_240/DLL 零改动；
+  Target 属性页三变体 142/163/178 因 GUI 来源需实证（风险边界第 10 条）
+  **明确排除**，移交后续批次。
+- **守卫实录**：gen 表 2047 草稿键（0+1000）越界被 IndexError 暴露并修正。
+- **测试状态**：apply 语义验证全过；verify --manifest PASS
+  （changed 15400B / 9478 段 / allowed=46 / non_target=0）；.rdata 逐位一致；
+  重扫描抽查（8 个 Dialog 目标项已中文、238 个未动）；DIALOG-1..9 38/38；
+  自测 7/7。GUI 测试 ⛔ 未执行（等审核后用户手动测试）。
+- **产物**：output/UV4_CN_1B2_2_TEST.exe
+  （SHA256 adcf3433bccfc832d07cec50ca4168e9424a8a90256f717682b2f79d7c65b16c，
+  本地 only，未提交、未运行）；output/uv4_cn_1b2_2_manifest.json。
+- **明确未包含（后续候选）**：375 Editor 设置页（62 控件）、142/163/178 Target 页、
+  2047 控件 11–14 引导长句、170 控件 11（双助记键）。
+- **Git**：tag v0.1-analysis 不动；无 EXE/DLL/binary dump 入库。
+
+
 ## 2026-09-13 — PHASE 1B2.1b1（Manage Project Items 1033 资源汉化；本地 UV4_CN_1B2_1B_TEST.exe 已构建，待审核）
 
 - **docs: fix Manage Project Items mapping presentation**

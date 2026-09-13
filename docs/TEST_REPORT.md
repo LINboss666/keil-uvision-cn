@@ -132,6 +132,23 @@ CCmdUI::SetText mechanism**（未经 dynamic tracing / call-site analysis，
 剩余英文接受；未来如追求更高覆盖率，走 PHASE 2 — EXPERIMENTAL RDATA
 LOCALIZATION 专项评估（当前禁止实施）。
 
+## PHASE 1B2.2 批次静态验证（2026-09-13，工程与目标管理 Dialog 群：128/132/135/139/147/170/614/2047）
+
+| 项 | 结果 |
+|---|---|
+| 基线 / 门禁 | SHA256 校验通过；**40/40 MENU round-trip** ✓；**246/246 DIALOG round-trip** ✓（applier 内置门禁 + 独立测试双重执行）；DIALOG-1..9 38/38 |
+| 写入 | 累计 334 条（本轮新增 50 条：8 个 Dialog 的 title + BUTTON/STATIC string title）；全部整资源重序列化，logical ≤ 原分配（全部缩小） |
+| Control locator | (ResourceID, LANGID, control_index) + ID/Class/Original 三重交叉校验 ✓ |
+| 逐 Dialog 验证 | 128: 398→346（pad 52）；132: 490→418（pad 72）；135: 860→688（pad 172）；139: 362→340（pad 22）；147: 472→408（pad 64）；170: 1188→1016（pad 172）；614: 440→388（pad 52）；2047: 1564→1400（pad 164）—— 仅 manifest 指定 title 路径变化 ✓ |
+| 139 标题模板 | `Get Filetype for '%s'` → `获取 '%s' 的文件类型`（printf token 保留）✓ |
+| allocation padding | 资源尾部纯 00、长度精确（= 原分配 − logical）✓ |
+| `verify.py --manifest` | **PASS**：changed_byte_count=15400，changed_ranges=9478，载荷白名单 **46 个资源范围**，**non_target_resource_changes=0**；其余 **238 个 Dialog bit-identical** |
+| .rdata bit-identical | original == patched：`7e5438f7…f912` ✓ |
+| 签名 | 原版 **Valid** → 测试版 **HashMismatch**（预期） |
+| 自测回归 | VERIFY-1..6 7/7；DIALOG-1..9 38/38 |
+| GUI 测试（1B2.2） | ⛔ **未执行** —— 等 GPT 批准后由用户手动测试 `UV4_CN_1B2_2_TEST.exe`（重点：Project 内文件/组窗口、File Extensions 页、Get Filetype 对话框（%s 文件名正常代入）、Device 页中文渲染、RTE/MDK 器件支持窗口按钮；裁切 → UI_LAYOUT_ISSUES.md） |
+
+
 ## PHASE 1B2.1b1 静态验证（2026-09-13，Manage Project Items 1033 资源：RT_STRING 32704 + RT_DIALOG 465/466/468）
 
 | 项 | 结果 |
