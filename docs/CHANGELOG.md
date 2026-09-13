@@ -2,6 +2,46 @@
 
 格式：日期 / 阶段 / 提交 / 修改内容 / 涉及 Resource ID / 新增翻译条目 / 已知问题 / 测试状态。
 
+## 2026-09-13 — PHASE 1B2.1a（首批 Dialog 烟雾测试：100/129/511；本地 UV4_CN_1B2_1A_TEST.exe 已构建，待审核）
+
+- **feat: add dialog translation applier with semantic allowlist**
+  - `extract_resources.py` 新增 `dialog_semantic_diff()`：除 manifest 指定的
+    dialog.title.value / control[index].title.value（string kind）外，
+    kind/dlgVer/signature/helpID/style/exStyle/cDlgItems/rect/menu/windowClass/
+    font/ID/class/creation size+hash 一律必须 identical；trailing 剥离后由
+    allocation padding 规则单独校验（纯 00、长度精确）。
+  - `apply_translation.py` 支持 DIALOG 行：locator =
+    (ResourceID, LANGID, control_index) + **ID/Class/Original 三重交叉校验**；
+    首轮仅 BUTTON/STATIC + string title；logical ≤ 原分配（否则
+    RESOURCE_TOO_LARGE）；allocation padding 纯 00 机械生成。
+  - `verify.py` 接受 manifest v3。
+- **feat: add phase 1b2.1a dialog translations**
+  - CSV 扩列 `CtlID`/`CtlClass`，增至 **251 条（STRING 152 + MENU 79 + DIALOG 20）**；
+    本轮新增 Dialog 文本 19 条：Dialog 100（About：标题 + OK，版权/版本/授权
+    文本保持原文）、129（Targets：标题 + 6 控件）、511（Batch Setup：标题 + 10 控件）；
+    原文含 `&` 保留原助记键字母，原文无 `&` 不加助记键。
+- **docs: add 1b2.1a candidate report and validation**
+  - `docs/DIALOG_TRANSLATION_1B2_1A.md`：四候选考察（100/129/511 入选，
+    465 暂缓）、逐控件映射表、Serialized Size/Delta/Fits（全部实测序列化）、
+    locator/助记键/RESOURCE_TOO_LARGE 评估。
+- **涉及 Resource ID**：RT_DIALOG 100/129/511（1033）—— 其余 **243 个
+  bit-identical**；RT_STRING/RT_MENU 沿用 1B1.2（本轮零新增）；
+  .rdata/.text/RT_240/DLL 零改动。
+- **新增翻译条目**：20（19 条 Dialog 文本 + CSV 中 1 条为 title 与 ctl 复计数勘误……
+  以 CSV 实际行数 251 为准：本轮净增 20 行 DIALOG）。
+- **守卫实录**：locator 拦截 2 次 Control ID 转录错误（511 ctl:4 Clean 1864→1863、
+  ctl:5 Select All 1865→1864）；511 ctl:5/ctl:6 同 ID 1865（Keil 原始资源如此）
+  —— 按 control_index 定位不受影响。
+- **测试状态**：DIALOG-1..9 **38/38**（新增语义白名单/allocation padding/
+  非 manifest 变化检测/RESOURCE_TOO_LARGE 条件断言）；verify --manifest PASS
+  （changed 9465B / 6535 段 / allowed=34 / non_target=0）；243 个未改 Dialog
+  bit-identical；.rdata SHA256 逐位一致；签名 Valid → HashMismatch（预期）；
+  自测 7/7。**GUI 测试 ⛔ 未执行**（等 GPT 批准后用户手动测试）。
+- **产物**：`output/UV4_CN_1B2_1A_TEST.exe`
+  （SHA256 `8ea6b4b339b29da66d105fcd0536334783528419adc0dd23442403b4b31b6cfc`，
+  本地 only，未提交、未运行）；`output/uv4_cn_1b2_1a_manifest.json`。
+- **Git**：tag `v0.1-analysis` 不动；无 EXE/DLL/binary dump 入库。
+
 ## 2026-09-13 — PHASE 1B2.0b（落地漏提交的语义快照加硬 + 字段规范对齐；零翻译零 EXE）
 
 - **事故与根因（GPT 审核 A/B/C 项回答）**：

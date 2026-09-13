@@ -132,6 +132,21 @@ CCmdUI::SetText mechanism**（未经 dynamic tracing / call-site analysis，
 剩余英文接受；未来如追求更高覆盖率，走 PHASE 2 — EXPERIMENTAL RDATA
 LOCALIZATION 专项评估（当前禁止实施）。
 
+## PHASE 1B2.1a 静态验证（2026-09-13，首批 Dialog 烟雾测试：100/129/511）
+
+| 项 | 结果 |
+|---|---|
+| 基线 / 门禁 | SHA256 校验通过；40/40 MENU round-trip ✓；**246/246 DIALOG round-trip** ✓（原版）；DIALOG-1..9 **38/38** |
+| 写入 | 累计 251 条（STRING 152 + MENU 79 + **DIALOG 20**）；本轮新增 Dialog 文本 19 条（100 ×2、129 ×7、511 ×11，含 dialog title） |
+| Control locator | (ResourceID, LANGID, control_index) + ID/Class/Original 三重交叉校验 ✓（实战拦截 2 次 ID 转录错误：511 ctl:4 1864→1863、ctl:5 1865→1864） |
+| 逐 Dialog 验证 | 100：1084→1080（pad 4）；129：588→472（pad 116）；511：696→536（pad 160）—— 仅 manifest 指定 title 路径变化；style/exStyle/rect/ID/class/font/helpID/creation data 全部一致 ✓ |
+| allocation padding | 资源尾部纯 00、长度精确（= 原分配 − logical）；原版 semantic trailing 保持 0 ✓ |
+| `verify.py --manifest` | **PASS**：changed_byte_count=9465，changed_ranges=6535，载荷白名单 **34 个资源范围**，**non_target_resource_changes=0**；其余 **243 个 Dialog bit-identical** |
+| .rdata bit-identical | original == patched：`7e5438f7…f912` ✓ |
+| 签名 | 原版 **Valid** → 测试版 **HashMismatch**（预期） |
+| 自测回归 | VERIFY-1..6 7/7；DIALOG-1..9 38/38 |
+| GUI 测试（1B2.1a） | ⛔ **未执行** —— 等 GPT 批准后由用户手动测试 `UV4_CN_1B2_1A_TEST.exe`（About/Targets/Batch Setup 三个窗口能否打开、中文渲染、按钮可点、Tab/焦点、关闭、有无裁切；乱码/豆腐块 → STOP 且不自动换字体；裁切记入 UI_LAYOUT_ISSUES.md） |
+
 ## PHASE 1B2.0b 验证输出（真实 stdout，2026-09-13 执行，exit=0）
 
 > 1B2.0a 审核指出：快照加硬修改漏提交（commit 8ccbbe5 仅暂存了测试文件，
