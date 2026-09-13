@@ -608,6 +608,65 @@ def parse_dialog_ast(buf: bytes):
     return _parse_dialog_ast_std(buf)
 
 
+def _serialize_dialog_ast_std(ast):
+    h = ast["header"]
+    out = bytearray()
+    out += struct.pack("<IIHhhhh", h["style"], h["exstyle"], h["cdit"], *h["rect"])
+    out += serialize_sz_or_ord_ast(ast["menu"])
+    out += serialize_sz_or_ord_ast(ast["window_class"])
+    out += ast["title"]["value"].encode("utf-16le") + b"\x00\x00"
+    f = ast["font"]
+    if f is not None:
+        out += struct.pack("<H", f["pointsize"])
+        out += f["typeface"].encode("utf-16le") + b"\x00\x00"
+    for c in ast["controls"]:
+        out += c["pad_before"]
+        out += struct.pack("<IIhhhhH", c["style"], c["exstyle"], *c["rect"], c["id"])
+        out += serialize_sz_or_ord_ast(c["window_class"])
+        out += serialize_sz_or_ord_ast(c["title"])
+        cr = c["creation_data"]
+        if cr["cb_word"] == 0:
+            out += struct.pack("<H", 0)
+        else:
+            out += struct.pack("<H", cr["cb_word"]) + cr["data"]
+    out += ast.get("trailing", b"")
+    return bytes(out)
+
+
+def _serialize_dialog_ast_ex(ast):
+    h = ast["header"]
+    out = bytearray()
+    out += struct.pack("<HH", ast["dlgver"], ast["signature"])
+    out += struct.pack("<III", h["helpid"], h["exstyle"], h["style"])
+    out += struct.pack("<Hhhhh", h["cdit"], *h["rect"])
+    out += serialize_sz_or_ord_ast(ast["menu"])
+    out += serialize_sz_or_ord_ast(ast["window_class"])
+    out += ast["title"]["value"].encode("utf-16le") + b"\x00\x00"
+    f = ast["font"]
+    if f is not None:
+        out += struct.pack("<HHBB", f["pointsize"], f["weight"],
+                           f["italic"], f["charset"])
+        out += f["typeface"].encode("utf-16le") + b"\x00\x00"
+    for c in ast["controls"]:
+        out += c["pad_before"]
+        out += struct.pack("<IIIhhhhI", c["helpid"], c["exstyle"], c["style"],
+                           *c["rect"], c["id"])
+        out += serialize_sz_or_ord_ast(c["window_class"])
+        out += serialize_sz_or_ord_ast(c["title"])
+        out += struct.pack("<H", c["extra_count"]) + c["creation_data"]
+    out += ast.get("trailing", b"")
+    return bytes(out)
+
+
+def serialize_dialog_ast(ast) -> bytes:
+    """从 lossless AST 完整重序列化 (禁止 raw search/replace / hex patch)。"""
+    if ast["kind"] == "std":
+        return _serialize_dialog_ast_std(ast)
+    if ast["kind"] == "ex":
+        return _serialize_dialog_ast_ex(ast)
+    raise ValueError(f"未知 dialog kind: {ast['kind']!r}")
+
+
 def dialog_semantic_snapshot(ast):
     """结构语义快照 (与具体 padding/字节布局无关, 用于语义级比较)。"""
     def sz(node):
