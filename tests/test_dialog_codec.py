@@ -223,6 +223,16 @@ def main(argv=None):
     record("std: 语义一致",
            er.compare_semantic_snapshots(er.dialog_semantic_snapshot(f_a),
                                          er.dialog_semantic_snapshot(a2)) == [])
+    # 防回归断言 (1B2.0b): 字段改名 (cb_word→size_bytes) 不可能再次静默漏掉
+    import hashlib as _h
+    snap4 = er.dialog_semantic_snapshot(a2)
+    payload4 = bytes([0x11, 0x22, 0x33, 0x44])
+    record("std 快照字段绑定: creation_size_bytes == 6",
+           snap4["controls"][0]["creation_size_bytes"] == 6)
+    record("std 快照字段绑定: creation_data_len == 4 且 creation_data_sha256 == sha256(payload)",
+           snap4["controls"][0]["creation"]["creation_data_len"] == 4
+           and snap4["controls"][0]["creation"]["creation_data_sha256"]
+           == _h.sha256(payload4).hexdigest())
 
     # ---- DIALOG-5: Extended 合成 fixture ----
     print("== TEST DIALOG-5: Extended 合成 fixture ==")
@@ -235,6 +245,21 @@ def main(argv=None):
            and g2["controls"][1]["extra_count"] == 5
            and g2["controls"][1]["creation_data"] == bytes([0xDE, 0xAD, 0xBE, 0xEF, 0x01]))
     record("ex: 控件起始 offset 均 DWORD 对齐", offsets_aligned(g2))
+    # 显式断言 (1B2.0b): EX 快照字段逐项绑定
+    import hashlib as _h2
+    snap5 = er.dialog_semantic_snapshot(g2)
+    payload5 = bytes([0xDE, 0xAD, 0xBE, 0xEF, 0x01])
+    record("ex 快照字段绑定: dlgVer==1 / signature==0xFFFF / dialog helpID==0x1234",
+           snap5["dlgver"] == 1 and snap5["signature"] == 0xFFFF
+           and snap5["helpid"] == 0x1234)
+    record("ex 快照字段绑定: control helpID==0x5678 / extraCount==5 / "
+           "creation_data_len==5 / creation_data_sha256==sha256(payload)",
+           snap5["controls"][0]["helpid"] == 0x5678
+           and snap5["controls"][1]["creation_extra_count"] == 5
+           and snap5["controls"][1]["creation"]["extra_count"] == 5
+           and snap5["controls"][1]["creation"]["creation_data_len"] == 5
+           and snap5["controls"][1]["creation"]["creation_data_sha256"]
+           == _h2.sha256(payload5).hexdigest())
 
     # ---- DIALOG-6: 语义验证器破坏检测 ----
     print("== TEST DIALOG-6: 字段破坏 → 语义验证器必须发现 ==")
