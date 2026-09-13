@@ -132,6 +132,61 @@ CCmdUI::SetText mechanism**（未经 dynamic tracing / call-site analysis，
 剩余英文接受；未来如追求更高覆盖率，走 PHASE 2 — EXPERIMENTAL RDATA
 LOCALIZATION 专项评估（当前禁止实施）。
 
+## PHASE 1B2.0b 验证输出（真实 stdout，2026-09-13 执行，exit=0）
+
+> 1B2.0a 审核指出：快照加硬修改漏提交（commit 8ccbbe5 仅暂存了测试文件，
+> `scripts/extract_resources.py` 的加硬版 `dialog_semantic_snapshot()` 留在
+> 未提交工作区），导致 HEAD 上 DIALOG-4 会 KeyError。本节 stdout 来自
+> **加硬版已入库后**的真实执行；另将快照字段对齐审核规范
+> （creation_data_len / creation_data_sha256 / creation_size_bytes 扁平字段），
+> 并增加防回归断言（字段改名不可能再次静默漏掉）。
+> 同时新增 `.gitattributes`（`*.py/*.md/*.csv/*.json → LF`）根治上轮
+> extract_resources.py 的整文件 CRLF/LF churn（本次提交包含该一次性归一，
+> 真实内容差异见 `git diff --ignore-cr-at-eol`：30/7 行）。
+
+```text
+RT_DIALOG 总数: 246; 基线校验: 通过
+  [PASS] DIALOG-1 parse 246/246
+  [PASS] DIALOG-2 serialize 246/246
+  [PASS] DIALOG-3 byte-identical 246/246 (std 52/52, ex 194/194)
+== TEST DIALOG-4: Standard 合成 fixture ==
+  [PASS] std: size_bytes=6/payload=4 round-trip 稳定
+  [PASS] std: nonzero creation data 保真
+  [PASS] std: odd size_bytes=7/payload=5 round-trip 稳定
+  [PASS] std: 两 fixture 控件起始 offset 均 DWORD 对齐 — offsets=[[44, 92], [44, 96]]
+  [PASS] std: 语义一致
+  [PASS] std 快照字段绑定: creation_size_bytes == 6
+  [PASS] std 快照字段绑定: creation_data_len == 4 且 creation_data_sha256 == sha256(payload)
+== TEST DIALOG-5: Extended 合成 fixture ==
+  [PASS] ex: round-trip 稳定
+  [PASS] ex: helpID/exStyle/weight/italic/charset/extraCount=5 保真
+  [PASS] ex: 控件起始 offset 均 DWORD 对齐
+  [PASS] ex 快照字段绑定: dlgVer==1 / signature==0xFFFF / dialog helpID==0x1234
+  [PASS] ex 快照字段绑定: control helpID==0x5678 / extraCount==5 / creation_data_len==5 / creation_data_sha256==sha256(payload)
+== TEST DIALOG-6: 字段破坏 → 语义验证器必须发现 ==
+  [PASS] DIALOG-6 破坏字段被语义验证器发现 (IDD_FINDREPLBASE,1033) — diffs=['controls[0].style: 1342242817 → 1342243070', "title: 'Dialog' → 'Xialog'"]
+== TEST DIALOG-7: 文本长度奇偶突变 → 对齐自动重建 ==
+  [PASS] std 对齐突变: 全部控件 offset % 4 == 0 — pads even=[0, 0] odd=[0, 2]
+  [PASS] std 覆盖 0-byte→2-byte 与 2-byte→0-byte — c2 pad: 偶长度标题 0 字节 ↔ 奇长度标题 2 字节
+  [PASS] ex 对齐突变: 全部控件 offset % 4 == 0 — pads even=[0, 0] odd=[0, 2]
+  [PASS] ex 覆盖 0-byte→2-byte 与 2-byte→0-byte — c2 pad: 偶长度标题 0 字节 ↔ 奇长度标题 2 字节
+  [PASS] std 突变前后除 title/text 外语义字段未变化
+== TEST DIALOG-8: 语义破坏守卫 (必须全部 FAIL/拒绝) ==
+  [PASS] DIALOG-8.1 dialog helpID 改 1 bit → 发现
+  [PASS] DIALOG-8.2 signature 改变 → 发现
+  [PASS] DIALOG-8.3 cDlgItems 与控件数不一致 → serializer 拒绝
+  [PASS] DIALOG-8.4 control exStyle 改变 → 发现
+  [PASS] DIALOG-8.5 creation data 同长度改 1 字节 → 发现
+  [PASS] DIALOG-8.6 extraCount 与 creation data 不一致 → serializer 拒绝
+  [PASS] DIALOG-8.7 std size_bytes 与 payload 不一致 → serializer 拒绝
+  [PASS] DIALOG-8.8 trailing 不透明字节变化 → 发现
+========================================================================
+自测结论: 29/29 项全部通过
+```
+
+回归：VERIFY-1..6 自测 7/7；`parse_dialog_template` 投影视图兼容
+（map_dynamic_strings 回归 exit=0）。
+
 ## PHASE 1B1.2 静态验证（2026-09-13，RT_MENU 592/624/191/800/22565/400 + 补充 RT_STRING 含 command prompt）
 
 | 项 | 结果 |

@@ -2,6 +2,44 @@
 
 格式：日期 / 阶段 / 提交 / 修改内容 / 涉及 Resource ID / 新增翻译条目 / 已知问题 / 测试状态。
 
+## 2026-09-13 — PHASE 1B2.0b（落地漏提交的语义快照加硬 + 字段规范对齐；零翻译零 EXE）
+
+- **事故与根因（GPT 审核 A/B/C 项回答）**：
+  - A：1B2.0a 的 "25/25 PASS" 是在**未提交的工作区**执行的 —— 加硬版
+    `dialog_semantic_snapshot()` 当时只存在于工作区；
+  - B：commit 8ccbbe5 仅 `git add tests/test_dialog_codec.py`，**漏暂存**
+    `scripts/extract_resources.py` 的快照加硬修改 → HEAD 上 DIALOG-4 必然
+    KeyError（HEAD 仍访问 `cb_word`）；
+  - C：push 未覆盖任何内容（远端 == 本地 HEAD == b397842），纯属漏暂存。
+- **fix: land hardened dialog semantic snapshot (missed from 1b2.0a)**
+  - 落地加硬版快照并按审核字段规范对齐：creation 统一为
+    `{size_bytes|extra_count, creation_data_len, creation_data_sha256}`；
+    控件新增扁平字段 `creation_size_bytes` / `creation_extra_count`
+    （防字段改名静默回归的显式绑定）；
+  - 快照覆盖：kind / dlgVer / signature / helpID / style / exStyle / cDlgItems /
+    rect / menu / windowClass / title / font / 逐控件全字段 / trailing 长度与 SHA256。
+  - 新增 `.gitattributes`（*.py/*.md/*.csv/*.json → LF）：根治上轮
+    extract_resources.py 整文件 CRLF/LF churn（本提交含该一次性归一；
+    真实内容差异 `git diff --ignore-cr-at-eol` = 30/7 行）。
+- **fix: bake gui addendum into dynamic mapping generator**
+  - 修复回归隐患：mapper 重新生成 `DYNAMIC_MENU_MAPPING.md` 时会覆盖事后追加的
+    "1B1 GUI 实测补充" 附录 —— 现将附录以 `ADDENDUM_LINES` 固化进生成器
+    （ADDENDUM_LINES 随文档自动再生，不再丢失）。
+- **test: add snapshot creation-field regression asserts**
+  - DIALOG-4/5 新增显式断言：`creation_size_bytes == 6`、
+    `creation_data_sha256 == sha256(payload)`、`creation_data_len`、
+    `dlgVer==1`、`signature==0xFFFF`、dialog/control helpID、`extraCount==5`。
+- **docs: record phase 1b2.0b validation stdout**
+  - TEST_REPORT 收录加硬版入库后的**真实 stdout**（29/29）。
+- **涉及 Resource ID / 新增翻译条目**：无（**Translations Added = 0**，
+  **Binary Modified = NO**，keil_translation.csv 未改动，未生成任何 EXE）。
+- **测试状态**：DIALOG-1..8 **29/29 通过**（含新增防回归断言）；
+  round-trip **52/52 std + 194/194 ex = 246/246**；自测 VERIFY-1..6 7/7；
+  原版 UV4.exe SHA256 复验未动（428baf13…）。
+- **已知问题**：仓库遗留一个 CRLF→LF 一次性归一（本提交内完成，
+  `.gitattributes` 防复发）；无其他新增。
+- **Git**：tag `v0.1-analysis` 不动；无 EXE/DLL/binary dump 入库。
+
 ## 2026-09-13 — PHASE 1B2.0a（dialog codec correctness hardening；纯 codec/测试/文档，零修改零翻译）
 
 - **fix: correct standard dialog creation-data byte semantics**
