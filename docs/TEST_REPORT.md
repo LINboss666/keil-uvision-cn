@@ -175,6 +175,20 @@ LOCALIZATION 专项评估（当前禁止实施）。
 | 510 | `用户` | 3/35 (大部分是 Run #N 按钮对与 DOS16 按钮，保持原文) |
 
 
+## PHASE 1B2.4 批次静态验证（2026-09-13，NoInit 恢复 + Device/Listing/Asm/Linker 4 页）
+
+| 项 | 结果 |
+|---|---|
+| 基线 / 门禁 | SHA256 通过；40/40 MENU ✓；246/246 DIALOG ✓（applier 内置 + 独立测试）；DIALOG-1..9 38/38 |
+| 写入 | 累计 535 条；1B2.4 新增 60 条：NoInit 裁切恢复 + RT_DIALOG 443 Device ×8、462 Listing ×17、459 Asm ×18、461 Linker ×16 |
+| NoInit 裁切恢复 | 500 ctl:62 从 `不初始化` 恢复为 `NoInit` ✓ |
+| 逐 Dialog 验证 | 443: 1176→?(pad ?)；462: 1822→?(pad ?)；459: 1582→?(pad ?)；461: 1724→?(pad ?)—— 仅 manifest title 路径变化 ✓ |
+| `verify.py --manifest` | **PASS**：changed_byte_count=27323，changed_ranges=14698，载荷白名单 46 个，**non_target_resource_changes=0** |
+| .rdata bit-identical | original == patched ✓ |
+| 签名 | Valid → HashMismatch（预期） |
+| GUI 测试（1B2.4） | ⛔ **未执行** —— 等 GPT 批准后由用户手动测试 UV4_CN_1B2_4_TEST.exe |
+
+
 ## PHASE 1B2.1b1 静态验证（2026-09-13，Manage Project Items 1033 资源：RT_STRING 32704 + RT_DIALOG 465/466/468）
 
 | 项 | 结果 |

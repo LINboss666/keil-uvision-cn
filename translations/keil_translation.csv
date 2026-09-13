@@ -321,7 +321,6 @@ DIALOG,500,ctl:8,4294967295,BUTTON,1033,Code Generation,代码生成,DONE,1B2.3 
 DIALOG,500,ctl:10,1904,STATIC,1033,ARM Compiler:,ARM 编译器:,DONE,1B2.3 Options sheet
 DIALOG,500,ctl:12,1905,STATIC,1033,Software Model:,软件模型:,DONE,1B2.3 Options sheet
 DIALOG,500,ctl:14,2216,STATIC,1033,CDE CoProcessors [0..7]:,CDE 协处理器 [0..7]:,DONE,1B2.3 Options sheet
-DIALOG,500,ctl:23,1815,BUTTON,1033,Use Cross-Module Optimization,使用跨模块优化,DONE,1B2.3 Options sheet
 DIALOG,500,ctl:24,1699,BUTTON,1033,Use MicroLIB,使用 MicroLIB,DONE,1B2.3 Options sheet
 DIALOG,500,ctl:25,1906,BUTTON,1033,B&ig Endian,大端(&I),DONE,1B2.3 Options sheet
 DIALOG,500,ctl:26,1903,STATIC,1033,Floating Point Hardware:,浮点硬件:,DONE,1B2.3 Options sheet
@@ -343,7 +342,7 @@ DIALOG,500,ctl:58,4294967295,STATIC,1033,default,默认,DONE,1B2.3 Options sheet
 DIALOG,500,ctl:59,4294967295,STATIC,1033,off-chip,片外,DONE,1B2.3 Options sheet
 DIALOG,500,ctl:60,4294967295,STATIC,1033,Start,起始地址,DONE,1B2.3 Options sheet
 DIALOG,500,ctl:61,4294967295,STATIC,1033,Size,大小,DONE,1B2.3 Options sheet
-DIALOG,500,ctl:62,4294967295,STATIC,1033,NoInit,不初始化,DONE,1B2.3 Options sheet
+DIALOG,500,ctl:62,4294967295,STATIC,1033,NoInit,NoInit,DONE,1B2.3 Options sheet
 DIALOG,500,ctl:63,1428,BUTTON,1033,RAM1:,RAM1:,DONE,1B2.3 Options sheet
 DIALOG,500,ctl:67,1429,BUTTON,1033,RAM2:,RAM2:,DONE,1B2.3 Options sheet
 DIALOG,500,ctl:71,1430,BUTTON,1033,RAM3:,RAM3:,DONE,1B2.3 Options sheet
@@ -372,9 +371,7 @@ DIALOG,642,ctl:12,4294967295,BUTTON,1033, Language / Code Generation, 语言 / �
 DIALOG,642,ctl:13,4294967295,STATIC,1033,&Optimization:,优化(&O):,DONE,1B2.3 Options sheet
 DIALOG,642,ctl:17,4294967295,STATIC,1033,&Warnings:,警告(&W):,DONE,1B2.3 Options sheet
 DIALOG,642,ctl:18,4294967295,STATIC,1033,Language C:,C 语言:,DONE,1B2.3 Options sheet
-DIALOG,642,ctl:19,1715,BUTTON,1033,No Auto Includes,禁止自动包含,DONE,1B2.3 Options sheet
 DIALOG,642,ctl:20,1686,BUTTON,1033,One &ELF Section per Function,每个函数独立 &ELF 段,DONE,1B2.3 Options sheet
-DIALOG,642,ctl:21,2097,BUTTON,1033,Execute-only Code,仅执行代码,DONE,1B2.3 Options sheet
 DIALOG,642,ctl:22,1714,BUTTON,1033,Thum&b Mode,Thumb 模式(&B),DONE,1B2.3 Options sheet
 DIALOG,642,ctl:23,1685,BUTTON,1033,&Split Load and Store Multiple,拆分加载与存储多重指令(&S),DONE,1B2.3 Options sheet
 DIALOG,642,ctl:24,1613,BUTTON,1033,Read-Onl&y Position Independent,只读位置无关(&Y),DONE,1B2.3 Options sheet
@@ -461,6 +458,85 @@ DIALOG,510,ctl:19,1853,BUTTON,1033,Run #1:,Run #1:,DONE,1B2.3 Options sheet
 DIALOG,510,ctl:21,1852,BUTTON,1033,...,...,DONE,1B2.3 Options sheet
 DIALOG,510,ctl:23,1855,BUTTON,1033,Run #2:,Run #2:,DONE,1B2.3 Options sheet
 DIALOG,510,ctl:26,1910,BUTTON,1033,DOS16,...,DONE,1B2.3 Options sheet
+DIALOG,443,title,,,1033,Device,器件,DONE,1B2.4 批次 (title)
+DIALOG,443,ctl:1,1223,BUTTON,1033,Device &Options...,器件选项(&O)...,DONE,1B2.4 批次
+DIALOG,443,ctl:5,4294967295,STATIC,1033,Vendor:,厂商:,DONE,1B2.4 批次
+DIALOG,443,ctl:7,4294967295,STATIC,1033,Device:,器件:,DONE,1B2.4 批次
+DIALOG,443,ctl:9,4294967295,STATIC,1033,Toolset:,工具集:,DONE,1B2.4 批次
+DIALOG,443,ctl:11,4294967295,STATIC,1033,Search:,搜索:,DONE,1B2.4 批次
+DIALOG,443,ctl:12,2093,BUTTON,1033,Software Pack,Software Pack,DONE,1B2.4 批次
+DIALOG,443,ctl:13,2094,STATIC,1033,Pack:,软件包:,DONE,1B2.4 批次
+DIALOG,443,ctl:17,1605,BUTTON,1033,Use Extended &Linker (LX51) instead of BL51,使用扩展链接器(&L)替代 BL51,DONE,1B2.4 批次
+DIALOG,443,ctl:18,1606,BUTTON,1033,Use Extended &Assembler (AX51) instead of A51 ,使用扩展汇编器(&A)替代 A51,DONE,1B2.4 批次
+DIALOG,462,title,,,1033,Listing,列表文件,DONE,1B2.4 批次 (title)
+DIALOG,462,ctl:0,1709,BUTTON,1033,&Select Folder for Listings...,选择列表文件目录(&S)...,DONE,1B2.4 批次
+DIALOG,462,ctl:1,4294967295,STATIC,1033,Page &Width:,页面宽度(&W):,DONE,1B2.4 批次
+DIALOG,462,ctl:4,4294967295,STATIC,1033,Pag&e Length:,页面长度(&E):,DONE,1B2.4 批次
+DIALOG,462,ctl:8,1710,BUTTON,1033,&Assembler Listing: *.lst (relative Pfad-Ausgabe),汇编列表: *.lst(&A),DONE,1B2.4 批次
+DIALOG,462,ctl:9,1699,BUTTON,1033,&Cross Reference,交叉引用(&X),DONE,1B2.4 批次
+DIALOG,462,ctl:13,1712,BUTTON,1033,&Compiler Listing: *.lst (relative Pfad-Ausgabe),编译列表: *.lst(&C),DONE,1B2.4 批次
+DIALOG,462,ctl:14,1296,BUTTON,1033,C Preprocessor Listing: *.lst (relative Pfad-Ausgabe),C 预处理器列表: *.lst,DONE,1B2.4 批次
+DIALOG,462,ctl:15,1714,BUTTON,1033,&Cross Reference,交叉引用(&C),DONE,1B2.4 批次
+DIALOG,462,ctl:17,1708,BUTTON,1033,&Linker Listing: *.map (relative Pfad-Ausgabe),链接列表: *.map(&L),DONE,1B2.4 批次
+DIALOG,462,ctl:18,1701,BUTTON,1033,&Memory Map,内存映射(&M),DONE,1B2.4 批次
+DIALOG,462,ctl:19,1704,BUTTON,1033,Callgrap&h,调用图(&H),DONE,1B2.4 批次
+DIALOG,462,ctl:20,1702,BUTTON,1033,S&ymbols,符号(&Y),DONE,1B2.4 批次
+DIALOG,462,ctl:21,1703,BUTTON,1033,Cross &Reference,交叉引用(&R),DONE,1B2.4 批次
+DIALOG,462,ctl:22,1705,BUTTON,1033,Size In&fo,大小信息(&F),DONE,1B2.4 批次
+DIALOG,462,ctl:23,1711,BUTTON,1033,&Totals Info,总计信息(&T),DONE,1B2.4 批次
+DIALOG,462,ctl:24,1706,BUTTON,1033,Unuse&d Sections Info,未用段信息(&D),DONE,1B2.4 批次
+DIALOG,462,ctl:25,1707,BUTTON,1033,&Veneers Info,Veneers 信息(&V),DONE,1B2.4 批次
+DIALOG,459,title,,,1033,Asm,汇编,DONE,1B2.4 批次 (title)
+DIALOG,459,ctl:0,4294967295,BUTTON,1033, Conditional Assembly Control Symbols , 条件汇编控制符号 ,DONE,1B2.4 批次
+DIALOG,459,ctl:1,4294967295,STATIC,1033,&Define:,定义(&D):,DONE,1B2.4 批次
+DIALOG,459,ctl:3,4294967295,STATIC,1033,U&ndefine:,取消定义(&U):,DONE,1B2.4 批次
+DIALOG,459,ctl:5,4294967295,BUTTON,1033, Language / Code Generation, 语言 / 代码生成,DONE,1B2.4 批次
+DIALOG,459,ctl:6,1684,BUTTON,1033,&Enable ARM/Thumb Interworking,启用 ARM/Thumb 交互(&E),DONE,1B2.4 批次
+DIALOG,459,ctl:7,1712,BUTTON,1033,Read-&Only Position Independent,只读位置无关(&O),DONE,1B2.4 批次
+DIALOG,459,ctl:8,1713,BUTTON,1033,Read-&Write Position Independent,读写位置无关(&W),DONE,1B2.4 批次
+DIALOG,459,ctl:9,1687,BUTTON,1033,&Thumb Mode,Thumb 模式(&T),DONE,1B2.4 批次
+DIALOG,459,ctl:10,1689,BUTTON,1033,No W&arnings,无警告(&W),DONE,1B2.4 批次
+DIALOG,459,ctl:11,1685,BUTTON,1033,Split &Load and Store Multiple,拆分加载与存储多重指令(&L),DONE,1B2.4 批次
+DIALOG,459,ctl:12,1688,BUTTON,1033,Software Stack-&Checking,软件栈检查(&C),DONE,1B2.4 批次
+DIALOG,459,ctl:13,4294967295,STATIC,1033,"&Include
+Paths","包含
+路径(&I)",DONE,1B2.4 批次
+DIALOG,459,ctl:16,4294967295,STATIC,1033,"&Misc
+Controls","杂项
+控制(&M)",DONE,1B2.4 批次
+DIALOG,459,ctl:18,4294967295,STATIC,1033,"Assembler
+control
+string","汇编器
+控制
+字符串",DONE,1B2.4 批次
+DIALOG,459,ctl:20,1715,BUTTON,1033,No Auto Includes,禁止自动包含,DONE,1B2.4 批次
+DIALOG,459,ctl:21,2097,BUTTON,1033,Execute-only Code,仅执行代码,DONE,1B2.4 批次
+DIALOG,459,ctl:23,2230,STATIC,1033,Assembler Option:,汇编器选项:,DONE,1B2.4 批次
+DIALOG,461,title,,,1033,Linker,链接器,DONE,1B2.4 批次 (title)
+DIALOG,461,ctl:0,1625,BUTTON,1033,&Use Memory Layout from Target Dialog,使用目标对话框的内存布局(&U),DONE,1B2.4 批次
+DIALOG,461,ctl:1,1694,BUTTON,1033,Ma&ke RW Sections Position Independent,读写段位置无关(&K),DONE,1B2.4 批次
+DIALOG,461,ctl:2,1693,BUTTON,1033,M&ake RO Sections Position Independent,只读段位置无关(&A),DONE,1B2.4 批次
+DIALOG,461,ctl:3,1692,BUTTON,1033,Do&n't Search Standard Libraries,不搜索标准库(&N),DONE,1B2.4 批次
+DIALOG,461,ctl:4,1697,BUTTON,1033,Report 'mi&ght fail' Conditions as Errors,'可能失败'条件报告为错误(&G),DONE,1B2.4 批次
+DIALOG,461,ctl:5,4294967295,STATIC,1033,&R/O Base:,R/O 基址(&R):,DONE,1B2.4 批次
+DIALOG,461,ctl:6,4294967295,STATIC,1033,R/&W Base,R/W 基址(&W):,DONE,1B2.4 批次
+DIALOG,461,ctl:7,4294967295,STATIC,1033,&disable Warnings:,禁用警告(&D):,DONE,1B2.4 批次
+DIALOG,461,ctl:12,1717,BUTTON,1033,Use Linker Control File,使用链接器控制文件,DONE,1B2.4 批次
+DIALOG,461,ctl:13,1718,BUTTON,1033,Create...,创建...,DONE,1B2.4 批次
+DIALOG,461,ctl:14,1719,BUTTON,1033,Browse...,浏览...,DONE,1B2.4 批次
+DIALOG,461,ctl:15,1720,BUTTON,1033,Edit...,编辑...,DONE,1B2.4 批次
+DIALOG,461,ctl:19,4294967295,STATIC,1033,"&Include
+Libraries","包含
+库(&I)",DONE,1B2.4 批次
+DIALOG,461,ctl:21,4294967295,STATIC,1033,"&Misc
+controls","杂项
+控制(&M)",DONE,1B2.4 批次
+DIALOG,461,ctl:23,4294967295,STATIC,1033,"&Linker
+control
+string","链接器
+控制
+字符串(&L)",DONE,1B2.4 批次
+DIALOG,461,ctl:25,4294967295,STATIC,1033,&X/O Base:,X/O 基址(&X):,DONE,1B2.4 批次
 DIALOG,465,title,,,1033,Project Items,工程项目,DONE,property page title (1B2.1b1)
 DIALOG,465,ctl:3,1728,BUTTON,1033,&Set as Current Target,设为当前目标(&S),DONE,1B2.1b1
 DIALOG,465,ctl:4,1729,BUTTON,1033,&Add Files...,添加文件(&A)...,DONE,1B2.1b1

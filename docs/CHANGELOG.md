@@ -26,6 +26,22 @@
 - **Git**：tag v0.1-analysis 不动；无 EXE/DLL/binary dump 入库。
 
 
+## 2026-09-13 — PHASE 1B2.4 批次（NoInit 裁切恢复 + Device/Listing/Asm/Linker 4 页；本地 UV4_CN_1B2_4_TEST.exe 已构建，待审核）
+
+- **批次范围**：500 ctl:62 NoInit 裁切恢复 + RT_DIALOG 443（Device ARM, 21 控件）/
+  462（Listing, 26 控件）/ 459（Asm, 24 控件）/ 461（Linker, 28 控件）。
+- **本轮新增 60 条**；CSV 扩至 **535 条**。
+- **涉及 Resource ID**：RT_DIALOG 443/462/459/461（1033）+ 500 ctl:62 覆盖 ——
+  其余 Dialog bit-identical；.rdata/.text/RT_240/DLL/859(0x2000) 零改动。
+- **测试状态**：DIALOG-1..9 38/38；自测 7/7；verify --manifest PASS
+  （changed 27323B / 14698 段 / non_target=0 / .rdata 逐位一致）。
+  GUI 测试 ⛔ 未执行。
+- **产物**：output/UV4_CN_1B2_4_TEST.exe
+  （SHA256 e6159bfa9dafec90cda8d6ef6657ba4fa28e67397fa021a47ef757ba40c1a66a，
+  本地 only）；output/uv4_cn_1b2_4_manifest.json。
+- **Git**：tag v0.1-analysis 不动；无二进制入库。
+
+
 ## 2026-09-13 — PHASE 1B2.3 批次（Options for Target ARM 属性表 6 页；本地 UV4_CN_1B2_3_TEST.exe 已构建，待审核）
 
 - **批次范围**：RT_DIALOG 500（Target/ARM, 89 控件）/ 642（C/C++ AC6, 33 控件）/
