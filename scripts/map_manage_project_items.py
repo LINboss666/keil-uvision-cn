@@ -95,7 +95,8 @@ class Index:
                 self.dialog_meta.append({
                     "id": r["name"], "lang": r["lang"], "kind": ast["kind"],
                     "size": r["size"], "title": ast["title"]["value"],
-                    "font": ast["font"], "controls": ctrls})
+                    "font": ast["font"], "control_count": len(ctrls),
+                    "controls": ctrls})
         self.rt240 = []
         for r in er.flatten_resources(pe):
             if r["type_name"] == "RT_240" and r["file_offset"]:
@@ -349,7 +350,7 @@ def main(argv=None):
         for m in metas:
             conf = "HIGH" if m["lang"] == 1033 or pid != 859 else "HIGH (来源) / LANGID 策略待批"
             L.append(f"| tab_title (page) | {tab} | RT_DIALOG id={pid} | {m['lang']} | "
-                     f"{m.get('kind')} | {m.get('controls')} | {conf} |")
+                     f"{m.get('kind')} | {m.get('control_count')} | {conf} |")
     L += ["",
           "外层标题 `Manage Project Items`：来自 RT_STRING id=32704 (1033) "
           "prompt 长段 `Manage Project Items\\nFile Extensions, Books and Environment...`"
