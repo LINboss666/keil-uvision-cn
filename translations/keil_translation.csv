@@ -1,244 +1,264 @@
-﻿ResourceType,ResourceID,ItemRef,LANGID,Original,Chinese,Status,Notes
-STRING,8,117,1033,&File,文件(&F),DONE,顶层菜单 File
-STRING,9,139,1033,&Edit,编辑(&E),DONE,顶层菜单 Edit
-STRING,11,165,1033,Fl&ash,Flash(&A),DONE,"顶层菜单 Flash, 助记键在 a"
-STRING,43,681,1033,&View,视图(&V),DONE,顶层菜单 View
-STRING,46,729,1033,&Project,工程(&P),DONE,顶层菜单 Project
-STRING,48,759,1033,&Debug,调试(&D),DONE,顶层菜单 Debug
-STRING,50,784,1033,Pe&ripherals,外设(&R),DONE,顶层菜单 Peripherals(调试模式)
-STRING,50,786,1033,&Tools,工具(&T),DONE,顶层菜单 Tools
-STRING,50,793,1033,&SVCS,SVCS(&S),DONE,"顶层菜单 SVCS, 缩写不译"
-STRING,50,795,1033,&Window,窗口(&W),DONE,顶层菜单 Window
-STRING,50,799,1033,&Help,帮助(&H),DONE,顶层菜单 Help
-STRING,8,121,1033,&New...	Ctrl+N,新建(&N)...	Ctrl+N,DONE,File>New
-STRING,8,124,1033,&Open	Ctrl+O,打开(&O)	Ctrl+O,DONE,File>Open
-STRING,8,125,1033,&Close,关闭(&C),DONE,File>Close
-STRING,9,128,1033,&Save	Ctrl+S,保存(&S)	Ctrl+S,DONE,File>Save
-STRING,9,130,1033,Save &As...,另存为(&A)...,DONE,File>Save As
-STRING,9,131,1033,Save A&ll,全部保存(&L),DONE,File>Save All
-STRING,9,132,1033,Windows...,窗口...,DONE,File>Windows... 窗口列表
-STRING,9,136,1033,&Print...	Ctrl+P,打印(&P)	Ctrl+P,DONE,File>Print
-STRING,9,137,1033,Print Pre&view,打印预览(&V),DONE,File>Print Preview
-STRING,9,138,1033,E&xit,退出(&X),DONE,File>Exit
-STRING,10,152,1033,&Build Target	F7,编译目标(&B)	F7,DONE,Build Target
-STRING,10,154,1033,&Rebuild all target files,重新编译所有目标文件(&R),DONE,Rebuild all target files
-STRING,11,166,1033,&Download,下载(&D),DONE,Flash>Download
-STRING,47,738,1033,Run-Time &Environment...,运行时环境(&E)...,DONE,Manage Run-Time Environment
-STRING,47,741,1033,Pack &Installer...,Pack 安装器(&I)...,DONE,Pack Installer
-STRING,47,743,1033,&Select Device for Target ...,为目标选择器件(&S)...,DONE,Select Device for Target
-STRING,47,748,1033,O&ptions...	Alt+F7,选项(&P)...	Alt+F7,DONE,Options for Target
-STRING,48,756,1033,Clean &Targets,清理目标(&T),DONE,Clean Targets
-STRING,48,758,1033,&Configure Flash Tools...,配置 Flash 工具(&C)...,DONE,Configure Flash Tools
-STRING,48,760,1033,Start/Stop &Debug Session	Ctrl+F5,开始/停止调试(&D)	Ctrl+F5,DONE,Start/Stop Debug Session
-STRING,48,761,1033,Reset &CPU,复位 CPU(&C),DONE,Reset CPU
-STRING,48,762,1033,&Run	F5,运行(&R)	F5,DONE,Debug>Run
-STRING,48,763,1033,&Stop	Esc,停止(&S)	Esc,DONE,Debug>Stop
-STRING,48,764,1033,S&tep	F11,单步(&T)	F11,DONE,Debug>Step
-STRING,48,765,1033,Step O&ver	F10,跳过(&V)	F10,DONE,Debug>Step Over
-STRING,48,766,1033,Ste&p Out	Ctrl+F11,跳出(&P)	Ctrl+F11,DONE,Debug>Step Out
-STRING,48,767,1033,Run to Cursor &Line	Ctrl+F10,运行到光标行(&L)	Ctrl+F10,DONE,Debug>Run to Cursor Line
-STRING,49,768,1033,Show Ne&xt Statement,显示下一条语句(&X),DONE,Debug>Show Next Statement
-STRING,49,769,1033,&Breakpoints...,断点(&B)...,DONE,Debug>Breakpoints
-STRING,49,783,1033,Debug Settin&gs...,调试设置(&G)...,DONE,Debug>Debug Settings
-STRING,43,682,1033,Status Bar,状态栏,DONE,View>Status Bar
-STRING,8,115,1033,Show Trace Data,显示跟踪数据,DONE,Show Trace Data
-STRING,9,140,1033,&Undo	Ctrl+Z,撤销(&U)	Ctrl+Z,DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,9,141,1033,&Redo	Ctrl+Shift+Z,重做(&R)	Ctrl+Shift+Z,DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,9,142,1033,Cu&t	Ctrl+X,剪切(&T)	Ctrl+X,DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,9,143,1033,&Copy	Ctrl+C,复制(&C)	Ctrl+C,DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,10,144,1033,&Paste	Ctrl+V,粘贴(&P)	Ctrl+V,DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,10,145,1033,Navigate &Backwards,向后导航(&B),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,10,146,1033,Navigate For&wards,向前导航(&W),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,10,147,1033,&Insert/Remove Bookmark	Ctrl+F2,插入/移除书签(&I)	Ctrl+F2,DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,10,148,1033,&Go to Next Bookmark	F2,转到下一书签(&G)	F2,DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,10,149,1033,Go to Previous Book&mark	Shift+F2,转到上一书签(&M)	Shift+F2,DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,10,151,1033,Clear &All Bookmarks,清除所有书签(&A),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,41,649,1033,&Find...	Ctrl+F,查找(&F)...	Ctrl+F,DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,41,650,1033,R&eplace...	Ctrl+H,替换(&E)...	Ctrl+H,DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,41,651,1033,Find in Fi&les...,在文件中查找(&L)...,DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,41,652,1033,Incremental Fin&d	Ctrl+I,增量查找(&D)	Ctrl+I,DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,41,653,1033,Outlini&ng,大纲(&N),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,41,654,1033,&Show All Outlining,显示全部大纲(&S),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,41,655,1033,&Hide All Outlining,隐藏全部大纲(&H),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,42,656,1033,&Expand All Definitions,展开全部定义(&E),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,42,657,1033,Collapse All &Definitions,折叠全部定义(&D),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,42,658,1033,Collapse Current &Block,折叠当前块(&B),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,42,659,1033,Collapse Current &Procedure,折叠当前过程(&P),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,42,660,1033,Ad&vanced,高级(&V),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,42,661,1033,&Go To Line...	Ctrl G,转到行(&G)...	Ctrl G,DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,42,663,1033,Go To Matching B&race	Ctrl E,转到匹配括号(&R)	Ctrl E,DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,42,666,1033,Make &Uppercase,转为大写(&U),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,42,667,1033,Make &Lowercase,转为小写(&L),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,42,668,1033,Co&mment Selection,注释所选(&M),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,42,669,1033,Uncomm&ent Selection,取消注释所选(&E),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,42,670,1033,&Indent Selection,缩进所选(&I),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,42,671,1033,U&nindent Selection,取消缩进所选(&N),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,43,674,1033,Delete Trailing &White Space,删除尾随空白(&W),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,43,675,1033,Delete &Horizontal White Space,删除水平空白(&H),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,43,676,1033,&Cut Current Line,剪切当前行(&C),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,43,677,1033,Go to &Definition of current Word,转到当前词的定义(&D),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,43,680,1033,C&onfiguration...,配置(&O)...,DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,43,683,1033,T&oolbars,工具栏(&O),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,43,684,1033,&File Toolbar,文件工具栏(&F),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,43,685,1033,&Edit Toolbar,编辑工具栏(&E),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,43,686,1033,&Build Toolbar,编译工具栏(&B),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,43,687,1033,&Debug Toolbar,调试工具栏(&D),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,44,688,1033,&Project Window,工程窗口(&P),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,44,689,1033,Boo&ks Window,书籍窗口(&K),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,44,690,1033,Functions Window,函数窗口,DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,44,691,1033,Templates &Window,模板窗口(&W),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,44,692,1033,Source &Browser Window,源代码浏览器窗口(&B),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,44,693,1033,Build Output Wi&ndow,编译输出窗口(&N),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,44,694,1033,&Error List Window,错误列表窗口(&E),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,44,695,1033,F&ind In Files Window,在文件中查找窗口(&I),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,44,696,1033,&Command Window,命令窗口(&C),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,44,697,1033,&Disassembly Window,反汇编窗口(&D),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,44,698,1033,Symbo&ls Window,符号窗口(&L),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,44,699,1033,Re&gisters Window,寄存器窗口(&G),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,44,700,1033,Call &Stack Window,调用栈窗口(&S),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,44,701,1033,Watc&h Windows,Watch 窗口(&H),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,45,704,1033,&Memory Windows,内存窗口(&M),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,45,705,1033,Memory &1,内存 1(&1),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,45,706,1033,Memory &2,内存 2(&2),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,45,707,1033,Memory &3,内存 3(&3),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,45,708,1033,Memory &4,内存 4(&4),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,45,709,1033,Se&rial Windows,串口窗口(&R),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,46,720,1033,Trace &Navigation,跟踪导航(&N),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,46,721,1033,Trace &Exceptions,跟踪异常(&E),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,46,723,1033,&Instruction Trace,指令跟踪(&I),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,46,724,1033,&Show Records in Disassembly,在反汇编中显示记录(&S),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,46,725,1033,&Enable Trace Recording,启用跟踪记录(&E),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,46,726,1033,&Toolbox Window,工具箱窗口(&T),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,46,727,1033,System &Viewer,系统查看器(&V),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,46,728,1033,Periodic Window &Update,定期窗口刷新(&U),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,46,730,1033,New Multi-Project &Workspace...,新建多工程工作空间(&W)...,DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,46,731,1033,&Open Project...,打开工程(&O)...,DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,46,732,1033,&Close Project,关闭工程(&C),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,46,733,1033,&Export,导出(&E),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,46,734,1033,&Manage,管理(&M),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,31,490,1033,&Import,导入(&I),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,31,492,1033,Import Project from &CPRJ Format,从 CPRJ 格式导入工程(&C),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,32,496,1033,Batch Buil&d,批量编译(&D),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,11,161,1033,Batc&h Setup...,批量编译设置(&H)...,DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,50,787,1033,Set-up &PC-Lint...,设置 PC-Lint(&P)...,DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,50,789,1033,&Lint,Lint 检查(&L),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,50,791,1033,Configure &Merge Tool...,配置合并工具(&M)...,DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,50,792,1033,&Customize Tools Menu...,自定义工具菜单(&C)...,DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,51,801,1033,&Open Books Window,打开书籍窗口(&O),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,51,804,1033,&Contact Support,联系技术支持(&C),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,51,805,1033,Check for &Update,检查更新(&U),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,51,806,1033,Set-&up Static Code Analyzer...,设置静态代码分析器(&U)...,DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,3841,61447,1033,µVision &Help,µVision帮助(&H),DONE,Edit/View/Project/Tools/Help (1B1)
-STRING,3841,61448,1033,&About µVision...,关于 µVision(&A)...,DONE,Edit/View/Project/Tools/Help (1B1)
-MENU,143,0/0,1033,O&ptions...	Alt+F7,选项(&P)...	Alt+F7,DONE,工程窗口右键>Options
-MENU,143,0/2,1033,Add New &Item to Group...,向组添加新条目(&I)...,DONE,工程窗口右键
-MENU,143,0/3,1033,Add Existing &Files to Group...,向组添加已有文件(&F)...,DONE,工程窗口右键
-MENU,143,0/4,1033,A&dd Group...,添加组(&D)...,DONE,工程窗口右键
-MENU,143,0/5,1033,R&emove Item,移除条目(&E),DONE,工程窗口右键
-MENU,143,0/6,1033,Mana&ge Project Items...,管理工程条目(&G)...,DONE,工程窗口右键
-MENU,143,0/8,1033,&Open File,打开文件(&O),DONE,工程窗口右键
-MENU,143,0/9,1033,Open &List File,打开 List 文件(&L),DONE,工程窗口右键
-MENU,143,0/10,1033,Open &Map File,打开 Map 文件(&M),DONE,工程窗口右键
-MENU,143,0/11,1033,Op&en Build Log,打开编译日志(&E),DONE,工程窗口右键
-MENU,143,0/13,1033,&Rebuild target,重新编译目标(&R),DONE,工程窗口右键
-MENU,143,0/14,1033,&Build target	F7,编译目标(&B)	F7,DONE,工程窗口右键
-MENU,143,0/15,1033,Tr&anslate File,编译当前文件(&A),DONE,工程窗口右键
-MENU,143,0/16,1033,Stop b&uild,停止编译(&U),DONE,工程窗口右键
-MENU,143,0/18,1033,Show I&nclude File Dependencies,显示头文件依赖关系(&N),DONE,工程窗口右键
-MENU,1200,0/0,1033,Global Outlining,全局大纲,DONE,编辑器右键>Global Outlining
-MENU,1200,0/0/0,1033,Collapse All Definitions,折叠全部定义,DONE,编辑器右键
-MENU,1200,0/0/2,1033,Collapse All Comments,折叠全部注释,DONE,编辑器右键
-MENU,1200,0/0/4,1033,Toggle All Outlining,切换全部大纲,DONE,编辑器右键
-MENU,1200,0/0/5,1033,Stop All Outlining,停止全部大纲,DONE,编辑器右键
-MENU,1200,0/1,1033,Selected Outlining,所选大纲,DONE,编辑器右键>Selected Outlining
-MENU,1200,0/1/0,1033,Hide Selection,隐藏所选,DONE,编辑器右键
-MENU,1200,0/1/3,1033,Collapse Current Block,折叠当前块,DONE,编辑器右键
-MENU,1200,0/1/4,1033,Collapse Current Procedure,折叠当前过程,DONE,编辑器右键
-MENU,1200,0/1/9,1033,Toggle Current Expansion,切换当前展开,DONE,编辑器右键
-MENU,1200,0/2,1033,Bookmarks,书签,DONE,编辑器右键>Bookmarks
-MENU,1200,0/2/0,1033,&Insert/Remove Bookmark,插入/移除书签(&I),DONE,编辑器右键
-MENU,1200,0/2/1,1033,&Next Bookmark,下一书签(&N),DONE,编辑器右键
-MENU,1200,0/2/2,1033,&Previous Bookmark,上一书签(&P),DONE,编辑器右键
-MENU,1200,0/2/3,1033,&Clear All Bookmarks,清除所有书签(&C),DONE,编辑器右键
-MENU,1200,0/3,1033,Toggle &Breakpoint,切换断点(&B),DONE,编辑器右键
-MENU,1205,0/0,1033,&Close,关闭(&C),DONE,编辑器标签右键
-MENU,1205,0/1,1033,Close All But This,关闭其他,DONE,编辑器标签右键
-MENU,1205,0/2,1033,Close &All,全部关闭(&A),DONE,编辑器标签右键
-MENU,1205,0/4,1033,Copy Full Path,复制完整路径,DONE,编辑器标签右键
-MENU,1205,0/5,1033,Open Containing Folder,打开所在文件夹,DONE,编辑器标签右键
-MENU,1205,0/7,1033,New Horizontal Tab Group,新建水平标签组,DONE,编辑器标签右键
-MENU,1205,0/8,1033,New Vertical Tab Group,新建垂直标签组,DONE,编辑器标签右键
-MENU,1205,0/9,1033,Move To Next Tab Group,移到下一标签组,DONE,编辑器标签右键
-MENU,1205,0/10,1033,Move To Previous Tab Group,移到上一标签组,DONE,编辑器标签右键
-MENU,1205,1/0,1033,Close,关闭,DONE,编辑器标签右键(pane)
-MENU,1205,1/1,1033,Close All But This,关闭其他,DONE,编辑器标签右键(pane)
-MENU,1205,1/2,1033,Close &All,全部关闭(&A),DONE,编辑器标签右键(pane)
-MENU,1205,1/3,1033,&Floating,浮动(&F),DONE,编辑器标签右键(pane)
-MENU,1205,1/4,1033,&Docking,停靠(&D),DONE,编辑器标签右键(pane)
-MENU,1205,1/5,1033,&Tabbed Document,标签式文档(&T),DONE,编辑器标签右键(pane)
-MENU,1205,1/6,1033,&Auto Hide,自动隐藏(&A),DONE,编辑器标签右键(pane)
-MENU,1205,1/7,1033,&Hide,隐藏(&H),DONE,编辑器标签右键(pane)
-MENU,1205,1/9,1033,New Horizontal Tab Group,新建水平标签组,DONE,编辑器标签右键(pane)
-MENU,1205,1/10,1033,New Vertical Tab Group,新建垂直标签组,DONE,编辑器标签右键(pane)
-MENU,1205,1/11,1033,Move To Next Tab Group,移到下一标签组,DONE,编辑器标签右键(pane)
-MENU,1205,1/12,1033,Move To Previous Tab Group,移到上一标签组,DONE,编辑器标签右键(pane)
-MENU,1205,2/1,1033,New Horizontal Tab Group,新建水平标签组,DONE,标签组右键
-MENU,1205,2/2,1033,New Vertical Tab Group,新建垂直标签组,DONE,标签组右键
-MENU,1205,2/3,1033,Move To Next Tab Group,移到下一标签组,DONE,标签组右键
-MENU,1205,2/4,1033,Move To Previous Tab Group,移到上一标签组,DONE,标签组右键
-STRING,10,159,1033,New µ&Vision Project...,新建 µVision 工程(&V)...,DONE,Project>New µVision Project (1B1 漏项)
-STRING,11,162,1033,Tr&anslate...	Ctrl+F7,编译当前文件(&A)...	Ctrl+F7,DONE,Project>Translate
-STRING,11,164,1033,Stop b&uild,停止编译(&U),DONE,Project>Stop build
-STRING,11,167,1033,&Erase,擦除(&E),DONE,Flash>Erase
-STRING,47,744,1033,Remo&ve Item,移除条目(&E),DONE,Project>Remove Item (GUI 实际来源)
-STRING,49,770,1033,I&nsert/Remove Breakpoint,插入/移除断点(&N),DONE,编辑器右键>Breakpoint
-STRING,49,771,1033,&Enable/Disable Breakpoint,启用/禁用断点(&E),DONE,编辑器右键>Breakpoint
-STRING,7,104,1033,Update Source Browser Information,更新源代码浏览器信息,DONE,编辑器右键>Source Browser
-STRING,12,181,1033,Refresh Source Browser View,刷新源代码浏览器视图,DONE,编辑器右键>Source Browser
-STRING,1290,20628,1033,&Undo	Ctrl+Z,撤销(&U)	Ctrl+Z,DONE,编辑器右键备用串
-STRING,1290,20629,1033,Cu&t	Ctrl+X,剪切(&T)	Ctrl+X,DONE,编辑器右键备用串
-STRING,1290,20630,1033,&Copy	Ctrl+C,复制(&C)	Ctrl+C,DONE,编辑器右键备用串
-STRING,1290,20631,1033,&Paste	Ctrl+V,粘贴(&P)	Ctrl+V,DONE,编辑器右键备用串
-STRING,1290,20632,1033,&Delete	Delete,删除(&D)	Delete,DONE,编辑器右键备用串
-STRING,1290,20633,1033,Select &All,全选(&A),DONE,编辑器右键>Select All
-STRING,3603,57634,1033,"Copy the selection to the clipboard
+﻿ResourceType,ResourceID,ItemRef,CtlID,CtlClass,LANGID,Original,Chinese,Status,Notes
+STRING,8,117,,,1033,&File,文件(&F),DONE,顶层菜单 File
+STRING,9,139,,,1033,&Edit,编辑(&E),DONE,顶层菜单 Edit
+STRING,11,165,,,1033,Fl&ash,Flash(&A),DONE,"顶层菜单 Flash, 助记键在 a"
+STRING,43,681,,,1033,&View,视图(&V),DONE,顶层菜单 View
+STRING,46,729,,,1033,&Project,工程(&P),DONE,顶层菜单 Project
+STRING,48,759,,,1033,&Debug,调试(&D),DONE,顶层菜单 Debug
+STRING,50,784,,,1033,Pe&ripherals,外设(&R),DONE,顶层菜单 Peripherals(调试模式)
+STRING,50,786,,,1033,&Tools,工具(&T),DONE,顶层菜单 Tools
+STRING,50,793,,,1033,&SVCS,SVCS(&S),DONE,"顶层菜单 SVCS, 缩写不译"
+STRING,50,795,,,1033,&Window,窗口(&W),DONE,顶层菜单 Window
+STRING,50,799,,,1033,&Help,帮助(&H),DONE,顶层菜单 Help
+STRING,8,121,,,1033,&New...	Ctrl+N,新建(&N)...	Ctrl+N,DONE,File>New
+STRING,8,124,,,1033,&Open	Ctrl+O,打开(&O)	Ctrl+O,DONE,File>Open
+STRING,8,125,,,1033,&Close,关闭(&C),DONE,File>Close
+STRING,9,128,,,1033,&Save	Ctrl+S,保存(&S)	Ctrl+S,DONE,File>Save
+STRING,9,130,,,1033,Save &As...,另存为(&A)...,DONE,File>Save As
+STRING,9,131,,,1033,Save A&ll,全部保存(&L),DONE,File>Save All
+STRING,9,132,,,1033,Windows...,窗口...,DONE,File>Windows... 窗口列表
+STRING,9,136,,,1033,&Print...	Ctrl+P,打印(&P)	Ctrl+P,DONE,File>Print
+STRING,9,137,,,1033,Print Pre&view,打印预览(&V),DONE,File>Print Preview
+STRING,9,138,,,1033,E&xit,退出(&X),DONE,File>Exit
+STRING,10,152,,,1033,&Build Target	F7,编译目标(&B)	F7,DONE,Build Target
+STRING,10,154,,,1033,&Rebuild all target files,重新编译所有目标文件(&R),DONE,Rebuild all target files
+STRING,11,166,,,1033,&Download,下载(&D),DONE,Flash>Download
+STRING,47,738,,,1033,Run-Time &Environment...,运行时环境(&E)...,DONE,Manage Run-Time Environment
+STRING,47,741,,,1033,Pack &Installer...,Pack 安装器(&I)...,DONE,Pack Installer
+STRING,47,743,,,1033,&Select Device for Target ...,为目标选择器件(&S)...,DONE,Select Device for Target
+STRING,47,748,,,1033,O&ptions...	Alt+F7,选项(&P)...	Alt+F7,DONE,Options for Target
+STRING,48,756,,,1033,Clean &Targets,清理目标(&T),DONE,Clean Targets
+STRING,48,758,,,1033,&Configure Flash Tools...,配置 Flash 工具(&C)...,DONE,Configure Flash Tools
+STRING,48,760,,,1033,Start/Stop &Debug Session	Ctrl+F5,开始/停止调试(&D)	Ctrl+F5,DONE,Start/Stop Debug Session
+STRING,48,761,,,1033,Reset &CPU,复位 CPU(&C),DONE,Reset CPU
+STRING,48,762,,,1033,&Run	F5,运行(&R)	F5,DONE,Debug>Run
+STRING,48,763,,,1033,&Stop	Esc,停止(&S)	Esc,DONE,Debug>Stop
+STRING,48,764,,,1033,S&tep	F11,单步(&T)	F11,DONE,Debug>Step
+STRING,48,765,,,1033,Step O&ver	F10,跳过(&V)	F10,DONE,Debug>Step Over
+STRING,48,766,,,1033,Ste&p Out	Ctrl+F11,跳出(&P)	Ctrl+F11,DONE,Debug>Step Out
+STRING,48,767,,,1033,Run to Cursor &Line	Ctrl+F10,运行到光标行(&L)	Ctrl+F10,DONE,Debug>Run to Cursor Line
+STRING,49,768,,,1033,Show Ne&xt Statement,显示下一条语句(&X),DONE,Debug>Show Next Statement
+STRING,49,769,,,1033,&Breakpoints...,断点(&B)...,DONE,Debug>Breakpoints
+STRING,49,783,,,1033,Debug Settin&gs...,调试设置(&G)...,DONE,Debug>Debug Settings
+STRING,43,682,,,1033,Status Bar,状态栏,DONE,View>Status Bar
+STRING,8,115,,,1033,Show Trace Data,显示跟踪数据,DONE,Show Trace Data
+STRING,9,140,,,1033,&Undo	Ctrl+Z,撤销(&U)	Ctrl+Z,DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,9,141,,,1033,&Redo	Ctrl+Shift+Z,重做(&R)	Ctrl+Shift+Z,DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,9,142,,,1033,Cu&t	Ctrl+X,剪切(&T)	Ctrl+X,DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,9,143,,,1033,&Copy	Ctrl+C,复制(&C)	Ctrl+C,DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,10,144,,,1033,&Paste	Ctrl+V,粘贴(&P)	Ctrl+V,DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,10,145,,,1033,Navigate &Backwards,向后导航(&B),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,10,146,,,1033,Navigate For&wards,向前导航(&W),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,10,147,,,1033,&Insert/Remove Bookmark	Ctrl+F2,插入/移除书签(&I)	Ctrl+F2,DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,10,148,,,1033,&Go to Next Bookmark	F2,转到下一书签(&G)	F2,DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,10,149,,,1033,Go to Previous Book&mark	Shift+F2,转到上一书签(&M)	Shift+F2,DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,10,151,,,1033,Clear &All Bookmarks,清除所有书签(&A),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,41,649,,,1033,&Find...	Ctrl+F,查找(&F)...	Ctrl+F,DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,41,650,,,1033,R&eplace...	Ctrl+H,替换(&E)...	Ctrl+H,DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,41,651,,,1033,Find in Fi&les...,在文件中查找(&L)...,DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,41,652,,,1033,Incremental Fin&d	Ctrl+I,增量查找(&D)	Ctrl+I,DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,41,653,,,1033,Outlini&ng,大纲(&N),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,41,654,,,1033,&Show All Outlining,显示全部大纲(&S),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,41,655,,,1033,&Hide All Outlining,隐藏全部大纲(&H),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,42,656,,,1033,&Expand All Definitions,展开全部定义(&E),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,42,657,,,1033,Collapse All &Definitions,折叠全部定义(&D),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,42,658,,,1033,Collapse Current &Block,折叠当前块(&B),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,42,659,,,1033,Collapse Current &Procedure,折叠当前过程(&P),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,42,660,,,1033,Ad&vanced,高级(&V),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,42,661,,,1033,&Go To Line...	Ctrl G,转到行(&G)...	Ctrl G,DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,42,663,,,1033,Go To Matching B&race	Ctrl E,转到匹配括号(&R)	Ctrl E,DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,42,666,,,1033,Make &Uppercase,转为大写(&U),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,42,667,,,1033,Make &Lowercase,转为小写(&L),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,42,668,,,1033,Co&mment Selection,注释所选(&M),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,42,669,,,1033,Uncomm&ent Selection,取消注释所选(&E),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,42,670,,,1033,&Indent Selection,缩进所选(&I),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,42,671,,,1033,U&nindent Selection,取消缩进所选(&N),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,43,674,,,1033,Delete Trailing &White Space,删除尾随空白(&W),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,43,675,,,1033,Delete &Horizontal White Space,删除水平空白(&H),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,43,676,,,1033,&Cut Current Line,剪切当前行(&C),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,43,677,,,1033,Go to &Definition of current Word,转到当前词的定义(&D),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,43,680,,,1033,C&onfiguration...,配置(&O)...,DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,43,683,,,1033,T&oolbars,工具栏(&O),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,43,684,,,1033,&File Toolbar,文件工具栏(&F),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,43,685,,,1033,&Edit Toolbar,编辑工具栏(&E),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,43,686,,,1033,&Build Toolbar,编译工具栏(&B),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,43,687,,,1033,&Debug Toolbar,调试工具栏(&D),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,44,688,,,1033,&Project Window,工程窗口(&P),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,44,689,,,1033,Boo&ks Window,书籍窗口(&K),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,44,690,,,1033,Functions Window,函数窗口,DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,44,691,,,1033,Templates &Window,模板窗口(&W),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,44,692,,,1033,Source &Browser Window,源代码浏览器窗口(&B),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,44,693,,,1033,Build Output Wi&ndow,编译输出窗口(&N),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,44,694,,,1033,&Error List Window,错误列表窗口(&E),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,44,695,,,1033,F&ind In Files Window,在文件中查找窗口(&I),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,44,696,,,1033,&Command Window,命令窗口(&C),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,44,697,,,1033,&Disassembly Window,反汇编窗口(&D),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,44,698,,,1033,Symbo&ls Window,符号窗口(&L),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,44,699,,,1033,Re&gisters Window,寄存器窗口(&G),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,44,700,,,1033,Call &Stack Window,调用栈窗口(&S),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,44,701,,,1033,Watc&h Windows,Watch 窗口(&H),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,45,704,,,1033,&Memory Windows,内存窗口(&M),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,45,705,,,1033,Memory &1,内存 1(&1),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,45,706,,,1033,Memory &2,内存 2(&2),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,45,707,,,1033,Memory &3,内存 3(&3),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,45,708,,,1033,Memory &4,内存 4(&4),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,45,709,,,1033,Se&rial Windows,串口窗口(&R),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,46,720,,,1033,Trace &Navigation,跟踪导航(&N),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,46,721,,,1033,Trace &Exceptions,跟踪异常(&E),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,46,723,,,1033,&Instruction Trace,指令跟踪(&I),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,46,724,,,1033,&Show Records in Disassembly,在反汇编中显示记录(&S),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,46,725,,,1033,&Enable Trace Recording,启用跟踪记录(&E),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,46,726,,,1033,&Toolbox Window,工具箱窗口(&T),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,46,727,,,1033,System &Viewer,系统查看器(&V),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,46,728,,,1033,Periodic Window &Update,定期窗口刷新(&U),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,46,730,,,1033,New Multi-Project &Workspace...,新建多工程工作空间(&W)...,DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,46,731,,,1033,&Open Project...,打开工程(&O)...,DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,46,732,,,1033,&Close Project,关闭工程(&C),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,46,733,,,1033,&Export,导出(&E),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,46,734,,,1033,&Manage,管理(&M),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,31,490,,,1033,&Import,导入(&I),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,31,492,,,1033,Import Project from &CPRJ Format,从 CPRJ 格式导入工程(&C),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,32,496,,,1033,Batch Buil&d,批量编译(&D),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,11,161,,,1033,Batc&h Setup...,批量编译设置(&H)...,DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,50,787,,,1033,Set-up &PC-Lint...,设置 PC-Lint(&P)...,DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,50,789,,,1033,&Lint,Lint 检查(&L),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,50,791,,,1033,Configure &Merge Tool...,配置合并工具(&M)...,DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,50,792,,,1033,&Customize Tools Menu...,自定义工具菜单(&C)...,DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,51,801,,,1033,&Open Books Window,打开书籍窗口(&O),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,51,804,,,1033,&Contact Support,联系技术支持(&C),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,51,805,,,1033,Check for &Update,检查更新(&U),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,51,806,,,1033,Set-&up Static Code Analyzer...,设置静态代码分析器(&U)...,DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,3841,61447,,,1033,µVision &Help,µVision帮助(&H),DONE,Edit/View/Project/Tools/Help (1B1)
+STRING,3841,61448,,,1033,&About µVision...,关于 µVision(&A)...,DONE,Edit/View/Project/Tools/Help (1B1)
+MENU,143,0/0,,,1033,O&ptions...	Alt+F7,选项(&P)...	Alt+F7,DONE,工程窗口右键>Options
+MENU,143,0/2,,,1033,Add New &Item to Group...,向组添加新条目(&I)...,DONE,工程窗口右键
+MENU,143,0/3,,,1033,Add Existing &Files to Group...,向组添加已有文件(&F)...,DONE,工程窗口右键
+MENU,143,0/4,,,1033,A&dd Group...,添加组(&D)...,DONE,工程窗口右键
+MENU,143,0/5,,,1033,R&emove Item,移除条目(&E),DONE,工程窗口右键
+MENU,143,0/6,,,1033,Mana&ge Project Items...,管理工程条目(&G)...,DONE,工程窗口右键
+MENU,143,0/8,,,1033,&Open File,打开文件(&O),DONE,工程窗口右键
+MENU,143,0/9,,,1033,Open &List File,打开 List 文件(&L),DONE,工程窗口右键
+MENU,143,0/10,,,1033,Open &Map File,打开 Map 文件(&M),DONE,工程窗口右键
+MENU,143,0/11,,,1033,Op&en Build Log,打开编译日志(&E),DONE,工程窗口右键
+MENU,143,0/13,,,1033,&Rebuild target,重新编译目标(&R),DONE,工程窗口右键
+MENU,143,0/14,,,1033,&Build target	F7,编译目标(&B)	F7,DONE,工程窗口右键
+MENU,143,0/15,,,1033,Tr&anslate File,编译当前文件(&A),DONE,工程窗口右键
+MENU,143,0/16,,,1033,Stop b&uild,停止编译(&U),DONE,工程窗口右键
+MENU,143,0/18,,,1033,Show I&nclude File Dependencies,显示头文件依赖关系(&N),DONE,工程窗口右键
+MENU,1200,0/0,,,1033,Global Outlining,全局大纲,DONE,编辑器右键>Global Outlining
+MENU,1200,0/0/0,,,1033,Collapse All Definitions,折叠全部定义,DONE,编辑器右键
+MENU,1200,0/0/2,,,1033,Collapse All Comments,折叠全部注释,DONE,编辑器右键
+MENU,1200,0/0/4,,,1033,Toggle All Outlining,切换全部大纲,DONE,编辑器右键
+MENU,1200,0/0/5,,,1033,Stop All Outlining,停止全部大纲,DONE,编辑器右键
+MENU,1200,0/1,,,1033,Selected Outlining,所选大纲,DONE,编辑器右键>Selected Outlining
+MENU,1200,0/1/0,,,1033,Hide Selection,隐藏所选,DONE,编辑器右键
+MENU,1200,0/1/3,,,1033,Collapse Current Block,折叠当前块,DONE,编辑器右键
+MENU,1200,0/1/4,,,1033,Collapse Current Procedure,折叠当前过程,DONE,编辑器右键
+MENU,1200,0/1/9,,,1033,Toggle Current Expansion,切换当前展开,DONE,编辑器右键
+MENU,1200,0/2,,,1033,Bookmarks,书签,DONE,编辑器右键>Bookmarks
+MENU,1200,0/2/0,,,1033,&Insert/Remove Bookmark,插入/移除书签(&I),DONE,编辑器右键
+MENU,1200,0/2/1,,,1033,&Next Bookmark,下一书签(&N),DONE,编辑器右键
+MENU,1200,0/2/2,,,1033,&Previous Bookmark,上一书签(&P),DONE,编辑器右键
+MENU,1200,0/2/3,,,1033,&Clear All Bookmarks,清除所有书签(&C),DONE,编辑器右键
+MENU,1200,0/3,,,1033,Toggle &Breakpoint,切换断点(&B),DONE,编辑器右键
+MENU,1205,0/0,,,1033,&Close,关闭(&C),DONE,编辑器标签右键
+MENU,1205,0/1,,,1033,Close All But This,关闭其他,DONE,编辑器标签右键
+MENU,1205,0/2,,,1033,Close &All,全部关闭(&A),DONE,编辑器标签右键
+MENU,1205,0/4,,,1033,Copy Full Path,复制完整路径,DONE,编辑器标签右键
+MENU,1205,0/5,,,1033,Open Containing Folder,打开所在文件夹,DONE,编辑器标签右键
+MENU,1205,0/7,,,1033,New Horizontal Tab Group,新建水平标签组,DONE,编辑器标签右键
+MENU,1205,0/8,,,1033,New Vertical Tab Group,新建垂直标签组,DONE,编辑器标签右键
+MENU,1205,0/9,,,1033,Move To Next Tab Group,移到下一标签组,DONE,编辑器标签右键
+MENU,1205,0/10,,,1033,Move To Previous Tab Group,移到上一标签组,DONE,编辑器标签右键
+MENU,1205,1/0,,,1033,Close,关闭,DONE,编辑器标签右键(pane)
+MENU,1205,1/1,,,1033,Close All But This,关闭其他,DONE,编辑器标签右键(pane)
+MENU,1205,1/2,,,1033,Close &All,全部关闭(&A),DONE,编辑器标签右键(pane)
+MENU,1205,1/3,,,1033,&Floating,浮动(&F),DONE,编辑器标签右键(pane)
+MENU,1205,1/4,,,1033,&Docking,停靠(&D),DONE,编辑器标签右键(pane)
+MENU,1205,1/5,,,1033,&Tabbed Document,标签式文档(&T),DONE,编辑器标签右键(pane)
+MENU,1205,1/6,,,1033,&Auto Hide,自动隐藏(&A),DONE,编辑器标签右键(pane)
+MENU,1205,1/7,,,1033,&Hide,隐藏(&H),DONE,编辑器标签右键(pane)
+MENU,1205,1/9,,,1033,New Horizontal Tab Group,新建水平标签组,DONE,编辑器标签右键(pane)
+MENU,1205,1/10,,,1033,New Vertical Tab Group,新建垂直标签组,DONE,编辑器标签右键(pane)
+MENU,1205,1/11,,,1033,Move To Next Tab Group,移到下一标签组,DONE,编辑器标签右键(pane)
+MENU,1205,1/12,,,1033,Move To Previous Tab Group,移到上一标签组,DONE,编辑器标签右键(pane)
+MENU,1205,2/1,,,1033,New Horizontal Tab Group,新建水平标签组,DONE,标签组右键
+MENU,1205,2/2,,,1033,New Vertical Tab Group,新建垂直标签组,DONE,标签组右键
+MENU,1205,2/3,,,1033,Move To Next Tab Group,移到下一标签组,DONE,标签组右键
+MENU,1205,2/4,,,1033,Move To Previous Tab Group,移到上一标签组,DONE,标签组右键
+STRING,10,159,,,1033,New µ&Vision Project...,新建 µVision 工程(&V)...,DONE,Project>New µVision Project (1B1 漏项)
+STRING,11,162,,,1033,Tr&anslate...	Ctrl+F7,编译当前文件(&A)...	Ctrl+F7,DONE,Project>Translate
+STRING,11,164,,,1033,Stop b&uild,停止编译(&U),DONE,Project>Stop build
+STRING,11,167,,,1033,&Erase,擦除(&E),DONE,Flash>Erase
+STRING,47,744,,,1033,Remo&ve Item,移除条目(&E),DONE,Project>Remove Item (GUI 实际来源)
+STRING,49,770,,,1033,I&nsert/Remove Breakpoint,插入/移除断点(&N),DONE,编辑器右键>Breakpoint
+STRING,49,771,,,1033,&Enable/Disable Breakpoint,启用/禁用断点(&E),DONE,编辑器右键>Breakpoint
+STRING,7,104,,,1033,Update Source Browser Information,更新源代码浏览器信息,DONE,编辑器右键>Source Browser
+STRING,12,181,,,1033,Refresh Source Browser View,刷新源代码浏览器视图,DONE,编辑器右键>Source Browser
+STRING,1290,20628,,,1033,&Undo	Ctrl+Z,撤销(&U)	Ctrl+Z,DONE,编辑器右键备用串
+STRING,1290,20629,,,1033,Cu&t	Ctrl+X,剪切(&T)	Ctrl+X,DONE,编辑器右键备用串
+STRING,1290,20630,,,1033,&Copy	Ctrl+C,复制(&C)	Ctrl+C,DONE,编辑器右键备用串
+STRING,1290,20631,,,1033,&Paste	Ctrl+V,粘贴(&P)	Ctrl+V,DONE,编辑器右键备用串
+STRING,1290,20632,,,1033,&Delete	Delete,删除(&D)	Delete,DONE,编辑器右键备用串
+STRING,1290,20633,,,1033,Select &All,全选(&A),DONE,编辑器右键>Select All
+STRING,3603,57634,,,1033,"Copy the selection to the clipboard
 Copy","将所选内容复制到剪贴板
 复制",DONE,"command prompt 57634 (整条处理,2 段)"
-STRING,3603,57635,1033,"Cut the selection and put it on the clipboard
+STRING,3603,57635,,,1033,"Cut the selection and put it on the clipboard
 Cut","剪切所选内容并将其放入剪贴板
 剪切",DONE,"command prompt 57635 (整条处理,2 段)"
-STRING,3603,57637,1033,"Insert clipboard contents
+STRING,3603,57637,,,1033,"Insert clipboard contents
 Paste","插入剪贴板内容
 粘贴",DONE,"command prompt 57637 (整条处理,2 段)"
-STRING,3603,57642,1033,"Select the entire text
+STRING,3603,57642,,,1033,"Select the entire text
 Select All","选择全部文本
 全选",DONE,"command prompt 57642 (整条处理,2 段)"
-STRING,3603,57643,1033,"Undo the last action
+STRING,3603,57643,,,1033,"Undo the last action
 Undo","撤销上一步操作
 撤销",DONE,"command prompt 57643 (整条处理,2 段)"
-STRING,3603,57644,1033,"Redo the previous Undo action
+STRING,3603,57644,,,1033,"Redo the previous Undo action
 Redo","重做上一次撤销操作
 重做",DONE,"command prompt 57644 (整条处理,2 段)"
-MENU,592,0/7,1033,Stop b&uild,停止编译(&U),DONE,工程树根右键
-MENU,592,0/9,1033,Mana&ge Project Items...,管理工程条目(&G)...,DONE,工程树根右键
-MENU,592,0/11,1033,Show I&nclude File Dependencies,显示头文件依赖关系(&N),DONE,工程树根右键
-MENU,624,0/4,1033,Mana&ge Project Items...,管理工程条目(&G)...,DONE,工程树组右键
-MENU,624,0/8,1033,Open &Map File,打开 Map 文件(&M),DONE,工程树组右键
-MENU,624,0/9,1033,Op&en Build Log,打开编译日志(&E),DONE,工程树组右键
-MENU,624,0/14,1033,Stop b&uild,停止编译(&U),DONE,工程树组右键
-MENU,624,0/16,1033,Show I&nclude File Dependencies,显示头文件依赖关系(&N),DONE,工程树组右键
-MENU,191,0/8,1033,Insert/Remove &Breakpoint,插入/移除断点(&B),DONE,"编辑器右键 DbWinMenu, 保持原助记键 B"
-MENU,191,0/9,1033,&Enable/Disable Breakpoint,启用/禁用断点(&E),DONE,编辑器右键 DbWinMenu
-MENU,191,0/17,1033,Insert/Remove Bookmark	Ctrl+F2,插入/移除书签	Ctrl+F2,DONE,编辑器右键 DbWinMenu
-MENU,191,0/19,1033,&Copy,复制(&C),DONE,编辑器右键 DbWinMenu
-MENU,800,0/8,1033,Insert/Remove &Breakpoint,插入/移除断点(&B),DONE,"编辑器右键 DbWinMenu 副本, 保持原助记键 B"
-MENU,800,0/9,1033,&Enable/Disable Breakpoint,启用/禁用断点(&E),DONE,编辑器右键 DbWinMenu 副本
-MENU,800,0/17,1033,Insert/Remove Bookmark	Ctrl+F2,插入/移除书签	Ctrl+F2,DONE,编辑器右键 DbWinMenu 副本
-MENU,800,0/19,1033,&Copy,复制(&C),DONE,编辑器右键 DbWinMenu 副本
-MENU,22565,0/0,1033,&Undo,撤销(&U),DONE,MFC 隐藏编辑弹出
-MENU,22565,0/1,1033,&Redo,重做(&R),DONE,MFC 隐藏编辑弹出
-MENU,22565,0/3,1033,Cu&t,剪切(&T),DONE,MFC 隐藏编辑弹出
-MENU,22565,0/4,1033,&Copy,复制(&C),DONE,MFC 隐藏编辑弹出
-MENU,22565,0/5,1033,&Paste,粘贴(&P),DONE,MFC 隐藏编辑弹出
-MENU,22565,0/7,1033,Select &All,全选(&A),DONE,MFC 隐藏编辑弹出
-MENU,400,0/0,1033,Select All	Ctrl+A,全选	Ctrl+A,DONE,编辑器右键(Edt)
+MENU,592,0/7,,,1033,Stop b&uild,停止编译(&U),DONE,工程树根右键
+MENU,592,0/9,,,1033,Mana&ge Project Items...,管理工程条目(&G)...,DONE,工程树根右键
+MENU,592,0/11,,,1033,Show I&nclude File Dependencies,显示头文件依赖关系(&N),DONE,工程树根右键
+MENU,624,0/4,,,1033,Mana&ge Project Items...,管理工程条目(&G)...,DONE,工程树组右键
+MENU,624,0/8,,,1033,Open &Map File,打开 Map 文件(&M),DONE,工程树组右键
+MENU,624,0/9,,,1033,Op&en Build Log,打开编译日志(&E),DONE,工程树组右键
+MENU,624,0/14,,,1033,Stop b&uild,停止编译(&U),DONE,工程树组右键
+MENU,624,0/16,,,1033,Show I&nclude File Dependencies,显示头文件依赖关系(&N),DONE,工程树组右键
+MENU,191,0/8,,,1033,Insert/Remove &Breakpoint,插入/移除断点(&B),DONE,"编辑器右键 DbWinMenu, 保持原助记键 B"
+MENU,191,0/9,,,1033,&Enable/Disable Breakpoint,启用/禁用断点(&E),DONE,编辑器右键 DbWinMenu
+MENU,191,0/17,,,1033,Insert/Remove Bookmark	Ctrl+F2,插入/移除书签	Ctrl+F2,DONE,编辑器右键 DbWinMenu
+MENU,191,0/19,,,1033,&Copy,复制(&C),DONE,编辑器右键 DbWinMenu
+MENU,800,0/8,,,1033,Insert/Remove &Breakpoint,插入/移除断点(&B),DONE,"编辑器右键 DbWinMenu 副本, 保持原助记键 B"
+MENU,800,0/9,,,1033,&Enable/Disable Breakpoint,启用/禁用断点(&E),DONE,编辑器右键 DbWinMenu 副本
+MENU,800,0/17,,,1033,Insert/Remove Bookmark	Ctrl+F2,插入/移除书签	Ctrl+F2,DONE,编辑器右键 DbWinMenu 副本
+MENU,800,0/19,,,1033,&Copy,复制(&C),DONE,编辑器右键 DbWinMenu 副本
+MENU,22565,0/0,,,1033,&Undo,撤销(&U),DONE,MFC 隐藏编辑弹出
+MENU,22565,0/1,,,1033,&Redo,重做(&R),DONE,MFC 隐藏编辑弹出
+MENU,22565,0/3,,,1033,Cu&t,剪切(&T),DONE,MFC 隐藏编辑弹出
+MENU,22565,0/4,,,1033,&Copy,复制(&C),DONE,MFC 隐藏编辑弹出
+MENU,22565,0/5,,,1033,&Paste,粘贴(&P),DONE,MFC 隐藏编辑弹出
+MENU,22565,0/7,,,1033,Select &All,全选(&A),DONE,MFC 隐藏编辑弹出
+MENU,400,0/0,,,1033,Select All	Ctrl+A,全选	Ctrl+A,DONE,编辑器右键(Edt)
+DIALOG,100,title,,,1033,About µVision,关于 µVision,DONE,Help>About (仅标题; 版权/版本/授权文本保持原文)
+DIALOG,100,ctl:9,1,BUTTON,1033,OK,确定,DONE,About>OK 按钮
+DIALOG,129,title,,,1033,Targets,目标,DONE,Project>Targets (仅标题)
+DIALOG,129,ctl:0,4294967295,BUTTON,1033, &Target to Add: , 要添加的目标(&T): ,DONE,Targets 组框标题
+DIALOG,129,ctl:2,1025,BUTTON,1033,&Add,添加(&A),DONE,Targets>Add
+DIALOG,129,ctl:3,1539,BUTTON,1033,&Copy all Settings from Current Target,从当前目标复制全部设置(&C),DONE,Targets
+DIALOG,129,ctl:4,4294967295,BUTTON,1033, &Available Targets: , 可用目标(&A): ,DONE,Targets 组框标题
+DIALOG,129,ctl:6,1026,BUTTON,1033,&Set as Current Target,设为当前目标(&S),DONE,Targets
+DIALOG,129,ctl:7,1023,BUTTON,1033,&Remove Target,移除目标(&R),DONE,Targets
+DIALOG,511,title,,,1033,Batch Setup,批量编译设置,DONE,Project>Batch Setup (仅标题)
+DIALOG,511,ctl:0,4294967295,STATIC,1033,Select Project Targets:,选择工程目标:,DONE,Batch Setup 静态标签
+DIALOG,511,ctl:2,1223,BUTTON,1033,Build,编译,DONE,Batch Setup
+DIALOG,511,ctl:3,1862,BUTTON,1033,Rebuild,重新编译,DONE,Batch Setup
+DIALOG,511,ctl:4,1863,BUTTON,1033,Clean,清理,DONE,Batch Setup
+DIALOG,511,ctl:5,1864,BUTTON,1033,Select All,全选,DONE,Batch Setup
+DIALOG,511,ctl:6,1865,BUTTON,1033,Deselect All,取消全选,DONE,"Batch Setup (与 Select All 同 ID, 按 index 定位)"
+DIALOG,511,ctl:7,2,BUTTON,1033,Cancel,取消,DONE,Batch Setup
+DIALOG,511,ctl:8,57670,BUTTON,1033,&Help,帮助(&H),DONE,Batch Setup
+DIALOG,511,ctl:9,1,BUTTON,1033,Close,关闭,DONE,Batch Setup
+DIALOG,511,ctl:10,2253,BUTTON,1033,Stop after first failing project,在首个失败工程后停止,DONE,Batch Setup
