@@ -2,6 +2,44 @@
 
 格式：日期 / 阶段 / 提交 / 修改内容 / 涉及 Resource ID / 新增翻译条目 / 已知问题 / 测试状态。
 
+## 2026-09-13 — PHASE 1B2.1b1（Manage Project Items 1033 资源汉化；本地 UV4_CN_1B2_1B_TEST.exe 已构建，待审核）
+
+- **docs: fix Manage Project Items mapping presentation**
+  - 属性表结构映射"控件数"误输出整个 controls 数组 → 修正为实测数字
+    （465→6、466→46、468→14、859→18）。
+- **feat: add dialog round-trip gate to applier**
+  - apply_translation.py 新增 dialog_roundtrip_gate()：存在 DIALOG 翻译条目时，
+    写入前强制 **246/246 RT_DIALOG parse→serialize→byte-identical**，任一失败 STOP；
+  - 阶段标识通用化：Keil Resource Localization Applier（manifest generator
+    不再写死 PHASE 1B1）。
+- **feat: localize Manage Project Items 1033 resources**
+  - CSV 扩至 **284 条**（本轮净增 33）：
+    - RT_STRING 32704（1033）：Manage Project Items
+File Extensions, Books and
+      Environment... → 管理工程项目
+设置文件扩展名、书籍和开发环境...
+      （**整条处理**，2 段结构保留；同时影响属性表标题与菜单状态 prompt，预期内）；
+    - RT_DIALOG 465：title 工程项目 + ctl:3/4/5 三个 BUTTON；
+    - RT_DIALOG 466：title 文件夹/扩展名 + 21 个 BUTTON/STATIC
+      （&BIN:/&INC:/&LIB:/&Regfile:/... 5 项 KEEP，技术缩写不强行中文化；
+       18 个 EDIT 全部 DYNAMIC 禁改）；
+    - RT_DIALOG 468：title 书籍 + 文件:/默认根目录:×3/新建/更改书籍...；
+    - 助记键：原 & 保留原字母（&U/&G/X/S/H），原文无 & 不加。
+- **涉及 Resource ID**：RT_STRING 32704 + RT_DIALOG 465/466/468（1033）——
+  **RT_DIALOG 859 (0x2000) 零改动**（STRICTLY DEFERRED / LANGID POLICY BLOCKED）；
+  其余 243 个 Dialog、.rdata/.text/RT_240/DLL 零改动。
+- **新增翻译条目**：33（累计 284）。
+- **测试状态**：apply 语义验证全过（466 46 控件逐一对账）；verify --manifest PASS
+  （changed_byte_count=12016 / changed_ranges=7743 / allowed=38 /
+  **non_target_resource_changes=0**）；.rdata SHA256 逐位一致；重扫描抽查
+  （32704 两段中文、466 全部中文且 KEEP 项原样、其余 243 Dialog 不变）；
+  自测 7/7 + DIALOG-1..9 38/38。**GUI 测试 ⛔ 未执行**（等审核后用户手动测试）。
+- **产物**：output/UV4_CN_1B2_1B_TEST.exe
+  （SHA256 3070bc349a67682addaf02dbd136dff48e49d8130a4ae02e9025c8a11c982ee5，
+  本地 only，未提交、未运行）；output/uv4_cn_1b2_1b_manifest.json。
+- **Git**：tag v0.1-analysis 不动；无 EXE/DLL/binary dump 入库。
+
+
 ## 2026-09-13 — PHASE 1B2.1a FINAL VALIDATION（用户真机 GUI 验证 PASS）
 
 - **修改内容**：仅文档（TEST_REPORT / CHANGELOG / README / DIALOG_TRANSLATION_1B2_1A

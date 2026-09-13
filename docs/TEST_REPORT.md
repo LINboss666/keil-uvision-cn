@@ -132,6 +132,24 @@ CCmdUI::SetText mechanism**（未经 dynamic tracing / call-site analysis，
 剩余英文接受；未来如追求更高覆盖率，走 PHASE 2 — EXPERIMENTAL RDATA
 LOCALIZATION 专项评估（当前禁止实施）。
 
+## PHASE 1B2.1b1 静态验证（2026-09-13，Manage Project Items 1033 资源：RT_STRING 32704 + RT_DIALOG 465/466/468）
+
+| 项 | 结果 |
+|---|---|
+| 基线 / 门禁 | SHA256 校验通过；**40/40 MENU round-trip** ✓；**246/246 DIALOG round-trip 门禁（新增，applier 内置）** ✓；DIALOG-1..9 38/38 |
+| 写入 | 累计 284 条（STRING 153 + MENU 79 + DIALOG 20 + RT_STRING 32704 等）；1B2.1b1 新增 33 条：RT_STRING 32704（prompt 整条 2 段）+ RT_DIALOG 465 ×4 / 466 ×22 / 468 ×6 |
+| Control locator | (ResourceID, LANGID, control_index) + ID/Class/Original 三重交叉校验 ✓ |
+| prompt 结构 | 32704：newline 分段 2→2，无 printf/反斜杠t，助记键 0=0 ✓ |
+| 逐 Dialog 验证 | 465：416→352（pad 64）；466：2384→2052（pad 332）；468：672→596（pad 76）—— 仅 manifest 指定 title 路径变化；style/exStyle/rect/ID/class/font/helpID/creation data 全部一致 ✓ |
+| 466 KEEP 项 | `&BIN:` `&INC:` `&LIB:` `&Regfile:` `...` 保持原文（技术缩写不强行中文化）✓ |
+| allocation padding | 资源尾部纯 00、长度精确（= 原分配 − logical）✓ |
+| verify.py --manifest | **PASS**：changed_byte_count=12016，changed_ranges=7743，载荷白名单 **38 个资源范围**，**non_target_resource_changes=0**；其余 **243 个 Dialog bit-identical** |
+| .rdata bit-identical | original == patched：7e5438f7…f912 ✓ |
+| 签名 | 原版 **Valid** → 测试版 **HashMismatch**（预期） |
+| 自测回归 | VERIFY-1..6 7/7；DIALOG-1..9 38/38 |
+| GUI 测试（1B2.1b1） | ⛔ **未执行** —— 等 GPT 批准后由用户手动测试 UV4_CN_1B2_1B_TEST.exe（重点：外层标题"管理工程项目"、三个 Tab"工程项目/文件夹/扩展名/书籍"、第四页 Project Info/Layer 仍英文预期、466 全部中文与裁切（重点 Use GCC Compiler / Setup Default ARM Compiler Version 长按钮）、468 只查 UI、动态标签 Project Targets:/Groups:/Files: 仍英文预期、OK/Cancel/Help 仍英文预期） |
+
+
 ## PHASE 1B2.1a 最终 GUI 验证（2026-09-13，GPT 转述用户实测）
 
 ### 实测环境
