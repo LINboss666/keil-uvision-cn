@@ -262,6 +262,56 @@ DIALOG,511,ctl:7,2,BUTTON,1033,Cancel,取消,DONE,Batch Setup
 DIALOG,511,ctl:8,57670,BUTTON,1033,&Help,帮助(&H),DONE,Batch Setup
 DIALOG,511,ctl:9,1,BUTTON,1033,Close,关闭,DONE,Batch Setup
 DIALOG,511,ctl:10,2253,BUTTON,1033,Stop after first failing project,在首个失败工程后停止,DONE,Batch Setup
+DIALOG,128,title,,,1033,Files in Project,工程内文件,DONE,PHASE 1B2.2 批次 (title)
+DIALOG,128,ctl:0,4294967295,STATIC,1033,&Select Group:,选择组(&S):,DONE,PHASE 1B2.2 批次
+DIALOG,128,ctl:2,4294967295,STATIC,1033,&Files in Groups:,组内文件(&F):,DONE,PHASE 1B2.2 批次
+DIALOG,128,ctl:4,1017,BUTTON,1033,&Add Files...,添加文件(&A)...,DONE,PHASE 1B2.2 批次
+DIALOG,132,title,,,1033,Groups / Add Files,组 / 添加文件,DONE,PHASE 1B2.2 批次 (title)
+DIALOG,132,ctl:0,4294967295,BUTTON,1033, &Group to Add: , 要添加的组(&G): ,DONE,PHASE 1B2.2 批次
+DIALOG,132,ctl:2,1007,BUTTON,1033,&Add,添加(&A),DONE,PHASE 1B2.2 批次
+DIALOG,132,ctl:3,4294967295,BUTTON,1033, &Available Groups: , 可用组(&A): ,DONE,PHASE 1B2.2 批次
+DIALOG,132,ctl:5,1022,BUTTON,1033,&Add Files to Group...,向组添加文件(&A)...,DONE,PHASE 1B2.2 批次
+DIALOG,132,ctl:6,1021,BUTTON,1033,&Remove Group,移除组(&R),DONE,PHASE 1B2.2 批次
+DIALOG,135,title,,,1033,File Extensions,文件扩展名,DONE,PHASE 1B2.2 批次 (title)
+DIALOG,135,ctl:0,4294967295,STATIC,1033, Default File Type Extensions:, 默认文件类型扩展名:,DONE,PHASE 1B2.2 批次
+DIALOG,135,ctl:1,4294967295,STATIC,1033,C Source File:,C 源文件:,DONE,PHASE 1B2.2 批次
+DIALOG,135,ctl:3,4294967295,STATIC,1033,C++ Source File:,C++ 源文件:,DONE,PHASE 1B2.2 批次
+DIALOG,135,ctl:5,4294967295,STATIC,1033,Asm Source File:,汇编源文件:,DONE,PHASE 1B2.2 批次
+DIALOG,135,ctl:7,4294967295,STATIC,1033,Object File:,目标文件:,DONE,PHASE 1B2.2 批次
+DIALOG,135,ctl:9,4294967295,STATIC,1033,Library File:,库文件:,DONE,PHASE 1B2.2 批次
+DIALOG,135,ctl:11,4294967295,STATIC,1033,Document File:,文档文件:,DONE,PHASE 1B2.2 批次
+DIALOG,135,ctl:13,4294967295,STATIC,1033,PL/M Source File:,PL/M 源文件:,DONE,PHASE 1B2.2 批次
+DIALOG,139,title,,,1033,Get Filetype for '%s',获取 '%s' 的文件类型,DONE,PHASE 1B2.2 批次 (title)
+DIALOG,139,ctl:0,4294967295,STATIC,1033,File:,文件:,DONE,PHASE 1B2.2 批次
+DIALOG,139,ctl:2,4294967295,STATIC,1033,Type:,类型:,DONE,PHASE 1B2.2 批次
+DIALOG,139,ctl:4,1,BUTTON,1033,&OK,确定(&O),DONE,PHASE 1B2.2 批次
+DIALOG,139,ctl:5,2,BUTTON,1033,&Cancel,取消(&C),DONE,PHASE 1B2.2 批次
+DIALOG,147,title,,,1033,Options,选项,DONE,PHASE 1B2.2 批次 (title)
+DIALOG,147,ctl:0,4294967295,STATIC,1033,Target:,目标:,DONE,PHASE 1B2.2 批次
+DIALOG,147,ctl:4,4294967295,STATIC,1033,Translators Command Line:,翻译器命令行:,DONE,PHASE 1B2.2 批次
+DIALOG,147,ctl:6,1,BUTTON,1033,OK,确定,DONE,PHASE 1B2.2 批次
+DIALOG,147,ctl:7,2,BUTTON,1033,Cancel,取消,DONE,PHASE 1B2.2 批次
+DIALOG,170,title,,,1033,Device,器件,DONE,PHASE 1B2.2 批次 (title)
+DIALOG,170,ctl:0,4294967295,STATIC,1033,Vendor:,厂商:,DONE,PHASE 1B2.2 批次
+DIALOG,170,ctl:2,4294967295,STATIC,1033,Device:,器件:,DONE,PHASE 1B2.2 批次
+DIALOG,170,ctl:4,4294967295,STATIC,1033,Toolset:,工具集:,DONE,PHASE 1B2.2 批次
+DIALOG,170,ctl:6,4294967295,STATIC,1033,Search:,搜索:,DONE,PHASE 1B2.2 批次
+DIALOG,170,ctl:9,4294967295,STATIC,1033,Des&cription:,描述(&C):,DONE,PHASE 1B2.2 批次
+DIALOG,170,ctl:13,1605,BUTTON,1033,Use Extended &Linker (LX51) instead of BL51,使用扩展链接器(&L)替代 BL51,DONE,PHASE 1B2.2 批次
+DIALOG,170,ctl:14,1606,BUTTON,1033,Use Extended &Assembler (AX51) instead of A51 ,使用扩展汇编器(&A)替代 A51,DONE,PHASE 1B2.2 批次
+DIALOG,170,ctl:15,4294967295,STATIC,1033,&Select Toolset:,选择工具集(&S),DONE,PHASE 1B2.2 批次
+DIALOG,614,title,,,1033,Manage Run-Time Environment,管理运行时环境,DONE,PHASE 1B2.2 批次 (title)
+DIALOG,614,ctl:0,1,BUTTON,1033,OK,确定,DONE,PHASE 1B2.2 批次
+DIALOG,614,ctl:1,2,BUTTON,1033,Cancel,取消,DONE,PHASE 1B2.2 批次
+DIALOG,614,ctl:3,57670,BUTTON,1033,Help,帮助,DONE,PHASE 1B2.2 批次
+DIALOG,2047,title,,,1033,MDK Version 5: Device Support,MDK Version 5: 器件支持,DONE,PHASE 1B2.2 批次 (title)
+DIALOG,2047,ctl:2,4294967295,STATIC,1033,Install Software Pack with device support and select device,安装包含器件支持的 Software Pack 并选择器件,DONE,PHASE 1B2.2 批次
+DIALOG,2047,ctl:3,4294967295,STATIC,1033,Device:,器件:,DONE,PHASE 1B2.2 批次
+DIALOG,2047,ctl:4,4294967295,STATIC,1033,Vendor:,厂商:,DONE,PHASE 1B2.2 批次
+DIALOG,2047,ctl:8,10003,STATIC,1033,The device support for MDK Version 5 is provided as Software Pack.,MDK Version 5 的器件支持以 Software Pack 形式提供。,DONE,PHASE 1B2.2 批次
+DIALOG,2047,ctl:9,4294967295,STATIC,1033,Project:,工程:,DONE,PHASE 1B2.2 批次
+DIALOG,2047,ctl:0,1,BUTTON,1033,OK,确定,DONE,PHASE 1B2.2 批次
+DIALOG,2047,ctl:1,2,BUTTON,1033,Cancel,取消,DONE,PHASE 1B2.2 批次
 DIALOG,465,title,,,1033,Project Items,工程项目,DONE,property page title (1B2.1b1)
 DIALOG,465,ctl:3,1728,BUTTON,1033,&Set as Current Target,设为当前目标(&S),DONE,1B2.1b1
 DIALOG,465,ctl:4,1729,BUTTON,1033,&Add Files...,添加文件(&A)...,DONE,1B2.1b1
