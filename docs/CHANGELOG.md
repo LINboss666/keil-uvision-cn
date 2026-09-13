@@ -2,6 +2,29 @@
 
 格式：日期 / 阶段 / 提交 / 修改内容 / 涉及 Resource ID / 新增翻译条目 / 已知问题 / 测试状态。
 
+## 2026-09-13 — PHASE 1B2.1a FINAL VALIDATION（用户真机 GUI 验证 PASS）
+
+- **修改内容**：仅文档（TEST_REPORT / CHANGELOG / README / DIALOG_TRANSLATION_1B2_1A
+  附录），**不改源码、不改翻译、不生成新 EXE**。
+- **用户真机 GUI 验证**（`UV4_CN_1B2_1A_TEST.exe` + NS800 RT-Thread 工程）：
+  - Dialog 100 About µVision：**PASS** —— 标题"关于 µVision"、OK"确定"正常；
+    版本/版权/License/Legal Notices/Copy Info 保持英文（符合要求）；
+    Arial 9pt 未改，中文渲染正常；无乱码/豆腐块/崩溃/错位/裁切。
+  - Dialog 511 Batch Setup：**PASS** —— 11 项中文全部正常（批量编译设置/选择工程
+    目标/编译/重新编译/清理/全选/取消全选/取消/帮助(H)/关闭/在首个失败工程后停止）；
+    工程/目标名（project、rt-thread）未被误改；MS Shell Dlg 8pt / DS_SHELLFONT
+    未改，渲染正常。
+  - Dialog 129 Targets：**NOT EXERCISED / UI ENTRY NOT RESOLVED** —— 未找到直接
+    用户入口（用户打开的是 Manage Project Items 窗口）；未标记 FAIL，不追加测试。
+  - 非目标回归：Options for Target 'rt-thread' 与 Manage Project Items 正常打开
+    （保持英文符合预期）—— 非目标 Dialog 未被误伤。
+  - Build 回归：PASS（V6.24，`rt-thread.axf`，0 Error / 0 Warning）。
+- **最终结论**：PHASE 1B2.1a **PASS** —— STATIC VALIDATION / DIALOG CODEC /
+  ABOUT GUI / BATCH SETUP GUI / NON-TARGET REGRESSION / BUILD / FONT RENDERING /
+  LAYOUT 全部 PASS（no obvious clipping found）。
+- **涉及 Resource ID / 新增翻译条目**：无（仅文档）。
+- **Git**：tag `v0.1-analysis` 不动；无二进制入库。
+
 ## 2026-09-13 — PHASE 1B2.1a（首批 Dialog 烟雾测试：100/129/511；本地 UV4_CN_1B2_1A_TEST.exe 已构建，待审核）
 
 - **feat: add dialog translation applier with semantic allowlist**

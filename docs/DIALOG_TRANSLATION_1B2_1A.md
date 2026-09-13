@@ -86,3 +86,15 @@ STATIC 文本**保持英文原文**，仅译标题与 OK 按钮。
 三个入选 Dialog 序列化后均 **缩小**（−4 / −116 / −160 字节），
 allocation padding 以纯 00 填充至原分配尺寸；Resource Data Entry size 保持原值；
 无任何 .rsrc 扩展或资源移动。
+
+## GUI 实测结果（2026-09-13 最终验证）
+
+| Dialog | 结果 | 要点 |
+|---|---|---|
+| 100 About µVision | ✅ PASS | 标题/OK 中文正常；版本/版权/License/Legal Notices/Copy Info 保持英文（符合要求）；Arial 9pt 未改，中文渲染正常；无裁切 |
+| 511 Batch Setup | ✅ PASS | 11 项中文全部正常（含 帮助(H) 助记键）；工程/目标名（project、rt-thread）未被误改；MS Shell Dlg 8pt / DS_SHELLFONT 未改，渲染正常；无裁切 |
+| 129 Targets | ➖ **NOT EXERCISED / UI ENTRY NOT RESOLVED** | 未找到直接用户入口（用户打开的是 Manage Project Items 窗口，非本 Dialog）；按指示不追加测试，未标记 FAIL |
+
+非目标回归：Options for Target 'rt-thread' 与 Manage Project Items 均正常打开
+（保持英文符合预期）—— 非目标 Dialog 未被误伤。Build 回归 PASS（0E/0W）。
+字体渲染 PASS（未修改字体，中文正常）；布局 PASS（no obvious clipping found）。

@@ -132,6 +132,46 @@ CCmdUI::SetText mechanism**（未经 dynamic tracing / call-site analysis，
 剩余英文接受；未来如追求更高覆盖率，走 PHASE 2 — EXPERIMENTAL RDATA
 LOCALIZATION 专项评估（当前禁止实施）。
 
+## PHASE 1B2.1a 最终 GUI 验证（2026-09-13，GPT 转述用户实测）
+
+### 实测环境
+
+`UV4_CN_1B2_1A_TEST.exe` ｜ 基线 µVision 5.43.1.0 ｜ 工程 NS800 RT-Thread `project.uvprojx`
+
+### 逐 Dialog 实测结果
+
+| Dialog | 结果 | 实测明细 |
+|---|---|---|
+| 100 — About µVision | ✅ PASS | 标题 `About µVision` → **关于 µVision** ✓；`OK` → **确定** ✓；中文显示正常。无乱码/豆腐块/字符缺失/Dialog 崩溃/控件错位/明显裁切。版本、版权、License、Legal Notices、Copy Info 等法律/授权/版本文本保持英文 —— 符合本阶段要求。字体 Arial 9pt 未修改，中文可正常显示 |
+| 511 — Batch Setup | ✅ PASS | 实测中文：批量编译设置 / 选择工程目标 / 编译 / 重新编译 / 清理 / 全选 / 取消全选 / 取消 / 帮助(H) / 关闭 / 在首个失败工程后停止 全部正常。Project/Target 名称（project、rt-thread）保持用户工程原始内容，未被错误汉化。无乱码/豆腐块/崩溃/按钮错位/明显裁切。字体 MS Shell Dlg 8pt（DS_SHELLFONT=yes）未修改 |
+| 129 — Targets | ➖ **NOT EXERCISED / UI ENTRY NOT RESOLVED** | 本轮未找到直接用户入口，**不标记 FAIL**。用户实际打开的是 Project → Manage → Project Items（对应当前正式工作流的 Manage Project Items 窗口，非 Dialog 129）。按 GPT 指示不追加测试 Dialog 129 |
+
+### 非目标 Dialog 回归
+
+| 窗口 | 结果 |
+|---|---|
+| Options for Target 'rt-thread' | ✅ 正常打开，所有 Tab/控件布局正常（本阶段未翻译，保持英文符合预期） |
+| Manage Project Items | ✅ 正常打开，显示 Project Targets / Groups / Files / Set as Current Target / Add Files / OK / Cancel / Help 等英文（本阶段未翻译，符合预期）—— **证明非目标 Dialog 未被误伤** |
+
+### Build 回归
+
+F7：`Using Compiler V6.24`，生成 `rt-thread.axf`，**0 Error(s) / 0 Warning(s)** —— 无构建回归。
+
+### PHASE 1B2.1a 最终结论
+
+| 维度 | 结果 |
+|---|---|
+| STATIC VALIDATION | ✅ PASS |
+| DIALOG CODEC | ✅ PASS |
+| ABOUT GUI | ✅ PASS |
+| BATCH SETUP GUI | ✅ PASS |
+| NON-TARGET DIALOG REGRESSION | ✅ PASS |
+| BUILD | ✅ PASS |
+| FONT RENDERING | ✅ PASS |
+| LAYOUT | ✅ PASS（no obvious clipping found） |
+
+**PHASE 1B2.1a：PASS**（Dialog 129 NOT EXERCISED / UI ENTRY NOT RESOLVED，未标记 FAIL）。
+
 ## PHASE 1B2.1a 静态验证（2026-09-13，首批 Dialog 烟雾测试：100/129/511）
 
 | 项 | 结果 |
