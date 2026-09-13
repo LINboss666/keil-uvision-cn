@@ -93,6 +93,20 @@ def template_regex(template: str):
     return re.compile(r"^\s*" + r"(.{0,64}?)".join(parts) + r"\s*$", re.IGNORECASE | re.DOTALL)
 
 
+def resource_template_match(resource_text: str, gui: str):
+    """反向模板匹配: 把含 %s 的资源文本按 %s 切分构造正则, 对 GUI 实例做全文匹配。
+
+    用于捕获 '%sptions for Target '%s'%s%s' 这类多参数复用模板
+    (渲染为 'O'+'ptions for Target 'rt-thread''+''+'...')。
+    """
+    if "%s" not in resource_text:
+        return False
+    parts = [re.escape(p) for p in strip_amp(resource_text).split("%s")]
+    rx = re.compile(r"^\s*" + r"(.{0,80}?)".join(parts) + r"\s*$",
+                    re.IGNORECASE | re.DOTALL)
+    return rx.match(gui.strip()) is not None
+
+
 def ev(source_type, *, section=None, encoding=None, offset=None, resource_id=None,
        lang=None, item_path=None, command_id=None, text=None, match_type=None):
     """构造一条结构化证据。"""
@@ -193,6 +207,8 @@ class SourceIndex:
                     kind = "exact"
                 elif tmpl_re and tmpl_re.match(strip_amp(t)):
                     kind = "template"
+                elif "%s" in t and resource_template_match(t, gui):
+                    kind = "template"      # 资源即模板: '%sptions for Target '%s'%s%s' 一类
                 elif want and want in tn and len(tn) <= len(want) + 24:
                     kind = "contains"
                 if kind:
@@ -288,7 +304,7 @@ def classify(evidence, translated_ids, translated_menu_paths):
     if any(e["source_type"] == "RT_STRING" and e["match_type"] == "template"
            for e in evidence):
         parts.append("C 动态格式串(RT_STRING)")
-    # A: RT_STRING 精确匹配
+    # A: RT_STRING 精确匹配 (contains 命中单独降级标注)
     a = [e for e in evidence
          if e["source_type"] == "RT_STRING" and e["match_type"] == "exact"]
     if a:
@@ -296,7 +312,15 @@ def classify(evidence, translated_ids, translated_menu_paths):
             parts.append("A 静态RT_STRING(已译→GUI仍英文,疑似运行时覆盖)")
         else:
             parts.append("A 静态RT_STRING(未译)")
-    # B: RT_MENU 精确匹配
+    else:
+        a_c = [e for e in evidence
+               if e["source_type"] == "RT_STRING" and e["match_type"] == "contains"]
+        if a_c:
+            if any(e["resource_id"] in translated_ids for e in a_c):
+                parts.append("A 静态RT_STRING[contains](已译→GUI仍英文,疑似运行时覆盖)")
+            else:
+                parts.append("A 静态RT_STRING[contains](未译)")
+    # B: RT_MENU 精确匹配 (contains 命中单独降级标注)
     b = [e for e in evidence
          if e["source_type"] == "RT_MENU" and e["match_type"] == "exact"]
     if b:
@@ -305,6 +329,15 @@ def classify(evidence, translated_ids, translated_menu_paths):
             parts.append("B 静态RT_MENU(已译→GUI仍英文,疑似运行时覆盖)")
         else:
             parts.append("B 静态RT_MENU(未译)")
+    else:
+        b_c = [e for e in evidence
+               if e["source_type"] == "RT_MENU" and e["match_type"] == "contains"]
+        if b_c:
+            if any((e["resource_id"], e["lang"], e.get("item_path")) in translated_menu_paths
+                   for e in b_c):
+                parts.append("B 静态RT_MENU[contains](已译→GUI仍英文,疑似运行时覆盖)")
+            else:
+                parts.append("B 静态RT_MENU[contains](未译)")
     # D: 仅 section==.rdata 的 RAW 证据
     d = [e for e in evidence
          if e["source_type"] == "RAW" and e["section"] == ".rdata"]
