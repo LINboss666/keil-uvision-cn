@@ -623,16 +623,29 @@ def _serialize_dialog_ast_std(ast):
     if f is not None:
         out += struct.pack("<H", f["pointsize"])
         out += f["typeface"].encode("utf-16le") + b"\x00\x00"
+    if h["cdit"] != len(ast["controls"]):
+        raise ValueError(f"cDlgItems ({h['cdit']}) != controls 数量 "
+                         f"({len(ast['controls'])}) - 拒绝序列化")
     for c in ast["controls"]:
-        out += c["pad_before"]
+        required = (-len(out)) & 3
+        pad = c.get("pad_before", b"")
+        # 翻译感知对齐: 原文长度未变时复用原 padding (无损);
+        # 文本长度变化时按当前位置机械生成必要的 DWORD 对齐 (禁止错长度旧 pad)
+        out += pad if len(pad) == required else b" " * required
         out += struct.pack("<IIhhhhH", c["style"], c["exstyle"], *c["rect"], c["id"])
         out += serialize_sz_or_ord_ast(c["window_class"])
         out += serialize_sz_or_ord_ast(c["title"])
         cr = c["creation_data"]
-        if cr["cb_word"] == 0:
+        sb = cr["size_bytes"]
+        if sb == 0:
+            if cr["data"]:
+                raise ValueError("creation size_bytes == 0 但 payload 非空 - 拒绝序列化")
             out += struct.pack("<H", 0)
         else:
-            out += struct.pack("<H", cr["cb_word"]) + cr["data"]
+            if sb < 2 or sb != len(cr["data"]) + 2:
+                raise ValueError(f"creation size_bytes ({sb}) 与 payload 长度 "
+                                 f"({len(cr['data'])}) 不一致 (须 = len+2 且 >= 2)")
+            out += struct.pack("<H", sb) + cr["data"]
     out += ast.get("trailing", b"")
     return bytes(out)
 
@@ -651,12 +664,20 @@ def _serialize_dialog_ast_ex(ast):
         out += struct.pack("<HHBB", f["pointsize"], f["weight"],
                            f["italic"], f["charset"])
         out += f["typeface"].encode("utf-16le") + b"\x00\x00"
+    if h["cdit"] != len(ast["controls"]):
+        raise ValueError(f"cDlgItems ({h['cdit']}) != controls 数量 "
+                         f"({len(ast['controls'])}) - 拒绝序列化")
     for c in ast["controls"]:
-        out += c["pad_before"]
+        required = (-len(out)) & 3
+        pad = c.get("pad_before", b"")
+        out += pad if len(pad) == required else b" " * required
         out += struct.pack("<IIIhhhhI", c["helpid"], c["exstyle"], c["style"],
                            *c["rect"], c["id"])
         out += serialize_sz_or_ord_ast(c["window_class"])
         out += serialize_sz_or_ord_ast(c["title"])
+        if c["extra_count"] != len(c["creation_data"]):
+            raise ValueError(f"extraCount ({c['extra_count']}) != creation data "
+                             f"字节数 ({len(c['creation_data'])}) - 拒绝序列化")
         out += struct.pack("<H", c["extra_count"]) + c["creation_data"]
     out += ast.get("trailing", b"")
     return bytes(out)
