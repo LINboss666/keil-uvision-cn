@@ -2,6 +2,33 @@
 
 格式：日期 / 阶段 / 提交 / 修改内容 / 涉及 Resource ID / 新增翻译条目 / 已知问题 / 测试状态。
 
+## 2026-09-13 — PHASE 1B1.1a（mapping 工具加固；纯只读，零修改）
+
+- **fix: make dynamic source classification reproducible**
+  - `map_dynamic_strings.py` 重构：全部命中改为**结构化证据**
+    `{source_type, section, encoding, offset, resource_id, lang, item_path,
+    command_id, text, match_type}`；`classify()` 基于**完整证据集合**自动推导
+    （raw .rdata 证据正式纳入分类），新增"资源即模板"反向匹配
+    （捕获 `%sptions for Target '%s'%s%s` 类多参数复用模板）与
+    contains 降级标注（A/B [contains]）。
+  - `docs/DYNAMIC_MENU_MAPPING.md` 改为**脚本全自动生成**：29 条 GUI 观察文本
+    的分类全部由脚本自动得出（含 D .rdata 硬编码(ANSI) 10 条），**人工覆盖 = 0**，
+    重新运行即可复现。
+- **fix: bind dynamic mapping to UV4 baseline**
+  - 增加 baseline SHA256 守卫：输入文件必须等于 µVision 5.43.1.0 固定基线
+    （`428baf13…c42f89`），否则 FAIL 非零退出并提示"版本不匹配，需要重新执行
+    PHASE 0"；已用翻转字节的临时副本实测拒绝路径（未产出任何文档）。
+- **docs: align dynamic mapping wording with evidence**
+  - 措辞修正：不声称"MFC 动态覆盖已证实 / 具体 .rdata 地址已证明传给
+    CCmdUI::SetText"，统一表述为"**运行时动态文本覆盖假设获得强证据支持，
+    且行为与 MFC CCmdUI update mechanism 一致**"；可证明的仅为
+    A（GUI 最终文本与静态资源不完全一致）/ B（.rdata 存在完全匹配的
+    ANSI literal / format template）/ C（MFC 官方允许该动态机制）。
+- **涉及 Resource ID / 新增翻译条目**：无（纯调查工具与文档，零修改、零产物）。
+- **测试状态**：脚本 exit=0；29/29 自动分类；守卫拒绝路径实测通过
+  （翻转 .rdata 1 字节的临时副本 → 非零退出 + 正确提示，无文档产出）。
+- **Git**：tag `v0.1-analysis` 不动；无二进制入库。
+
 ## 2026-09-13 — PHASE 1B1.1（运行时菜单文本来源调查；**纯只读，零修改**）
 
 - **feat: add dynamic menu text source mapper**
@@ -11,12 +38,14 @@
 - **docs: map runtime-generated menu text sources**
   - 新增 `docs/DYNAMIC_MENU_MAPPING.md`：29 条 GUI 观察文本的来源映射表 +
     Command ID 映射表。
-  - **MFC 动态覆盖假设证实**，三种机制：① 隐藏/未覆盖菜单资源
+  - **运行时动态文本覆盖假设获得强证据支持，且行为与 MFC CCmdUI update mechanism
+    一致**，三种来源机制：① 隐藏/未覆盖菜单资源
     （MENU 22565 'Popups' 编辑命令骨架、191/800 'DbWinMenu' 编辑器右键真身、
     592/624 工程树组/根上下文 —— 1B1 未覆盖）；② LoadString/prompt 第二段
-    （159/744/164/167/104/181/5763x 等，1B1 未译）；③ .rdata ANSI 字面量经
-    CCmdUI::SetText（@0x7C0790-0x7C0AA8：Go To Definition/References of '%s' 家族、
-    Split Window horizontally、Toggle Header/Code File、断点两项等 —— 按红线不可改）。
+    （159/744/164/167/104/181/5763x 等，1B1 未译）；③ .rdata 中存在与 GUI 完全
+    一致的 ANSI literal / format template（@0x7C0790-0x7C0AA8：Go To
+    Definition/References of '%s' 家族、Split Window horizontally、
+    Toggle Header/Code File、断点两项等 —— 按红线不可改）。
   - **1B1 GUI 结果入档**：写入机制/主菜单/标签右键 PASS；Project Tree 与编辑器
     右键 PARTIAL（缺口全部归因到上述机制）；无崩溃/乱码/结构损坏/ID 异常。
 - **涉及 Resource ID / 新增翻译条目**：无（纯调查，零修改、零产物）。

@@ -1,112 +1,144 @@
-# 运行时菜单文本来源映射 (PHASE 1B1.1)
+# 运行时菜单文本来源映射 (PHASE 1B1.1 / 1B1.1a)
 
+- 生成方式：**完全由 `scripts/map_dynamic_strings.py` 自动生成**（分类由结构化
+  evidence 集合自动推导，人工覆盖数 = 0），重新运行即可复现。
 - 日期：2026-09-13 ｜ **只读调查**，未修改任何文件、未生成任何补丁
-- 工具：`scripts/map_dynamic_strings.py`（六路来源搜索：RT_STRING / RT_MENU /
-  RT_DIALOG(只查) / RT_240 / .rdata UTF-16 / .rdata ANSI + command ID 关联分析）
-- 原始证据：`output/dynamic_menu_mapping.json`（本地）
+- 基线：输入文件 SHA256 已由脚本校验，绑定 µVision 5.43.1.0
+  （`428baf13…c42f89`，见 `docs/BASELINE.md`）。
 
-## 背景
+## 背景与方法
 
-1B1 真机 GUI：主菜单与文件标签右键大量汉化成功，但**编辑器右键**与**工程树右键（根/组）**
-的相当多条目仍为英文，而对应 RT_MENU/RT_STRING 条目已是中文。
-结论：µVision 在 `WM_INITMENUPOPUP` / `ON_UPDATE_COMMAND_UI` 阶段用
-`CCmdUI::SetText()` / `LoadString()` 动态改写菜单文本。本报告定位每条 GUI 文本的真实来源。
+1B1 真机 GUI：主菜单与文件标签右键大量汉化成功，但**编辑器右键**与
+**工程树右键（根/组）**的相当多条目仍为英文，而对应 RT_MENU/RT_STRING 条目
+已是中文 —— 即 GUI 最终文本与静态资源不完全一致。
 
-## 关键发现（MFC 动态覆盖假设 → 证实，共三种机制）
+**运行时动态文本覆盖假设获得强证据支持，且行为与 MFC CCmdUI update mechanism
+一致**（Microsoft MFC 官方允许 `WM_INITMENUPOPUP` / `ON_UPDATE_COMMAND_UI` /
+`CCmdUI::SetText()` 动态修改菜单文本）。当前证据能证明的是：
 
-1. **隐藏/未覆盖的菜单资源**：
-   - `MENU 22565 'Popups'`：标准 MFC 编辑命令弹出骨架（cmd 57643 Undo / 57644 Redo /
-     57635 Cut / 57634 Copy / 57637 Paste / 57642 Select All）—— 编辑器右键中
-     Undo/Redo/Cut/Copy/Paste/Select All 的静态来源，1B1 未覆盖。
-   - `MENU 191 / 800 'DbWinMenu'`：**编辑器/窗口右键的真身**（1B1 汉化的 MENU 1200
-     不是 GUI 实际加载的那份）——`Insert/Remove &Breakpoint`(cmd 32765, 0/8)、
-     `&Enable/Disable Breakpoint`(cmd 35017, 0/9)、`Insert/Remove Bookmark\tCtrl+F2`
-     (cmd 45267, 0/17) 等均未翻译。
-   - `MENU 592 / 624 'Context'`：**工程树组/根上下文菜单**（与文件上下文 MENU 143
-     同 command ID 但为独立未翻译副本）——Project Tree "部分汉化"的直接原因。
-2. **LoadString / prompt 第二段机制**：菜单项 caption 运行时从 RT_STRING 加载
-   （prompt 格式为 `长提示\n短标题`，第二段即菜单文本）：
-   `159 New µ&Vision Project...`、`744 Remo&ve Item`、`164 Stop b&uild`、
-   `167 &Erase`、`104/181 Source Browser 两项`、`5763x 系列` —— 1B1 均未翻译。
-3. **.rdata ANSI 字面量 → CCmdUI::SetText**：`@0x7C0790-0x7C0AA8` 连续块内
-   `Split Window horizontally`(0x7C0800)、`Toggle Header/Code File`(0x7C0848)、
-   `Update Source Browser Information`(0x7C0878)、`Enable/Disable Breakpoint`(0x7C089C)、
-   `Insert/Remove Breakpoint`(0x7C08B8)、`Go To Definition of '%s'`(0x7C08E8)、
-   `Go To Previous/Next Reference To '%s'`(0x7C0904/0x7C0928)、
-   `Go To Definition Of '%s'`(0x7C0948)、`Show All References of '%s'`(0x7C0964)、
-   `Go To Previous/Next Reference of '%s'`(0x7C0980/0x7C09A4)、
-   `Go To Declaration of '%s'`(0x7C09C4)、`Redo`(0x7C09E0)、`Undo`(0x7C09E8)、
-   `Insert/Remove Bookmark`(0x7C09F0)、`Select All`(0x7C0A2C)、`Paste`(0x7C0A38)、
-   `Copy`(0x7C0A40)。
-   **按现行红线（禁改 .rdata），这些条目无法通过资源层汉化，维持英文**；
-   是否放开属未来专项决策（需 GPT 批准并单独评估风险）。
+- A. GUI 最终文本与静态 RT_MENU/RT_STRING 不完全一致；
+- B. `.rdata` 中存在与 GUI 完全一致的 ANSI literal / format template；
+- C. MFC 官方机制允许上述动态修改。
 
-## 映射表
+未经动态 tracing 或 call-site 分析，**不声称**某个具体 `.rdata` 地址
+"已被证明传给 `CCmdUI::SetText()`"；下表中的 `.rdata` 偏移仅作为
+"存在完全匹配 literal" 的证据记录。
 
-| GUI 文本 | 出现位置 | 分类 | 来源证据（资源 ID / LANGID / 原文 / 是否已翻译） |
+搜索源（六路）：RT_STRING / RT_MENU / RT_DIALOG(只查) / RT_240 /
+.rdata 等节 UTF-16LE / .rdata 等节 ANSI，外加 command ID → 同 ID
+RT_STRING → RT_ACCELERATOR 关联。
+
+## 自动映射表
+
+| GUI 文本 | 出现位置 | 自动分类 | 证据（结构化 evidence 摘要） |
 |---|---|---|---|
-| Split Window horizontally | 编辑器右键 | **D .rdata ANSI** | `.rdata@0x7C0800`；RT_STRING/RT_MENU 无命中 |
-| Toggle Header/Code File | 编辑器右键 | **D .rdata ANSI** | `.rdata@0x7C0848` |
-| Insert/Remove Breakpoint | 编辑器右键 | **A+B+D 多源** | RT_STRING 1033 id=770 `I&nsert/Remove Breakpoint`（未译）；MENU 191/800 0/8 cmd=32765（未译）；prompt 32765 第二段 `Insert/Remove Breakpoint`；`.rdata@0x7C08B8` |
-| Enable/Disable Breakpoint | 编辑器右键 | **A+B+D 多源** | RT_STRING id=771（未译）；MENU 191/800 0/9 cmd=35017（未译）；`.rdata@0x7C089C` |
-| Refresh Source Browser View | 编辑器右键 | **A 静态 RT_STRING（未译）** | id=181（未译）；AC6 变体 id=464 |
-| Update Source Browser Information | 编辑器右键 | **A 静态 RT_STRING（未译）** | id=104（未译）；AC6 变体 id=493 |
-| Go To Definition of '%s' | 编辑器右键 | **D .rdata ANSI 模板** | `.rdata@0x7C08E8 "Go To Definition of '%s'"`（另有 Of 大写变体 @0x7C0948） |
-| Go To Declaration of '%s' | 编辑器右键 | **D .rdata ANSI 模板** | `@0x7C09C4` |
-| Go To Next Reference of '%s' | 编辑器右键 | **D .rdata ANSI 模板** | `@0x7C09A4`（To 变体 @0x7C0928） |
-| Go To Previous Reference of '%s' | 编辑器右键 | **C+D** | RT_STRING 1033 id=35521 `Go To &Previous Reference of '%s'`（未译模板）+ `.rdata@0x7C0980` |
-| Show All References of '%s' | 编辑器右键 | **D .rdata ANSI 模板** | `@0x7C0964` |
-| Insert/Remove Bookmark | 编辑器右键 | **B+A+D 多源** | MENU 191/800 0/17 cmd=45267 `Insert/Remove Bookmark\tCtrl+F2`（未译，GUI 实际来源）；MENU 1200 0/2/0（已译但非 GUI 所用）；RT_STRING 147（已译）；`.rdata@0x7C09F0` |
-| Undo | 编辑器右键 | **B+A+D 多源** | MENU 22565 0/0 cmd=57643 `&Undo`（未译）；RT_STRING 57643 prompt 第二段 `Undo`；20628 `&Undo\tCtrl+Z`（未译）；140（已译，非此菜单所用）；`.rdata@0x7C09E8` |
-| Redo | 编辑器右键 | **B+D** | MENU 22565 0/1 cmd=57644（未译）；`.rdata@0x7C09E0` |
-| Cut | 编辑器右键 | **B+A+D** | MENU 22565 0/3 cmd=57635（未译）；RT_STRING 20629（未译）；prompt 57635 第二段；`.rdata` |
-| Copy | 编辑器右键 | **B+A+D** | MENU 22565 0/4、191/800 0/19 cmd=57634（未译）；RT_STRING 20630（未译）；`.rdata@0x7C0A40` |
-| Paste | 编辑器右键 | **B+A+D** | MENU 22565 0/5 cmd=57637（未译）；RT_STRING 20631（未译）；`.rdata@0x7C0A38` |
-| Select All | 编辑器右键 | **B+A+D** | MENU 22565 0/7 cmd=57642（未译）；MENU 400 0/0 `Select All\tCtrl+A`；RT_STRING 20633 `Select &All`（未译）、prompt 57642/202 第二段；`.rdata@0x7C0A2C` |
-| Options for Target 'rt-thread'... | 工程树右键/Project 菜单 | **C 动态格式串（RT_STRING）** | id=749 `%sptions for Target '%s'%s%s` —— 渲染为 `O` + `ptions for Target 'rt-thread'` + `` + `...`；另有 9 处 .rdata ANSI 'Options for Target' |
-| Add Group... | 工程树右键 | **B（未译副本）+D** | MENU 143 0/4（已译，文件上下文）；根上下文用未译来源：MENU 592/624 同 cmd=35481 副本 + `.rdata ANSI 'Add Group...'` |
-| Manage Project Items... | 工程树右键 | **B（未译副本）+D** | MENU 143 0/6（已译）；MENU 592 0/9、624 0/4 cmd=32704（未译）；`.rdata ANSI` |
-| Open Map File | 工程树右键 | **B（未译副本）+D** | MENU 143 0/10（已译）；MENU 624 0/8 cmd=32699（未译）；`.rdata ANSI` |
-| Open Build Log | 工程树右键 | **B（未译副本）+D** | MENU 143 0/11（已译）；MENU 624 0/9 cmd=2081（未译）；`.rdata ANSI` |
-| Show Include File Dependencies | 工程树右键 | **B（未译副本）+D** | MENU 143 0/18（已译）；MENU 592 0/11、624 0/16 cmd=35409（未译）；`.rdata ANSI` |
-| New µVision Project... | Project 菜单 | **A 静态 RT_STRING（未译）** | id=159 `New µ&Vision Project...`（1B1 漏项）—— Project 菜单首项运行时 LoadString(159) |
-| Remove Item | Project 菜单 | **A+B** | RT_STRING id=744 `Remo&ve Item`（未译，GUI 实际来源）；MENU 143 0/5（已译） |
-| Translate... | Project 菜单 | **A 静态 RT_STRING（未译）** | id=162 `Tr&anslate...\tCtrl+F7` |
-| Stop build | Project 菜单 | **A+B** | RT_STRING id=164 `Stop b&uild`（未译）；MENU 592 0/7、624 0/14 cmd=32721（未译） |
-| Erase | Flash 菜单 | **A 静态 RT_STRING（未译）** | id=167 `&Erase`（未译）；prompt 35405 第二段 `Erase` |
 
-## Command ID 映射（cmd → 静态菜单文本 → 运行时可见 → 快捷键）
+| Split Window horizontally | 编辑器右键 | D .rdata 硬编码(ANSI) | RAW ANSI @.rdata+0x7C0800 (literal): 'Split Window horizontally' |
+| Toggle Header/Code File | 编辑器右键 | D .rdata 硬编码(ANSI) | RAW ANSI @.rdata+0x7C0848 (literal): 'Toggle Header/Code File' |
+| Insert/Remove Breakpoint | 编辑器右键 | A 静态RT_STRING(未译)+B 静态RT_MENU(未译)+D .rdata 硬编码(ANSI)+RT_240(列头) | RT_STRING id=770 lang=1033 [exact]: 'I&nsert/Remove Breakpoint' <br> RT_MENU id=191 lang=1033 path=0/8 cmd=32765 [exact]: 'Insert/Remove &Breakpoint' <br> RT_MENU id=800 lang=1033 path=0/8 cmd=32765 [exact]: 'Insert/Remove &Breakpoint' <br> RT_240 id=487 lang=None [contains]: 'Remove' <br> RAW UTF-16LE @.rsrc+0xB86C26 (literal): 'Insert/Remove Breakpoint' <br> RAW UTF-16LE @.rsrc+0xB8EBB0 (literal): 'Insert/Remove Breakpoint' |
+| Enable/Disable Breakpoint | 编辑器右键 | A 静态RT_STRING(未译)+B 静态RT_MENU(未译)+D .rdata 硬编码(ANSI) | RT_STRING id=771 lang=1033 [exact]: '&Enable/Disable Breakpoint' <br> RT_MENU id=191 lang=1033 path=0/9 cmd=35017 [exact]: '&Enable/Disable Breakpoint' <br> RT_MENU id=800 lang=1033 path=0/9 cmd=35017 [exact]: '&Enable/Disable Breakpoint' <br> RAW UTF-16LE @.rsrc+0x9666A8 (literal): 'Enable/Disable Breakpoint' <br> RAW UTF-16LE @.rsrc+0x966AF6 (literal): 'Enable/Disable Breakpoint' <br> RAW UTF-16LE @.rsrc+0xB90810 (literal): 'Enable/Disable Breakpoint' |
+| Refresh Source Browser View | 编辑器右键 | A 静态RT_STRING(未译)+D .rdata 硬编码(ANSI) | RT_STRING id=181 lang=1033 [exact]: 'Refresh Source Browser View' <br> RT_STRING id=464 lang=1033 [contains]: 'Refresh Source Browser View (only AC6)' <br> RAW UTF-16LE @.rsrc+0xB91574 (literal): 'Refresh Source Browser View' <br> RAW UTF-16LE @.rsrc+0xB970BA (literal): 'Refresh Source Browser View' <br> RAW ANSI @.rdata+0x7AA020 (literal): 'Refresh Source Browser View' |
+| Update Source Browser Information | 编辑器右键 | A 静态RT_STRING(未译)+D .rdata 硬编码(ANSI) | RT_STRING id=104 lang=1033 [exact]: 'Update Source Browser Information' <br> RT_STRING id=493 lang=1033 [contains]: 'Update Source Browser Information (only AC6)' <br> RAW UTF-16LE @.rsrc+0xB912AC (literal): 'Update Source Browser Information' <br> RAW UTF-16LE @.rsrc+0xB96FDA (literal): 'Update Source Browser Information' <br> RAW ANSI @.rdata+0x7C0878 (literal): 'Update Source Browser Information' |
+| Go To Definition of 'main' | 编辑器右键 | D .rdata 硬编码(ANSI) | RAW ANSI @.rdata+0x7C08E8 (template-prefix): "Go To Definition of '" |
+| Go To Declaration of 'main' | 编辑器右键 | D .rdata 硬编码(ANSI) | RAW ANSI @.rdata+0x7C09C4 (template-prefix): "Go To Declaration of '" |
+| Go To Next Reference of 'main' | 编辑器右键 | D .rdata 硬编码(ANSI) | RAW ANSI @.rdata+0x7C09A4 (template-prefix): "Go To Next Reference of '" |
+| Go To Previous Reference of 'main' | 编辑器右键 | C 动态格式串(RT_STRING)+D .rdata 硬编码(ANSI) | RT_STRING id=35521 lang=1033 [template]: "Go To &Previous Reference of '%s'" <br> RAW ANSI @.rdata+0x7C0980 (template-prefix): "Go To Previous Reference of '" |
+| Show All References of 'main' | 编辑器右键 | D .rdata 硬编码(ANSI) | RAW ANSI @.rdata+0x7C0964 (template-prefix): "Show All References of '" |
+| Insert/Remove Bookmark | 编辑器右键 | A 静态RT_STRING[contains](已译→GUI仍英文,疑似运行时覆盖)+B 静态RT_MENU(已译→GUI仍英文,疑似运行时覆盖)+D .rdata 硬编码(ANSI)+RT_240(列头) | RT_STRING id=147 lang=1033 [contains]: '&Insert/Remove Bookmark\tCtrl+F2' <br> RT_MENU id=191 lang=1033 path=0/17 cmd=45267 [contains]: 'Insert/Remove Bookmark\tCtrl+F2' <br> RT_MENU id=800 lang=1033 path=0/17 cmd=45267 [contains]: 'Insert/Remove Bookmark\tCtrl+F2' <br> RT_MENU id=1200 lang=1033 path=0/2/0 cmd=33021 [exact]: '&Insert/Remove Bookmark' <br> RT_240 id=487 lang=None [contains]: 'Remove' <br> RAW UTF-16LE @.rsrc+0x96689E (literal): 'Insert/Remove Bookmark' |
+| Undo | 编辑器右键 | A 静态RT_STRING[contains](已译→GUI仍英文,疑似运行时覆盖)+B 静态RT_MENU(未译)+D .rdata 硬编码(ANSI)+RT_DIALOG 静态文本 | RT_STRING id=140 lang=1033 [contains]: '&Undo\tCtrl+Z' <br> RT_STRING id=20628 lang=1033 [contains]: '&Undo\tCtrl+Z' <br> RT_STRING id=57643 lang=1033 [contains]: 'Undo the last action\nUndo' <br> RT_STRING id=17102 lang=2057 [contains]: 'Undo %d Actions' <br> RT_STRING id=17103 lang=2057 [contains]: 'Undo 1 Action' <br> RT_MENU id=22565 lang=1033 path=0/0 cmd=57643 [exact]: '&Undo' |
+| Redo | 编辑器右键 | A 静态RT_STRING[contains](已译→GUI仍英文,疑似运行时覆盖)+B 静态RT_MENU(未译)+D .rdata 硬编码(ANSI) | RT_STRING id=141 lang=1033 [contains]: '&Redo\tCtrl+Shift+Z' <br> RT_MENU id=22565 lang=1033 path=0/1 cmd=57644 [exact]: '&Redo' <br> RAW UTF-16LE @.rsrc+0xB856BA (literal): 'Redo' <br> RAW UTF-16LE @.rsrc+0xB8D506 (literal): 'Redo' <br> RAW UTF-16LE @.rsrc+0xB903CC (literal): 'Redo' <br> RAW UTF-16LE @.rsrc+0xB90408 (literal): 'Redo' |
+| Cut | 编辑器右键 | A 静态RT_STRING[contains](已译→GUI仍英文,疑似运行时覆盖)+B 静态RT_MENU(未译)+RT_240(列头) | RT_STRING id=142 lang=1033 [contains]: 'Cu&t\tCtrl+X' <br> RT_STRING id=676 lang=1033 [contains]: '&Cut Current Line' <br> RT_STRING id=775 lang=1033 [contains]: 'Execut&ion Profiling' <br> RT_STRING id=20629 lang=1033 [contains]: 'Cu&t\tCtrl+X' <br> RT_STRING id=32791 lang=1033 [contains]: 'Start code execution\nRun' <br> RT_STRING id=32797 lang=1033 [contains]: 'Stop code execution\nStop' |
+| Copy | 编辑器右键 | A 静态RT_STRING[contains](已译→GUI仍英文,疑似运行时覆盖)+B 静态RT_MENU(未译)+D .rdata 硬编码(ANSI)+RT_DIALOG 静态文本 | RT_STRING id=143 lang=1033 [contains]: '&Copy\tCtrl+C' <br> RT_STRING id=20630 lang=1033 [contains]: '&Copy\tCtrl+C' <br> RT_STRING id=16907 lang=2057 [contains]: 'Copy Tool\nCopy' <br> RT_MENU id=191 lang=1033 path=0/19 cmd=57634 [exact]: '&Copy' <br> RT_MENU id=427 lang=1033 path=0/1 cmd=35127 [exact]: '&Copy' <br> RT_MENU id=800 lang=1033 path=0/19 cmd=57634 [exact]: '&Copy' |
+| Paste | 编辑器右键 | A 静态RT_STRING[contains](已译→GUI仍英文,疑似运行时覆盖)+B 静态RT_MENU(未译)+D .rdata 硬编码(ANSI) | RT_STRING id=144 lang=1033 [contains]: '&Paste\tCtrl+V' <br> RT_STRING id=20631 lang=1033 [contains]: '&Paste\tCtrl+V' <br> RT_STRING id=16908 lang=2057 [contains]: 'Paste Tool\nPaste' <br> RT_MENU id=21215 lang=1033 path=0/2 cmd=57637 [exact]: '&Paste' <br> RT_MENU id=21217 lang=1033 path=1/3 cmd=57637 [contains]: '&Paste\tCtrl+V' <br> RT_MENU id=22565 lang=1033 path=0/5 cmd=57637 [exact]: '&Paste' |
+| Select All | 编辑器右键 | A 静态RT_STRING(未译)+B 静态RT_MENU(未译)+D .rdata 硬编码(ANSI)+RT_DIALOG 静态文本 | RT_STRING id=202 lang=1033 [contains]: 'Select the entire text\nSelect All' <br> RT_STRING id=20633 lang=1033 [exact]: 'Select &All' <br> RT_STRING id=57642 lang=1033 [contains]: 'Select the entire text\nSelect All' <br> RT_STRING id=202 lang=1041 [contains]: 'Select the entire text\nSelect All' <br> RT_STRING id=57642 lang=1041 [contains]: 'Select the entire text\nSelect All' <br> RT_MENU id=400 lang=1033 path=0/0 cmd=57642 [contains]: 'Select All\tCtrl+A' |
+| Options for Target 'rt-thread'... | 工程树右键/Project 菜单 | C 动态格式串(RT_STRING)+D .rdata 硬编码(ANSI) | RT_STRING id=749 lang=1033 [template]: "%sptions for Target '%s'%s%s" <br> RAW ANSI @.rdata+0x7BE7DC (template-prefix): "Options for Target '" <br> RAW ANSI @.rdata+0x7CF5C7 (template-prefix): "Options for Target '" |
+| Add Group... | 工程树右键 | B 静态RT_MENU(已译→GUI仍英文,疑似运行时覆盖)+D .rdata 硬编码(ANSI) | RT_MENU id=143 lang=1033 path=0/4 cmd=35481 [exact]: 'A&dd Group...' <br> RAW ANSI @.rdata+0x7BE824 (literal): 'Add Group...' |
+| Manage Project Items... | 工程树右键 | B 静态RT_MENU(已译→GUI仍英文,疑似运行时覆盖)+D .rdata 硬编码(ANSI) | RT_MENU id=143 lang=1033 path=0/6 cmd=32704 [exact]: 'Mana&ge Project Items...' <br> RT_MENU id=592 lang=1033 path=0/9 cmd=32704 [exact]: 'Mana&ge Project Items...' <br> RT_MENU id=624 lang=1033 path=0/4 cmd=32704 [exact]: 'Mana&ge Project Items...' <br> RAW ANSI @.rdata+0x7BE834 (literal): 'Manage Project Items...' |
+| Open Map File | 工程树右键 | B 静态RT_MENU(已译→GUI仍英文,疑似运行时覆盖)+D .rdata 硬编码(ANSI) | RT_MENU id=143 lang=1033 path=0/10 cmd=32699 [exact]: 'Open &Map File' <br> RT_MENU id=624 lang=1033 path=0/8 cmd=32699 [exact]: 'Open &Map File' <br> RAW ANSI @.rdata+0x7BE8B0 (literal): 'Open Map File' |
+| Open Build Log | 工程树右键 | B 静态RT_MENU(已译→GUI仍英文,疑似运行时覆盖)+D .rdata 硬编码(ANSI) | RT_MENU id=143 lang=1033 path=0/11 cmd=2081 [exact]: 'Op&en Build Log' <br> RT_MENU id=624 lang=1033 path=0/9 cmd=2081 [exact]: 'Op&en Build Log' <br> RAW ANSI @.rdata+0x7BE8C0 (literal): 'Open Build Log' |
+| Show Include File Dependencies | 工程树右键 | B 静态RT_MENU(已译→GUI仍英文,疑似运行时覆盖)+D .rdata 硬编码(ANSI) | RT_MENU id=143 lang=1033 path=0/18 cmd=35409 [exact]: 'Show I&nclude File Dependencies' <br> RT_MENU id=592 lang=1033 path=0/11 cmd=35409 [exact]: 'Show I&nclude File Dependencies' <br> RT_MENU id=624 lang=1033 path=0/16 cmd=35409 [exact]: 'Show I&nclude File Dependencies' <br> RAW ANSI @.rdata+0x790480 (literal): 'Show Include File Dependencies' |
+| New µVision Project... | Project 菜单 | A 静态RT_STRING(未译) | RT_STRING id=159 lang=1033 [exact]: 'New µ&Vision Project...' |
+| Remove Item | Project 菜单/工程树 | A 静态RT_STRING(未译)+B 静态RT_MENU(已译→GUI仍英文,疑似运行时覆盖)+D .rdata 硬编码(ANSI)+RT_240(列头) | RT_STRING id=744 lang=1033 [exact]: 'Remo&ve Item' <br> RT_MENU id=143 lang=1033 path=0/5 cmd=35085 [exact]: 'R&emove Item' <br> RT_240 id=487 lang=None [contains]: 'Remove' <br> RAW UTF-16LE @.rsrc+0xB86EEA (literal): 'Remove Item' <br> RAW UTF-16LE @.rsrc+0xB8EF2E (literal): 'Remove Item' <br> RAW ANSI @.rdata+0x7BE770 (literal): 'Remove Item' |
+| Translate... | Project 菜单/工程树 | A 静态RT_STRING[contains](未译) | RT_STRING id=162 lang=1033 [contains]: 'Tr&anslate...\tCtrl+F7' |
+| Stop build | Project 菜单/工程树 | A 静态RT_STRING(未译)+B 静态RT_MENU(已译→GUI仍英文,疑似运行时覆盖) | RT_STRING id=164 lang=1033 [exact]: 'Stop b&uild' <br> RT_MENU id=143 lang=1033 path=0/16 cmd=32721 [exact]: 'Stop b&uild' <br> RT_MENU id=592 lang=1033 path=0/7 cmd=32721 [exact]: 'Stop b&uild' <br> RT_MENU id=624 lang=1033 path=0/14 cmd=32721 [exact]: 'Stop b&uild' |
+| Erase | Flash 菜单 | A 静态RT_STRING(未译)+D .rdata 硬编码(ANSI) | RT_STRING id=167 lang=1033 [exact]: '&Erase' <br> RT_STRING id=35405 lang=1033 [contains]: 'Erase flash memory\nErase' <br> RT_STRING id=57632 lang=1033 [contains]: 'Erase the selection\nErase' <br> RT_STRING id=57633 lang=1033 [contains]: 'Erase everything\nErase All' <br> RT_STRING id=57632 lang=1041 [contains]: 'Erase the selection\nErase' <br> RT_STRING id=57633 lang=1041 [contains]: 'Erase everything\nErase All' |
+## Command ID 关联（脚本自动提取）
 
-| Command ID | 静态菜单文本（所在资源） | 运行时可见文本 | 快捷键 |
-|---|---|---|---|
-| 57643 (ID_EDIT_UNDO) | `&Undo`（MENU 22565 0/0） | Undo（英文） | Ctrl+Z（RT_ACCELERATOR） |
-| 57644 (ID_EDIT_REDO) | `&Redo`（MENU 22565 0/1） | Redo | Ctrl+Shift+Z |
-| 57635 (ID_EDIT_CUT) | `Cu&t`（22565 0/3；21215 0/0） | Cut | Ctrl+X |
-| 57634 (ID_EDIT_COPY) | `&Copy`（22565 0/4；191/800 0/19；427 0/1；21215 0/1） | Copy | Ctrl+C |
-| 57637 (ID_EDIT_PASTE) | `&Paste`（22565 0/5；21215 0/2） | Paste | Ctrl+V |
-| 57642 (ID_EDIT_SELECT_ALL) | `Select &All`（22565 0/7） | Select All | Ctrl+A |
-| 32765 | `Insert/Remove &Breakpoint`（191/800 0/8，未译） | Insert/Remove Breakpoint | — |
-| 35017 | `&Enable/Disable Breakpoint`（191/800 0/9，未译） | Enable/Disable Breakpoint | — |
-| 45267 | `Insert/Remove Bookmark\tCtrl+F2`（191/800 0/17，未译） | Insert/Remove Bookmark | Ctrl+F2 |
-| 32704 | `Mana&ge Project Items...`（143 已译；592/624 未译副本） | 中文（文件上下文）/ 英文（根上下文） | — |
-| 32699 | `Open &Map File`（143 已译；624 0/8 未译） | 同上规律 | — |
-| 2081 | `Op&en Build Log`（143 已译；624 0/9 未译） | 同上规律 | — |
-| 35409 | `Show I&nclude File Dependencies`（143 已译；592/624 未译） | 同上规律 | — |
-| 35481 | `A&dd Group...`（143 已译） | Add Group...（根上下文） | — |
-| — (模板) | RT_STRING 749 `%sptions for Target '%s'%s%s` | Options for Target 'rt-thread'... | Alt+F7 |
+> "同 cmd" = 与命中菜单项共享 command ID 的其他资源证据
+> （RT_STRING prompt / 其他菜单副本 / RT_ACCELERATOR 快捷键）。
+> 完整明细见 `output/dynamic_menu_mapping.json`。
 
-> 同一 Command ID 同时对应：RT_MENU 静态文本（可多份副本，143 已译而 592/624 未译）+
-> RT_STRING command/prompt（如 5763x 系列 prompt 第二段）+ 运行时动态文本
-> （.rdata ANSI 字面量）——三种来源并存，已在上表逐项标注。
+| Command ID | 同 ID 资源证据 |
+|---|---|
+| 2081 | RT_MENU:143:1033:'Op&en Build Log' |
+| 2081 | RT_MENU:624:1033:'Op&en Build Log' |
+| 32699 | RT_MENU:143:1033:'Open &Map File' |
+| 32699 | RT_MENU:624:1033:'Open &Map File' |
+| 32704 | RT_MENU:1204:1033:'Manage Books...' |
+| 32704 | RT_MENU:143:1033:'Mana&ge Project Items...' |
+| 32704 | RT_MENU:592:1033:'Mana&ge Project Items...' |
+| 32704 | RT_MENU:624:1033:'Mana&ge Project Items...' |
+| 32704 | RT_STRING:32704:1033:'Manage Project Items\nFile Extensions, Books and Environment...' |
+| 32704 | RT_STRING:32704:1041:'プロジェクトに関する各種項目を管理します。\nプロジェクト各種項目...' |
+| 32721 | RT_MENU:143:1033:'Stop b&uild' |
+| 32721 | RT_MENU:592:1033:'Stop b&uild' |
+| 32721 | RT_MENU:624:1033:'Stop b&uild' |
+| 32721 | RT_STRING:32721:1033:'Cancel the current build\nStop Build' |
+| 32721 | RT_STRING:32721:1041:'現在のビルド処理を停止します。\nビルドを停止' |
+| 32765 | RT_MENU:191:1033:'Insert/Remove &Breakpoint' |
+| 32765 | RT_MENU:800:1033:'Insert/Remove &Breakpoint' |
+| 32765 | RT_STRING:32765:1033:'Insert or remove a breakpoint at the current line\nInsert/Remove Breakpoint' |
+| 32765 | RT_STRING:32765:1041:'Insert or remove a breakpoint at the current line\nInsert/Remove Breakpoint' |
+| 35017 | RT_MENU:191:1033:'&Enable/Disable Breakpoint' |
+| 35017 | RT_MENU:800:1033:'&Enable/Disable Breakpoint' |
+| 35017 | RT_STRING:35017:1033:'Enable or disable a breakpoint at the current line\nEnable/Disable Breakpoint' |
+| 35017 | RT_STRING:35017:1041:'現在のカーソル行のブレークポイントを有効/無効にします。\nブレークポイントを有効化/無効化' |
+| 35085 | RT_STRING:35085:1033:'Remove selected group or file\nRemove Item' |
+| 35085 | RT_STRING:35085:1041:'Remove selected group or file\nRemove Item' |
+| 35409 | RT_MENU:143:1033:'Show I&nclude File Dependencies' |
+| 35409 | RT_MENU:592:1033:'Show I&nclude File Dependencies' |
+| 35409 | RT_MENU:624:1033:'Show I&nclude File Dependencies' |
+| 35409 | RT_STRING:35409:1033:'Show or hide include file dependencies\nInclude File Dependencies' |
+| 35409 | RT_STRING:35409:1041:'Show or hide include file dependencies\nInclude File Dependencies' |
+| 35481 | RT_STRING:35481:1033:'Create a new Project Group\nNew Group' |
+| 35481 | RT_STRING:35481:1041:'Create a new Project Group\nNew Group' |
+| 57634 | RT_MENU:191:1033:'&Copy' |
+| 57634 | RT_MENU:21215:1033:'&Copy' |
+| 57634 | RT_MENU:21217:1033:'&Copy\tCtrl+C' |
+| 57634 | RT_MENU:22565:1033:'&Copy' |
+| 57634 | RT_MENU:800:1033:'&Copy' |
+| 57634 | RT_STRING:57634:1033:'Copy the selection to the clipboard\nCopy' |
+| 57634 | RT_STRING:57634:1041:'選択したテキストをクリップボードにコピーします。\nコピー' |
+| 57635 | RT_MENU:21215:1033:'Cu&t' |
+| 57635 | RT_MENU:21217:1033:'Cu&t\tCtrl+X' |
+| 57635 | RT_MENU:22565:1033:'Cu&t' |
+| 57635 | RT_STRING:57635:1033:'Cut the selection and put it on the clipboard\nCut' |
+| 57635 | RT_STRING:57635:1041:'選択したテキストをクリップボードに切り取ります。\n切り取り' |
+| 57637 | RT_MENU:21215:1033:'&Paste' |
+| 57637 | RT_MENU:21217:1033:'&Paste\tCtrl+V' |
+| 57637 | RT_MENU:22565:1033:'&Paste' |
+| 57637 | RT_STRING:57637:1033:'Insert clipboard contents\nPaste' |
+| 57637 | RT_STRING:57637:1041:'テキストをクリップボードから貼り付けます。\n貼り付け' |
+| 57642 | RT_MENU:400:1033:'Select All\tCtrl+A' |
+| 57642 | RT_STRING:57642:1033:'Select the entire text\nSelect All' |
+| 57642 | RT_STRING:57642:1041:'Select the entire text\nSelect All' |
+| 57643 | RT_STRING:57643:1033:'Undo the last action\nUndo' |
+| 57643 | RT_STRING:57643:1041:'直前の編集操作をキャンセルします。\n元に戻す' |
+| 57644 | RT_STRING:57644:1033:'Redo the previous Undo action\nRedo' |
+| 57644 | RT_STRING:57644:1041:'直前に元に戻した操作をやり直します。\nやり直し' |
 
 ## 结论与 1B1.2 候选（仅记录，未经批准不执行）
 
-- **可经资源层修复（静态 RT_STRING / RT_MENU）**：
+- **可经资源层修复（静态 RT_STRING / RT_MENU，候选清单）**：
   RT_STRING：159、162、164、167、744、770、771、104、181、20628–20633、
-  57643/57644/57634/57635/57637/57642（prompt 第二段）；RT_MENU：592、624
-  （工程树组/根上下文）、191、800（DbWinMenu）、22565（隐藏编辑弹出）、400。
-- **资源层无法覆盖（.rdata ANSI 驱动，维持英文）**：Split Window horizontally、
+  57643/57644/57634/57635/57637/57642（command prompt，须整条处理：
+  保留 newline 分段数 / 格式 token / 快捷键文本，不得只 raw patch "第二段"）；
+  RT_MENU：592、624（工程树组/根上下文）、191、800（DbWinMenu）、
+  22565（隐藏编辑弹出）、400。
+- **资源层无法覆盖（.rdata literal 强证据，维持英文）**：Split Window horizontally、
   Toggle Header/Code File、Go To Definition/Declaration/References of '%s' 家族、
-  Show All References of '%s'，以及上述条目在编辑器右键中的最终显示
-  （若运行时以 .rdata 字面量 SetText 为准）。是否放开 .rdata 属未来专项决策。
+  Show All References of '%s'，以及最终被 .rdata runtime text 覆盖的其它项
+  （以 1B1.2 GUI 测试实录为准）。是否放开 .rdata 属 **PHASE 2 — EXPERIMENTAL
+  RDATA LOCALIZATION** 专项决策，当前禁止实施。
 - RT_DIALOG / .rdata / .text / DLL：本阶段零接触。
+
