@@ -390,6 +390,12 @@ def main(argv=None):
     args = ap.parse_args(argv)
 
     data = Path(args.exe).read_bytes()
+    sha = hashlib.sha256(data).hexdigest()
+    print(f"输入 SHA256: {sha}")
+    if sha != BASELINE_SHA256:
+        print("FAIL: 输入文件 SHA256 与 µVision 5.43.1.0 固定基线不一致 —— "
+              "版本不匹配，需要重新执行 PHASE 0。", file=sys.stderr)
+        return 1
 
     pe = er.PEFile(data)
     idx = SourceIndex(data, pe)
