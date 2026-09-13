@@ -500,7 +500,7 @@ def main(argv=None):
         ev_lines = []
         for x in e["evidence"]:
             if x["source_type"] == "RAW":
-                desc = (f"RAW {x['encoding']} @{x['section']}+0x{x['offset']:X} "
+                desc = (f"RAW {x['encoding']} @file+0x{x['offset']:X} [{x['section']}] "
                         f"({x['match_type']}): {x['text']!r}")
             else:
                 desc = f"{x['source_type']} id={x.get('resource_id')} lang={x.get('lang')}"
