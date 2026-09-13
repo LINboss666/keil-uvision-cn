@@ -414,6 +414,32 @@ DOC_TAIL = """## Command ID 关联（脚本自动提取）
 """
 
 
+
+# 1B1 真机 GUI 验证附录 (2026-09-13): 每次重新生成映射文档时自动附带,
+# 防止被生成器覆盖丢失。实测记录, 不改变上表自动分类。
+ADDENDUM_LINES = [
+    "## PHASE 1B1 GUI 实测补充（2026-09-13 最终验证）",
+    "",
+    "- **映射命中并生效**：New µVision Project...（id 159）→ 新建 µVision 工程 ✓；"
+    "Stop build（id 164 / MENU 592·624·143）→ 停止编译 ✓；Erase（id 167）→ 擦除 ✓；"
+    "Build/Rebuild/Batch Build 等既有条目保持中文 ✓。",
+    "- **仍英文且与 .rdata exact/template evidence 一致 → runtime override likely**："
+    "Split Window horizontally、Toggle Header/Code File、Go To Definition/Declaration/"
+    "Next·Previous Reference of '%s'、Show All References of '%s'、"
+    "Insert/Remove Breakpoint、Enable/Disable Breakpoint、Insert/Remove Bookmark、"
+    "Undo/Redo/Cut/Copy/Paste/Select All（编辑器右键）。",
+    "- **仍英文但来源属动态格式串家族（未在 1B1.2 范围）**："
+    "Options for Target/Group/File...（RT_STRING 749–755 复用模板家族）、"
+    "Remove File ...（id 745）、Translate <filepath> ...（id 752–754）——"
+    "Project Window context menu 按当前对象动态适配。",
+    "- **unresolved runtime source**：Refresh Source Browser View"
+    "（RT_STRING 181 已翻译，GUI 仍英文）→ runtime override likely。",
+    "- 措辞约束：resource-vs-GUI behavior strongly supports runtime command-UI text "
+    "replacement, consistent with MFC ON_UPDATE_COMMAND_UI / CCmdUI::SetText "
+    "mechanism；不声称具体 .rdata 地址已证明传入 SetText。",
+]
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description="运行时菜单文本来源调查 (只读)")
     ap.add_argument("--exe", default="backup/UV4_5.43.1.0_ORIGINAL.exe")
@@ -519,6 +545,7 @@ def main(argv=None):
             cmd_table.append(f"| {cmd} | {item} |")
     lines.append(DOC_TAIL.format(cmd_table="\n".join(cmd_table)))
 
+    lines += ADDENDUM_LINES
     Path(args.out).write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     print(f"条目: {len(results)}; 结果已写入 {args.out} 与 {args.json}")
