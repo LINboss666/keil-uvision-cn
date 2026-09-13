@@ -145,7 +145,7 @@ LOCALIZATION 专项评估（当前禁止实施）。
 | **.rdata bit-identical** | original == patched：SHA256 `7e5438f70385cb3d357b1ed00fa4ab2e47cc2fcc15452dfe5a845f244148f912` ✓ |
 | 签名 | 原版 **Valid** → 1B1.2 测试版 **HashMismatch**（预期） |
 | 自测回归 | VERIFY-1..6 7/7 通过 |
-| GUI 测试（1B1.2） | ⛔ **未执行** —— 等 GPT 审核后由用户手动测试 `UV4_CN_1B1_2_TEST.exe`（重点：Project 菜单 / 工程树根·组·文件三种右键 / 编辑器右键 / Flash>Erase / 动态 Options for Target / Undo·Redo·Cut·Copy·Paste / 断点·书签 / Source Browser；仍英文且与 .rdata runtime source 一致的项如实记录 `runtime override likely`） |
+| GUI 测试（1B1.2） | ✅ **已执行** —— 见 "PHASE 1B1 最终 GUI 验证"（写入机制/主菜单/Flash PASS；Project Tree 与编辑器右键 PARTIAL BY DESIGN，剩余英文为 runtime override，已接受） |
 
 ## PHASE 1B1 用户 GUI 测试结果（GPT 转述汇总，2026-09-13）
 
