@@ -2,6 +2,40 @@
 
 格式：日期 / 阶段 / 提交 / 修改内容 / 涉及 Resource ID / 新增翻译条目 / 已知问题 / 测试状态。
 
+## 2026-09-13 — PHASE 1B1.2（resource-only menu completion；本地 UV4_CN_1B1_2_TEST.exe 已构建，待审核）
+
+- **feat: validate command prompt segment structure**
+  - `text_validators.py` 新增 prompt 结构门禁：含 `\n` 的 STRING entry 必须整条处理，
+    `original_segments == chinese_segments`（分段数不一致 → FAIL）；
+    printf token / `\t` 快捷键 / 助记键校验继续全量执行。
+- **feat: complete resource-backed dynamic menu translations**
+  - CSV 增至 **231 条（STRING 152 + MENU 79，LANGID 1033）**，1B1.2 新增 44 条：
+    - RT_STRING 21 条：159/162/164/167/744/770/771/104/181、20628–20633
+      （含 20632 `&Delete\tDelete`）、command prompt **57634/57635/57637/57642/
+      57643/57644 整条处理**（2 段结构完整保留）；
+    - RT_MENU 23 项（仅 GUI mapping 确认路径）：MENU 592 ×3、624 ×5、
+      191/800 ×4+4（DbWinMenu 断点/书签/Copy）、22565 ×6（MFC 隐藏编辑弹出）、400 ×1。
+- **fix: report raw evidence offsets as file offsets**
+  - `map_dynamic_strings.py` RAW 证据显示由 `@.rdata+0x…` 修正为
+    `@file+0x… [section]`（语义正确化，不影响分类），映射文档重新生成。
+- **涉及 Resource ID**：RT_STRING 22 块（8/9/10/11/31/32/41/42/43/44/45/46/47/48/49/50/51/
+  3841/1290/3603 等其中 22 个）+ RT_MENU 143/1200/1205/592/624/191/800/22565/400
+  共 9 个（均 1033）。**.rdata/.text/.data/.reloc/证书表/RT_DIALOG/RT_240/
+  LANGID 9/1031/0x2000/1041 零改动。**
+- **新增翻译条目**：44（累计 231）。
+- **已知问题**：无新增。守卫实录：①3 条"原文无助记键误加 (&X)"被拦截修正；
+  ②MENU 191 助记键冲突被拦截（0/8 原文助记键 B，修正为 `(&B)` 保持原字母）。
+- **测试状态**：apply 语义验证全过；`verify --manifest` PASS
+  （changed_byte_count=8168 / changed_ranges=5756 / allowed=31 /
+  **non_target_resource_changes=0**）；**.rdata SHA256 逐位一致**
+  （`7e5438f7…f912`）；自测 7/7；GUI 测试 ⛔ 未执行（等审核后用户手动测试）。
+- **产物**：`output/UV4_CN_1B1_2_TEST.exe`
+  （SHA256 `b67768e77a087603188771da8a793e7824e95f0837c50f18fefe8581fe24cbf6`，
+  本地 only，未提交、未运行）；`output/uv4_cn_1b1_2_manifest.json`。
+- **预期管理**：不保证所有英文消失 —— 1B1.2 目标是补齐资源层可修复项；
+  GUI 测试中若某项翻译了全部 RT_STRING/RT_MENU 来源后仍显示英文，
+  记录 `runtime override likely`（.rdata exact/template evidence 存在者保留英文）。
+
 ## 2026-09-13 — PHASE 1B1.1a（mapping 工具加固；纯只读，零修改）
 
 - **fix: make dynamic source classification reproducible**

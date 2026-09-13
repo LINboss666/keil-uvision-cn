@@ -90,6 +90,21 @@ IDE 崩溃、构建链异常、Flash 异常、Debugger 异常、工程损坏。
 | GUI 测试矩阵（TEST 1–15） | ✅ **已执行**（用户真机测试，见"PHASE 1A 用户真机测试报告"；TEST 3/5/8/9/14/15 未单独报告） |
 | 编译一致性（原版 vs 汉化版 Rebuild + 日志/产物哈希对比） | ⚠ 严格 A/B 未执行（间接证据：汉化版 0E/0W + Flash Verify OK，见真机报告） |
 
+## PHASE 1B1.2 静态验证（2026-09-13，RT_MENU 592/624/191/800/22565/400 + 补充 RT_STRING 含 command prompt）
+
+| 项 | 结果 |
+|---|---|
+| 菜单 round-trip 门禁 | **40/40** parse → serialize → byte-identical ✓（写入前强制） |
+| 写入 | 累计 231 条：STRING 152（22 块）+ MENU 79（9 个资源）；1B1.2 新增 44 条（STRING 21 含 command prompt 整条、MENU 23 仅 GUI mapping 确认路径）；全部整资源重序列化，new_blob ≤ 原分配 |
+| prompt 结构校验（新增门禁） | `57634/57635/57637/57642/57643/57644` 六条 command prompt 整条处理：newline 分段 2→2、printf token 一致、`\t` 后快捷键逐字一致 ✓ |
+| 守卫实录 | ①校验器拦截 3 条"原文无助记键而中文误加 (&X)"（MENU 191/800 0/17、400 0/0）→ 修正；②拦截 MENU 191 同级助记键冲突（0/8 原文助记键为 **B** 而非 N，会与未译 `I&nstruction Trace` 撞车）→ 保持原字母 B |
+| apply 语义验证 | 资源树布局不变；各 STRING 块 16 条；MENU 树逐节点 command ID / flags / 树形 / 数量 / header_offset 不变；仅目标路径文本变化；无新同级助记键冲突 ✓ |
+| `verify.py --manifest` | **PASS**：changed_byte_count=8168，changed_ranges=5756，载荷白名单 **31 个资源范围**（由原版资源树重新推导），**non_target_resource_changes=0** |
+| **.rdata bit-identical** | original == patched：SHA256 `7e5438f70385cb3d357b1ed00fa4ab2e47cc2fcc15452dfe5a845f244148f912` ✓ |
+| 签名 | 原版 **Valid** → 1B1.2 测试版 **HashMismatch**（预期） |
+| 自测回归 | VERIFY-1..6 7/7 通过 |
+| GUI 测试（1B1.2） | ⛔ **未执行** —— 等 GPT 审核后由用户手动测试 `UV4_CN_1B1_2_TEST.exe`（重点：Project 菜单 / 工程树根·组·文件三种右键 / 编辑器右键 / Flash>Erase / 动态 Options for Target / Undo·Redo·Cut·Copy·Paste / 断点·书签 / Source Browser；仍英文且与 .rdata runtime source 一致的项如实记录 `runtime override likely`） |
+
 ## PHASE 1B1 用户 GUI 测试结果（GPT 转述汇总，2026-09-13）
 
 | 项 | 结果 |
