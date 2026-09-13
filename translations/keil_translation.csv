@@ -855,3 +855,12 @@ DIALOG,375,ctl:61,4294967295,STATIC,1033,at,位于,DONE,RC2 config
 DIALOG,399,title,,,1033,Shortcut Keys,快捷键,DONE,RC2 config
 DIALOG,32716,title,,,1033,User Keywords,用户关键字,DONE,RC2 config
 DIALOG,32718,title,,,1033,Text Completion,文本补全,DONE,RC2 config
+STRING,49,772,,,1033,Disable &All Breakpoints in current Target,禁用当前目标的所有断点(&A),DONE,RC3 Debug/Window menu
+STRING,49,773,,,1033,&Kill All Breakpoints in Current Target,终止当前目标的所有断点(&K),DONE,RC3 Debug/Window menu
+STRING,49,774,,,1033,&OS Support,操作系统支持(&O),DONE,RC3 Debug/Window menu
+STRING,49,775,,,1033,Execut&ion Profiling,执行分析(&I),DONE,RC3 Debug/Window menu
+STRING,49,780,,,1033,&Memory Map…,内存映射(&M)…,DONE,RC3 Debug/Window menu
+STRING,49,781,,,1033,Inline Assembl&y...,内联汇编(&Y)...,DONE,RC3 Debug/Window menu
+STRING,50,796,,,1033,&Reset View to Defaults,重置视图为默认布局(&R),DONE,RC3 Debug/Window menu
+STRING,50,797,,,1033,&Split,拆分(&S),DONE,RC3 Debug/Window menu
+STRING,50,798,,,1033,C&lose All,全部关闭(&L),DONE,RC3 Debug/Window menu
