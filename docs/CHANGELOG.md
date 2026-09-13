@@ -40,7 +40,7 @@
   - `verify.py` 接受 manifest v3。
 - **feat: add phase 1b2.1a dialog translations**
   - CSV 扩列 `CtlID`/`CtlClass`，增至 **251 条（STRING 152 + MENU 79 + DIALOG 20）**；
-    本轮新增 Dialog 文本 19 条：Dialog 100（About：标题 + OK，版权/版本/授权
+    本轮新增 Dialog 文本 20 条：Dialog 100（About：标题 + OK，版权/版本/授权
     文本保持原文）、129（Targets：标题 + 6 控件）、511（Batch Setup：标题 + 10 控件）；
     原文含 `&` 保留原助记键字母，原文无 `&` 不加助记键。
 - **docs: add 1b2.1a candidate report and validation**
@@ -50,7 +50,7 @@
 - **涉及 Resource ID**：RT_DIALOG 100/129/511（1033）—— 其余 **243 个
   bit-identical**；RT_STRING/RT_MENU 沿用 1B1.2（本轮零新增）；
   .rdata/.text/RT_240/DLL 零改动。
-- **新增翻译条目**：20（19 条 Dialog 文本 + CSV 中 1 条为 title 与 ctl 复计数勘误……
+- **新增翻译条目**：20（20 条 Dialog 文本；CSV 中 title 与 ctl 复计数已核对一致……
   以 CSV 实际行数 251 为准：本轮净增 20 行 DIALOG）。
 - **守卫实录**：locator 拦截 2 次 Control ID 转录错误（511 ctl:4 Clean 1864→1863、
   ctl:5 Select All 1865→1864）；511 ctl:5/ctl:6 同 ID 1865（Keil 原始资源如此）
