@@ -442,99 +442,250 @@ def _parse_menu_ex(buf: bytes):
             "total_bytes": n, "parse_note": err}
 
 
-def parse_dialog_template(buf: bytes):
-    if len(buf) < 4:
-        return {"error": "buffer too small"}
-    dlgver, signature = struct.unpack_from("<HH", buf, 0)
-    if dlgver == 1 and signature == 0xFFFF:
-        return _parse_dialog_ex(buf)
-    return _parse_dialog_std(buf)
+# ======================================================================
+# 无损 Dialog 编解码器 (PHASE 1B2.0)
+#
+# 设计目标: parse → serialize → byte-identical。
+# AST 中保留全部原始字段与原始类型 (sz_or_ord 用结构化 kind 表示,
+# 不把 ordinal class atom 永久替换成人类可读字符串; display 仅作展示)。
+# alignment padding 按原样捕获 (pad_before / trailing), 不假设全零。
+# STANDARD creation data 语义: 首 WORD S 非零时, S 包含 size WORD 自身
+# (Windows 标准语义, 16 位遗留), 即总消耗 S*2 字节; EXTENDED extraCount
+# 则仅表示其后的字节数 (不含字段本身)。两种格式不混用同一 size 语义。
+# ======================================================================
+
+DS_SETFONT = 0x40
+DS_SHELLFONT = 0x48  # DS_SETFONT | DS_FIXEDSYS
 
 
-def _parse_dialog_std(buf: bytes):
+def parse_sz_or_ord_ast(buf: bytes, pos: int, context: str = "generic"):
+    """无损解析 sz_Or_Ord 字段。返回 ({kind, value, display}, new_pos)。"""
+    if pos + 2 > len(buf):
+        raise ValueError("sz_or_ord 越界")
+    (w,) = struct.unpack_from("<H", buf, pos)
+    if w == 0x0000:
+        return {"kind": "none", "value": None, "display": None}, pos + 2
+    if w == 0xFFFF:
+        if pos + 4 > len(buf):
+            raise ValueError("ordinal 越界")
+        (v,) = struct.unpack_from("<H", buf, pos + 2)
+        if context in ("window_class", "class") and v in CONTROL_CLASS_ATOMS:
+            disp = CONTROL_CLASS_ATOMS[v]
+        else:
+            disp = f"ordinal:{v}"
+        return {"kind": "ordinal", "value": v, "display": disp}, pos + 4
+    text, pos2 = decode_utf16z(buf, pos)
+    return {"kind": "string", "value": text, "display": text}, pos2
+
+
+def serialize_sz_or_ord_ast(node) -> bytes:
+    k = node["kind"]
+    if k == "none":
+        return struct.pack("<H", 0)
+    if k == "ordinal":
+        return struct.pack("<HH", 0xFFFF, node["value"])
+    if k == "string":
+        return node["value"].encode("utf-16le") + b"\x00\x00"
+    raise ValueError(f"未知 sz_or_ord kind: {k!r}")
+
+
+def _parse_dialog_ast_std(buf: bytes):
     n = len(buf)
-    style, exstyle, cdit = struct.unpack_from("<IIH", buf, 0)
+    style, exstyle = struct.unpack_from("<II", buf, 0)
+    (cdit,) = struct.unpack_from("<H", buf, 8)
     x, y, cx, cy = struct.unpack_from("<hhhh", buf, 10)
     pos = 18
-    menu, pos = read_sz_or_ord(buf, pos)
-    wcls, pos = read_sz_or_ord(buf, pos)
+    dmenu, pos = parse_sz_or_ord_ast(buf, pos, "menu")
+    dclass, pos = parse_sz_or_ord_ast(buf, pos, "window_class")
     title, pos = decode_utf16z(buf, pos)
     font = None
-    if style & 0x40:  # DS_SETFONT
-        if pos + 2 <= n:
-            (ptsize,) = struct.unpack_from("<H", buf, pos)
-            pos += 2
-            face, pos = decode_utf16z(buf, pos)
-            font = {"pointsize": ptsize, "typeface": face}
-    controls, err = [], None
-    pos = (pos + 3) & ~3
+    if style & DS_SETFONT:
+        if pos + 2 > n:
+            raise ValueError("font 越界 (std)")
+        (pt,) = struct.unpack_from("<H", buf, pos)
+        pos += 2
+        face, pos = decode_utf16z(buf, pos)
+        font = {"pointsize": pt, "typeface": face}
+    controls = []
     for i in range(cdit):
-        try:
-            st, ex = struct.unpack_from("<II", buf, pos)
-            ix, iy, icx, icy = struct.unpack_from("<hhhh", buf, pos + 8)
-            (cid,) = struct.unpack_from("<H", buf, pos + 16)
-            pos += 18
-            wclass, pos = read_sz_or_ord(buf, pos)
-            wtitle, pos = read_sz_or_ord(buf, pos)
-            (cbextra,) = struct.unpack_from("<H", buf, pos)
+        aligned = (pos + 3) & ~3
+        pad_before = buf[pos:aligned]          # 原样捕获 (可能非全零)
+        pos = aligned
+        if pos + 18 > n:
+            raise ValueError(f"控件 {i} 头越界 (std)")
+        st, ex = struct.unpack_from("<II", buf, pos)
+        ix, iy, icx, icy = struct.unpack_from("<hhhh", buf, pos + 8)
+        (cid,) = struct.unpack_from("<H", buf, pos + 16)
+        pos += 18
+        wcls, pos = parse_sz_or_ord_ast(buf, pos, "class")
+        wtitle, pos = parse_sz_or_ord_ast(buf, pos, "title")
+        if pos + 2 > n:
+            raise ValueError(f"控件 {i} creation size 越界 (std)")
+        (S,) = struct.unpack_from("<H", buf, pos)
+        if S == 0:
+            creation = {"cb_word": 0, "data": b""}
             pos += 2
-            pos += cbextra
-            pos = (pos + 3) & ~3
-        except Exception as exc:
-            err = f"控件 {i} 解析失败: {exc}"
-            break
-        cname = CONTROL_CLASS_ATOMS.get(wclass, f"atom:{wclass}") if isinstance(wclass, int) else wclass
-        ttext = f"ordinal:{wtitle}" if isinstance(wtitle, int) else wtitle
-        controls.append({"id": cid, "class": cname, "text": ttext,
-                         "rect": [ix, iy, icx, icy], "style": st})
-    return {"version": 0, "style": style, "exstyle": exstyle,
-            "title": title, "font": font, "items": controls,
-            "item_count_expected": cdit, "item_count_parsed": len(controls),
-            "parse_note": err}
+        else:
+            total = S * 2                       # S 包含 size WORD 自身
+            if pos + total > n:
+                raise ValueError(f"控件 {i} creation data 越界 (std)")
+            creation = {"cb_word": S, "data": buf[pos + 2: pos + total]}
+            pos += total
+        controls.append({"pad_before": pad_before, "style": st, "exstyle": ex,
+                         "rect": [ix, iy, icx, icy], "id": cid,
+                         "window_class": wcls, "title": wtitle,
+                         "creation_data": creation})
+    trailing = buf[pos:]
+    return {"kind": "std", "header": {"style": style, "exstyle": exstyle,
+            "cdit": cdit, "rect": [x, y, cx, cy]},
+            "menu": dmenu, "window_class": dclass,
+            "title": {"kind": "string", "value": title, "display": title},
+            "font": font, "controls": controls, "trailing": trailing}
 
 
-def _parse_dialog_ex(buf: bytes):
+def _parse_dialog_ast_ex(buf: bytes):
     n = len(buf)
+    dlgver, signature = struct.unpack_from("<HH", buf, 0)
     helpid, exstyle, style = struct.unpack_from("<III", buf, 4)
-    cdit = struct.unpack_from("<H", buf, 16)[0]
+    (cdit,) = struct.unpack_from("<H", buf, 16)
     x, y, cx, cy = struct.unpack_from("<hhhh", buf, 18)
     pos = 26
-    menu, pos = read_sz_or_ord(buf, pos)
-    wcls, pos = read_sz_or_ord(buf, pos)
+    dmenu, pos = parse_sz_or_ord_ast(buf, pos, "menu")
+    dclass, pos = parse_sz_or_ord_ast(buf, pos, "window_class")
     title, pos = decode_utf16z(buf, pos)
     font = None
-    if style & 0x40:  # DS_SETFONT / DS_SHELLFONT
-        if pos + 6 <= n:
-            ptsize, weight = struct.unpack_from("<HH", buf, pos)
-            italic, charset = buf[pos + 4], buf[pos + 5]
-            pos += 6
-            face, pos = decode_utf16z(buf, pos)
-            font = {"pointsize": ptsize, "weight": weight, "italic": italic,
-                    "charset": charset, "typeface": face}
-    controls, err = [], None
-    for _ in range(cdit):
-        try:
-            pos = (pos + 3) & ~3
-            _h, _ex, st = struct.unpack_from("<III", buf, pos)
-            ix, iy, icx, icy = struct.unpack_from("<hhhh", buf, pos + 12)
-            (cid,) = struct.unpack_from("<I", buf, pos + 20)
-            pos += 24
-            wclass, pos = read_sz_or_ord(buf, pos)
-            wtitle, pos = read_sz_or_ord(buf, pos)
-            (cbextra,) = struct.unpack_from("<H", buf, pos)
-            pos += 2
-            pos += cbextra
-        except Exception as exc:
-            err = f"控件解析失败: {exc}"
-            break
-        cname = CONTROL_CLASS_ATOMS.get(wclass, f"atom:{wclass}") if isinstance(wclass, int) else wclass
-        ttext = f"ordinal:{wtitle}" if isinstance(wtitle, int) else wtitle
-        controls.append({"id": cid, "class": cname, "text": ttext,
-                         "rect": [ix, iy, icx, icy], "style": st})
-    return {"version": 1, "style": style, "exstyle": exstyle, "helpid": helpid,
-            "title": title, "font": font, "items": controls,
-            "item_count_expected": cdit, "item_count_parsed": len(controls),
-            "parse_note": err}
+    if style & DS_SETFONT:                     # DS_SETFONT / DS_SHELLFONT
+        if pos + 6 > n:
+            raise ValueError("font 越界 (ex)")
+        pt, weight = struct.unpack_from("<HH", buf, pos)
+        italic, charset = buf[pos + 4], buf[pos + 5]
+        pos += 6
+        face, pos = decode_utf16z(buf, pos)
+        font = {"pointsize": pt, "weight": weight, "italic": italic,
+                "charset": charset, "typeface": face}
+    controls = []
+    for i in range(cdit):
+        aligned = (pos + 3) & ~3
+        pad_before = buf[pos:aligned]
+        pos = aligned
+        if pos + 24 > n:
+            raise ValueError(f"控件 {i} 头越界 (ex)")
+        chelpid, cex, cst = struct.unpack_from("<III", buf, pos)
+        ix, iy, icx, icy = struct.unpack_from("<hhhh", buf, pos + 12)
+        (cid,) = struct.unpack_from("<I", buf, pos + 20)
+        pos += 24
+        wcls, pos = parse_sz_or_ord_ast(buf, pos, "class")
+        wtitle, pos = parse_sz_or_ord_ast(buf, pos, "title")
+        if pos + 2 > n:
+            raise ValueError(f"控件 {i} extraCount 越界 (ex)")
+        (cb,) = struct.unpack_from("<H", buf, pos)
+        pos += 2                               # EX: cb 不含字段自身
+        data = buf[pos: pos + cb]
+        if len(data) != cb:
+            raise ValueError(f"控件 {i} creation data 越界 (ex)")
+        pos += cb
+        controls.append({"pad_before": pad_before, "helpid": chelpid,
+                         "exstyle": cex, "style": cst,
+                         "rect": [ix, iy, icx, icy], "id": cid,
+                         "window_class": wcls, "title": wtitle,
+                         "extra_count": cb, "creation_data": data})
+    trailing = buf[pos:]
+    return {"kind": "ex", "dlgver": dlgver, "signature": signature,
+            "header": {"helpid": helpid, "exstyle": exstyle, "style": style,
+                       "cdit": cdit, "rect": [x, y, cx, cy]},
+            "menu": dmenu, "window_class": dclass,
+            "title": {"kind": "string", "value": title, "display": title},
+            "font": font, "controls": controls, "trailing": trailing}
+
+
+def parse_dialog_ast(buf: bytes):
+    """无损解析 DLGTEMPLATE / DLGTEMPLATEEX 为 lossless AST。失败抛 ValueError。"""
+    if len(buf) < 4:
+        raise ValueError("buffer too small")
+    dlgver, signature = struct.unpack_from("<HH", buf, 0)
+    if dlgver == 1 and signature == 0xFFFF:
+        return _parse_dialog_ast_ex(buf)
+    return _parse_dialog_ast_std(buf)
+
+
+def dialog_semantic_snapshot(ast):
+    """结构语义快照 (与具体 padding/字节布局无关, 用于语义级比较)。"""
+    def sz(node):
+        if node is None or node["kind"] == "none":
+            return None
+        if node["kind"] == "ordinal":
+            return ("ordinal", node["value"])
+        return ("string", node["value"])
+
+    snap = {
+        "kind": ast["kind"],
+        "style": ast["header"]["style"],
+        "exstyle": ast["header"]["exstyle"],
+        "rect": list(ast["header"]["rect"]),
+        "menu": sz(ast["menu"]),
+        "window_class": sz(ast["window_class"]),
+        "title": ast["title"]["value"],
+        "font": dict(ast["font"]) if ast["font"] else None,
+        "control_count": len(ast["controls"]),
+        "controls": [],
+    }
+    for c in ast["controls"]:
+        clen = (len(c["creation_data"]["data"])
+                if ast["kind"] == "std" and c["creation_data"]["cb_word"]
+                else len(c.get("creation_data", b"")))
+        snap["controls"].append({
+            "helpid": c.get("helpid"),
+            "style": c["style"], "exstyle": c["exstyle"], "rect": list(c["rect"]),
+            "id": c["id"], "class": sz(c["window_class"]), "title": sz(c["title"]),
+            "creation_len": clen,
+        })
+    return snap
+
+
+def compare_semantic_snapshots(a, b, path=""):
+    """比较两份语义快照, 返回差异列表 (空 = 语义一致)。"""
+    diffs = []
+    if isinstance(a, dict) and isinstance(b, dict):
+        for k in sorted(set(a) | set(b)):
+            diffs += compare_semantic_snapshots(a.get(k), b.get(k),
+                                                f"{path}.{k}" if path else k)
+    elif isinstance(a, list) and isinstance(b, list):
+        if len(a) != len(b):
+            diffs.append(f"{path}: 数量 {len(a)} → {len(b)}")
+        else:
+            for i, (x, y) in enumerate(zip(a, b)):
+                diffs += compare_semantic_snapshots(x, y, f"{path}[{i}]")
+    elif a != b:
+        diffs.append(f"{path}: {a!r} → {b!r}")
+    return diffs
+
+
+def parse_dialog_template(buf: bytes):
+    """兼容旧输出形状的分析视图 (内部基于无损 AST 投影)。"""
+    try:
+        ast = parse_dialog_ast(buf)
+    except ValueError as exc:
+        return {"error": str(exc)}
+    return _project_dialog(ast)
+
+
+def _project_dialog(ast):
+    ctrl = []
+    for c in ast["controls"]:
+        cname = c["window_class"]["display"] if c["window_class"]["kind"] != "none" else None
+        ttext = c["title"]["display"] if c["title"]["kind"] != "none" else ""
+        ctrl.append({"id": c["id"], "class": cname, "text": ttext,
+                     "rect": list(c["rect"]), "style": c["style"],
+                     "exstyle": c["exstyle"]})
+    common = {"style": ast["header"]["style"], "exstyle": ast["header"]["exstyle"],
+              "title": ast["title"]["value"], "font": ast["font"],
+              "items": ctrl,
+              "item_count_expected": ast["header"]["cdit"],
+              "item_count_parsed": len(ctrl),
+              "parse_note": None}
+    if ast["kind"] == "std":
+        return {"version": 0, **common}
+    return {"version": 1, "helpid": ast["header"]["helpid"], **common}
 
 
 def parse_accelerators(buf: bytes):
